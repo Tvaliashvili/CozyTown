@@ -11,7 +11,7 @@ import { loadLetters, loadPhotos } from '../data/inside.js'
 import { loadCapsule } from '../data/capsule.js'
 import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
-import { AddPhotoIcon, BackIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
 // The room inside a house (/h/<code>/inside). It covers the street, which stays loaded underneath.
@@ -21,7 +21,8 @@ import './room.css'
 //   Visitor → looks at the photos. Letters are private, so visitors don't see them at all.
 // onCapsuleSeen: called when the keeper opens a time capsule whose day has come,
 // so the street stops saying "your time capsule has opened".
-export default function Room({ code, title, isKeeper, isHelper, onLeave, onCapsuleSeen }) {
+// design: the outside of the house, drawn on the offline page in the "Download everything" zip.
+export default function Room({ code, title, design, isKeeper, isHelper, onLeave, onCapsuleSeen }) {
   const { t, lang } = useI18n()
   const canDecorate = isKeeper || isHelper
   const [photos, setPhotos] = useState(null) // null = still loading
@@ -221,6 +222,7 @@ export default function Room({ code, title, isKeeper, isHelper, onLeave, onCapsu
               </button>
             )}
             {isHelper && <p className="room-note">{t('helpers.youHelp')}</p>}
+            {isKeeper && <ExportButton code={code} title={title} design={design} />}
           </>
         ) : (
           photos?.length > 0 && <p className="room-note">{t('room.visitorNote')}</p>
@@ -261,6 +263,39 @@ export default function Room({ code, title, isKeeper, isHelper, onLeave, onCapsu
           onClose={() => setCapsuleOpen(false)}
         />
       )}
+    </div>
+  )
+}
+
+// "Download everything": a zip of every photo and letter with a page that works offline.
+// The export code (and the zip library) only downloads when the button is pressed.
+function ExportButton({ code, title, design }) {
+  const { t, lang } = useI18n()
+  // 'idle' | 'working' | 'done' | 'failed'
+  const [state, setState] = useState('idle')
+
+  async function download() {
+    setState('working')
+    try {
+      const { exportHouse } = await import('../export/exportHouse.js')
+      await exportHouse({ code, title, design, t, lang })
+      setState('done')
+    } catch {
+      setState('failed')
+    }
+  }
+
+  return (
+    <div className="room-export">
+      <button type="button" className="link-button quiet" onClick={download} disabled={state === 'working'}>
+        <DownloadIcon />
+        {state === 'working' ? t('export.working') : t('export.button')}
+      </button>
+      <p className="room-note" role="status">
+        {state === 'done' && t('export.done')}
+        {state === 'failed' && t('export.failed')}
+        {(state === 'idle' || state === 'working') && t('export.hint')}
+      </p>
     </div>
   )
 }

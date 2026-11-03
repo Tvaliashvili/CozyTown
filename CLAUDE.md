@@ -94,6 +94,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   and invite codes (→ helper) through the same `claim_house()`. Helpers hang photos, write letters and fill
   the capsule, but read only their own letters, can't change the outside or the capsule's day, and don't
   see lanterns. `can_edit_house()` = keeper or helper; `is_house_keeper()` = keeper only.
+- **Download everything** (keeper only, bottom of the room): `src/export/exportHouse.js` builds the zip on the
+  phone with `fflate` (`zipSync`; the worker version stalled) and is lazy-loaded on the button press.
+  It holds photos/, letters/, capsule/ (only once open), lanterns.txt and an offline index.html with a
+  flat SVG of the house (`src/export/houseDrawing.js`). All people's words are HTML-escaped in that page.
 - `/h/<code>/card` is the printable bank-card-size card (`src/card/`), for the keeper or an admin.
   While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
   a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the

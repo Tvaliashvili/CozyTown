@@ -371,4 +371,19 @@ export default {
   'signin.step2Invite': 'Join the house',
   'signin.inviteCodeHint': 'Your invitation code is already filled in.',
   'signin.join': 'Join and help decorate',
+
+  // ---------- Download everything (export zip) ----------
+  'export.button': 'Download everything',
+  'export.working': 'Packing everything up…',
+  'export.hint': 'A zip with every photo and letter, and a page that opens without internet.',
+  'export.done': 'Downloaded. Keep the zip file somewhere safe.',
+  'export.failed': "The download didn't work. Check your internet and try again.",
+  'export.downloadedOn': 'Downloaded from Cozy Town on {date}',
+  'export.photos': 'Photos',
+  'export.noPhotos': 'No photos yet.',
+  'export.noLetters': 'No letters yet.',
+  'export.noLanterns': 'No lanterns yet.',
+  'export.someone': 'Someone',
+  'export.capsuleNone': 'No time capsule yet.',
+  'export.capsuleLocked': 'Still sealed. It opens on {date}. Download again after that day to keep what is inside.',
 }

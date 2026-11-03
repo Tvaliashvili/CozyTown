@@ -292,6 +292,7 @@ export default function HouseTown({ code, inside }) {
         <Room
           code={code}
           title={name}
+          design={house.design}
           isKeeper={house.isKeeper}
           isHelper={house.isHelper}
           onLeave={goOutside}

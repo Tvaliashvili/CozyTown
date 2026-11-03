@@ -597,3 +597,14 @@
   font-weight: 700;
   overflow-wrap: anywhere;
 }
+
+/* "Download everything" at the bottom of the keeper's room sheet */
+.room-export {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.room-export .room-note {
+  margin-top: -6px;
+}
