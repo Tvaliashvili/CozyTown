@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Town from './scene/Town.jsx'
 import LanguageToggle from './ui/LanguageToggle.jsx'
 import Customizer from './ui/Customizer.jsx'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
+import { useBackState } from './lib/useBackState.js'
 import { Link } from './router.jsx'
 import { BackIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
 
@@ -37,22 +38,28 @@ export default function StreetView({
   onEnter,
 }) {
   const { t } = useI18n()
-  const [editing, setEditing] = useState(false)
+  // useBackState: the phone's Back button closes the decorating panel, instead of leaving the street.
+  const [editing, setEditing] = useBackState(false)
   // The 3D scene moves this label every frame so it floats above the house.
   const labelRef = useRef(null)
 
-  // If the design gets locked while the panel is open, the panel simply disappears.
+  // If the design gets locked while the panel is open, the panel closes.
   const showPanel = editing && canEdit
+  useEffect(() => {
+    if (editing && !canEdit) setEditing(false)
+  }, [editing, canEdit])
+
+  // Save the last taps right away when the panel closes, by its button or the phone's Back button.
+  const wasEditing = useRef(false)
+  useEffect(() => {
+    if (wasEditing.current && !editing) onDoneEditing?.()
+    wasEditing.current = editing
+  }, [editing])
   // The decorating panel or another panel (focusHouse) is covering part of the street.
   const covered = showPanel || focusHouse
 
   // What tapping the house does: open the decorating panel, step inside, or nothing.
   const onTapHouse = canEdit ? () => setEditing(true) : onEnter
-
-  function closePanel() {
-    setEditing(false)
-    onDoneEditing?.()
-  }
 
   return (
     <div className={covered ? 'app editing' : 'app'}>
@@ -110,7 +117,7 @@ export default function StreetView({
       </header>
 
       {showPanel ? (
-        <Customizer design={design} onChange={onChange} onClose={closePanel} onFinish={onFinish} saveFailed={saveFailed} />
+        <Customizer design={design} onChange={onChange} onClose={() => setEditing(false)} onFinish={onFinish} saveFailed={saveFailed} />
       ) : (
         bottom ?? (
           <p className="hint">

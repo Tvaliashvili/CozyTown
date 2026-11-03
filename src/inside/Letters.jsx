@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { deleteLetter, sendLetter } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { formatDate } from '../lib/formatDate.js'
+import { useBackState } from '../lib/useBackState.js'
 import { BackIcon, PenIcon, TrashIcon } from '../ui/icons.jsx'
 
 // The mailbox: a full-screen page over the room with the house's letters. Keeper only.
@@ -10,8 +11,9 @@ import { BackIcon, PenIcon, TrashIcon } from '../ui/icons.jsx'
 // onlyOwn: the person is a helper, so the database only gives them the letters they wrote.
 export default function Letters({ code, letters, failed, onRetry, onChange, onClose, onlyOwn = false }) {
   const { t } = useI18n()
-  const [reading, setReading] = useState(null)
-  const [writing, setWriting] = useState(false)
+  // The phone's Back button goes from a letter back to the list, like the Back button on screen.
+  const [reading, setReading] = useBackState(null)
+  const [writing, setWriting] = useBackState(false)
 
   function back() {
     if (reading || writing) {

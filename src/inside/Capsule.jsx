@@ -3,6 +3,7 @@ import { addToCapsule, openCapsule, setCapsuleDate } from '../data/capsule.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { formatDate, formatDay } from '../lib/formatDate.js'
 import { shrinkPhoto } from '../lib/shrinkPhoto.js'
+import { useBackState } from '../lib/useBackState.js'
 import { AddPhotoIcon, BackIcon, LockIcon, PenIcon } from '../ui/icons.jsx'
 
 // The time capsule: a full-screen page over the room, like the mailbox. For people who decorate.
@@ -14,8 +15,8 @@ import { AddPhotoIcon, BackIcon, LockIcon, PenIcon } from '../ui/icons.jsx'
 //   Open         → read everything inside.
 export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) {
   const { t, lang } = useI18n()
-  // 'main' | 'add' | 'date'
-  const [view, setView] = useState('main')
+  // 'main' | 'add' | 'date'. The phone's Back button goes back to 'main', like the Back button on screen.
+  const [view, setView] = useBackState('main')
   const [sealed, setSealed] = useState(false) // just put something in
 
   function back() {

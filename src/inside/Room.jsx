@@ -11,6 +11,7 @@ import { loadLetters, loadPhotos } from '../data/inside.js'
 import { loadCapsule } from '../data/capsule.js'
 import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
+import { useBackState } from '../lib/useBackState.js'
 import { AddPhotoIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
@@ -29,14 +30,15 @@ export default function Room({ code, title, design, isKeeper, isHelper, onLeave,
   const [photosFailed, setPhotosFailed] = useState(false)
   const [letters, setLetters] = useState(null) // keeper and helpers; null = still loading
   const [lettersFailed, setLettersFailed] = useState(false)
-  const [adding, setAdding] = useState(null) // { file, slot } while "Hang this photo?" is open
-  const [viewing, setViewing] = useState(null) // the photo opened full screen
-  const [lettersOpen, setLettersOpen] = useState(false)
+  // useBackState: the phone's Back button closes these pages, instead of leaving the room.
+  const [adding, setAdding] = useBackState(null) // { file, slot } while "Hang this photo?" is open
+  const [viewing, setViewing] = useBackState(null) // the photo opened full screen
+  const [lettersOpen, setLettersOpen] = useBackState(false)
   // Keeper and helpers: the time capsule chest. undefined = still loading, null = no chest yet.
   const [capsule, setCapsule] = useState(undefined)
   const [capsuleFailed, setCapsuleFailed] = useState(false)
-  const [capsuleOpen, setCapsuleOpen] = useState(false)
-  const [helpersOpen, setHelpersOpen] = useState(false) // keeper only
+  const [capsuleOpen, setCapsuleOpen] = useBackState(false)
+  const [helpersOpen, setHelpersOpen] = useBackState(false) // keeper only
 
   // One hidden file picker for every frame; slotToFill remembers which frame asked for it.
   const fileInput = useRef(null)

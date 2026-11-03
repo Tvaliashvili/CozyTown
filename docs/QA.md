@@ -18,7 +18,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
 | Q1 | 🔴 | Backups | **There is no backup.** Supabase free has no automatic backups, and CLAUDE.md promises our own nightly backup of the database *and* photo files from the start. If the database were lost today, every house, letter and photo would be gone. | A nightly GitHub Action: `pg_dump` of the database plus a copy of both storage buckets, saved somewhere free and private (e.g. Cloudflare R2, 10 GB free). **Needs the founder:** where to keep backups. Must be done before the pilot (Phase 4). |
-| Q3 | 🟠 | Phones | The phone's **Back button** on the Letters, Time capsule and Family helpers pages leaves the whole room (back to the street) instead of just closing that page. Grandparents use Back a lot. | When one of those pages opens, add a history entry; when Back is pressed, close only that page. |
 | Q4 | 🟠 | Testing | **The tests aren't in the project.** About 100 database tests and 6 browser tests exist, but only in Claude's temporary folders, so they can't be re-run later to catch something breaking. | Move them into `tests/` with `npm run test:db` and `npm run test:browser`. |
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
@@ -45,6 +44,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Date | What | Commit |
 |---|---|---|---|
+| Q3 | 2026-11-03 | 🟠 The phone's Back button left the whole room (or the house) instead of closing the page on top. Now every page or sheet that opens over the screen (letters, a letter, capsule, helpers, a photo, the decorating panel, lantern and share sheets, "make it final") adds a history step, so Back closes just that. `src/lib/useBackState.js`. | *(this commit)* |
 | Q2 | 2026-11-03 | 🔴 On small phones (360×640) the keeper's room panel covered the whole wall: photos shrank to a speck. The panel now takes at most ~56% of the screen and scrolls. | *(this review)* |
 | Q15 | 2026-11-03 | 🟢 Time capsule: after a photo that couldn't be opened, picking the same file again did nothing. | *(this review)* |
 | — | 2026-11-03 | Export zip stalled forever (fflate's background worker); switched to `zipSync`. Found by the export browser test. | 67f09db |
@@ -63,6 +63,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Helpers | 38 (+ admin & capsule tests re-run on top) | invite → join by link → write letter → keeper sees and removes |
 | Download everything | — | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
+| Back button (Q3) | — | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
 | Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | — |
 
 ## Phone checklist (for the founder, on real phones)
@@ -72,7 +73,7 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 1. Open the landing page on mobile data. Does it appear within ~3 seconds?
 2. Sign in, open the test house. Does the street move smoothly when you slide?
 3. Go inside. Can you see the wall *and* the buttons? Add a photo from the camera.
-4. Letters: write one, read it, press the phone's Back button (see Q3).
+4. Letters: write one, read it, press the phone's Back button. It should go back to the list, then to the room, then to the street, one step at a time.
 5. Time capsule: choose a day, put in a letter and a photo.
 6. Family helpers: invite your second email, open the link on another phone, join.
 7. Download everything. Does the zip save? Open `index.html` from it in airplane mode.

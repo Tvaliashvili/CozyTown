@@ -15,6 +15,7 @@ import {
 } from './data/houses.js'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
+import { useBackState } from './lib/useBackState.js'
 import { Link, navigate } from './router.jsx'
 import { DoorIcon, FlameIcon, GiftIcon, HouseIcon } from './ui/icons.jsx'
 
@@ -35,15 +36,16 @@ export default function HouseTown({ code, inside }) {
   const [status, setStatus] = useState('loading')
   const [house, setHouse] = useState(null)
   const [saveFailed, setSaveFailed] = useState(false)
-  const [confirming, setConfirming] = useState(false)
+  // useBackState: the phone's Back button closes these sheets, instead of leaving the house.
+  const [confirming, setConfirming] = useBackState(false)
   const [justFinished, setJustFinished] = useState(false)
-  const [lanternOpen, setLanternOpen] = useState(false)
+  const [lanternOpen, setLanternOpen] = useBackState(false)
   const [lanternLit, setLanternLit] = useState(false) // this visitor lit one during this visit
   // Keeper only: who lit the lanterns, { lanterns, seenUntil } (see loadKeeperLanterns). null until loaded.
   const [keeperLanterns, setKeeperLanterns] = useState(null)
   const [keeperLanternsFailed, setKeeperLanternsFailed] = useState(false)
-  const [lanternListOpen, setLanternListOpen] = useState(false)
-  const [shareOpen, setShareOpen] = useState(false) // keeper only: link, QR code and printable card
+  const [lanternListOpen, setLanternListOpen] = useBackState(false)
+  const [shareOpen, setShareOpen] = useBackState(false) // keeper only: link, QR code and printable card
   // The newest lantern we've already told the database the keeper has seen, so we tell it only once.
   const seenSent = useRef(null)
 
@@ -137,15 +139,16 @@ export default function HouseTown({ code, inside }) {
     setLanternLit(true)
   }
 
-  function closeLanternList() {
-    setLanternListOpen(false)
-    // They've seen them all now, so the "new" tags and the count on the button go away.
+  // Once the list closes (its button or the phone's Back button), they've seen them all,
+  // so the "new" tags and the count on the button go away.
+  useEffect(() => {
+    if (lanternListOpen) return
     setKeeperLanterns((current) => {
       const newest = current?.lanterns[0]
       if (!newest || !isNewLantern(newest, current.seenUntil)) return current
       return { ...current, seenUntil: newest.created_at }
     })
-  }
+  }, [lanternListOpen])
 
   function onLanternRemoved(lantern) {
     setKeeperLanterns((current) => ({ ...current, lanterns: current.lanterns.filter((l) => l.id !== lantern.id) }))
@@ -220,7 +223,7 @@ export default function HouseTown({ code, inside }) {
         count={house.lanternCount}
         onRetry={loadLanternList}
         onRemoved={onLanternRemoved}
-        onClose={closeLanternList}
+        onClose={() => setLanternListOpen(false)}
       />
     )
   } else {
