@@ -21,12 +21,13 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
 
 ### Questions for the founder (product choices made without asking)
-- **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. OK, or only their own?
-- **Q12** Helpers only read the letters they wrote; the rest of the mailbox is the keeper's. OK?
-- **Q13** One time capsule per house; its day can move later, never earlier. OK?
-- **Q14** Invites work once, for 14 days; up to 10 helpers per house. OK?
+None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
 
 ### Accepted (checked, deliberately left as is)
+- **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. (Founder OK, 2026-11-04.)
+- **Q12** Helpers only read the letters they wrote; the rest of the mailbox is the keeper's. (Founder OK, 2026-11-04.)
+- **Q13** One time capsule per house; its day can move later, never earlier. (Founder OK, 2026-11-04.)
+- **Q14** Invites work once, for 14 days; up to 10 helpers per house. (Founder OK, 2026-11-04.)
 - Signed-in people can ask `capsule_is_open(id)` and `is_house_keeper(id)` about any house id. They only answer
   yes/no, and house ids are never shown to anyone outside the house. The storage rules need them to be callable.
 - The admin page is English only (only the founder uses it).
