@@ -67,6 +67,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - Database changes live in `supabase/migrations/` (one SQL file per change, never edit an applied one).
   Applied by a Node `pg` script over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`,
   user `postgres.<ref>`. Test first inside a transaction that rolls back.
+- Hosting is a Cloudflare **Worker with static assets** (not Pages), name `cozytown`, live at
+  https://cozytown.sandrotvaliashvili10.workers.dev. Settings in `wrangler.jsonc` (SPA fallback so
+  `/h/<code>` works). Cloudflare builds from GitHub `main` on each push; the build needs the two
+  `VITE_SUPABASE_*` values as build variables. Manual deploy: `npm run build` then `npx wrangler deploy`
+  with `CLOUDFLARE_API_TOKEN` from `.env.local`.
 - Admin: after the founder first signs up, add their user id to `public.admins` in the SQL editor.
 
 ## How the site is organised

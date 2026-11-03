@@ -1,0 +1,11 @@
+// Cloudflare settings: the site is just the built files in dist/, no server code.
+{
+  "name": "cozytown",
+  "compatibility_date": "2026-11-02",
+  "assets": {
+    "directory": "./dist",
+    // Addresses like /h/<code> have no file of their own; serve index.html
+    // and let our router pick the page. QR codes depend on this.
+    "not_found_handling": "single-page-application"
+  }
+}
