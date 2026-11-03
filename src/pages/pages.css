@@ -593,6 +593,7 @@
     grid-column: 1;
     grid-row: 2;
     align-self: center;
+    padding-bottom: 40px; /* the card below tucks up 24px; keep it off the subtitle */
   }
 
   .signin-sky {
