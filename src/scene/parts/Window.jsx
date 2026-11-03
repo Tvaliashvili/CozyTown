@@ -1,6 +1,6 @@
 import { getMaterial } from '../materials.js'
 
-// Warm light glowing from inside — the cozy part.
+// Warm light glowing from inside - the cozy part.
 const GLASS_COLOR = '#ffe29a'
 const LIGHT_FRAME = '#fff6e9'
 

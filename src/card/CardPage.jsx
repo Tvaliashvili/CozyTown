@@ -15,8 +15,8 @@ const BLEED_MM = 3
 // The card's words follow the language picked at the top of the page.
 //
 // Two ways to print it:
-//   shop — a PDF the exact size of the card (plus bleed), front on page 1, back on page 2.
-//   home — one A4 sheet: back and front side by side. Cut it out and fold it in the middle,
+//   shop - a PDF the exact size of the card (plus bleed), front on page 1, back on page 2.
+//   home - one A4 sheet: back and front side by side. Cut it out and fold it in the middle,
 //          so it needs no two-sided printing.
 // The browser's own print window does the work ("Save as PDF" makes the file).
 export default function CardPage({ code }) {

@@ -3,7 +3,7 @@ import { shrinkPhoto } from '../lib/shrinkPhoto.js'
 import { hangPhoto } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
 
-// "Hang this photo?" — shrinks the chosen photo, shows it, and asks for a few optional words.
+// "Hang this photo?" - shrinks the chosen photo, shows it, and asks for a few optional words.
 // slot = the frame it will hang in.
 export default function AddPhoto({ code, file, slot, onHung, onCancel }) {
   const { t } = useI18n()

@@ -51,7 +51,7 @@ export default {
   signIn: 'Sign in',
 
   'hero.badge': 'Launching in Tbilisi · February 2027',
-  'hero.text': 'Choose a house on our street, write them a letter, and hand them the key — on a card or a wooden keychain.',
+  'hero.text': 'Choose a house on our street, write them a letter, and hand them the key, on a card or a wooden keychain.',
   'hero.give': 'Give a house',
   'hero.gotGift': 'I got a house as a gift',
   'hero.walk': 'Take a walk down the street',
@@ -139,7 +139,7 @@ export default {
   'signin.open': 'Open my house',
   'signin.opening': 'Opening…',
   'signin.signInFirst': 'Sign in or create an account in step 1 first. Then you can type your code here.',
-  'signin.visitHint': "Just visiting someone's house? Scan their QR code — no sign-in needed.",
+  'signin.visitHint': "Just visiting someone's house? Scan their QR code. No sign-in needed.",
   'signin.error.notFound': "We couldn't find a house with this code. Check the letters and try again.",
   'signin.error.claimed': 'This gift has already been opened by someone else.',
   'signin.error.wrongPassword': "That email and password don't match. Check them and try again.",
@@ -158,12 +158,12 @@ export default {
   'house.home': 'Go to the home page',
   tryAgain: 'Try again',
   close: 'Close',
-  'save.error': "Your last change wasn't saved. Check your internet — it will try again when you tap.",
+  'save.error': "Your last change wasn't saved. Check your internet. It will try again when you tap.",
 
   // ---------- Making the outside final ----------
   'finish.button': 'Make it final',
   'finish.title': 'Is this the one?',
-  'finish.text': 'Once it’s final, your house will look like this on the street. Photos, letters and lanterns stay open — add them any time.',
+  'finish.text': 'Once it’s final, your house will look like this on the street. Photos, letters and lanterns stay open, so add them any time.',
   'finish.price': 'Changing the outside later is a paid redesign: 15 ₾.',
   'finish.confirm': 'Yes, make it final',
   'finish.cancel': 'Keep decorating',

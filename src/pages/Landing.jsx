@@ -29,7 +29,7 @@ const PROMISES = [
   { id: 'outside', icon: HouseIcon },
   { id: 'export', icon: DownloadIcon },
 ]
-// Test prices from the pricing hypothesis in CLAUDE.md — not final.
+// Test prices from the pricing hypothesis in CLAUDE.md - not final.
 const PRICES = [
   { id: 'digital', price: 39 },
   { id: 'card', price: 49 },

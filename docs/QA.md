@@ -17,7 +17,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
-| Q4 | 🟠 | Testing | **The tests aren't in the project.** About 100 database tests and 6 browser tests exist, but only in Claude's temporary folders, so they can't be re-run later to catch something breaking. | Move them into `tests/` with `npm run test:db` and `npm run test:browser`. |
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
 | Q7 | 🟢 | Storage | Photo **files can be left behind** with nothing pointing to them: when a house is deleted (rows go, files stay), or when a capsule photo uploads but sealing it fails. They cost storage space, nothing else. | A cleanup step in the nightly backup script (Q1): delete files whose house or photo row no longer exists. |
@@ -44,29 +43,32 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Date | What | Commit |
 |---|---|---|---|
+| Q4 | 2026-11-03 | 🟠 The tests lived only in Claude's temporary folders. Now they are in `tests/`: `npm run test:db` (9 files, 173 checks, all rolled back) and `npm run test:browser` (7 files, 72 checks, throwaway accounts removed). See `tests/README.md`. | *(this commit)* |
 | Q1 | 2026-11-03 | 🔴 There was no backup. Now every night (05:00 Tbilisi) GitHub saves the database, login accounts and every photo, encrypted, to Cloudflare R2: 30 nightly + 12 monthly. `/admin` turns red if backups stop. First real run on GitHub passed and `npm run backup:check` opened it. See `docs/BACKUPS.md`. | 12efae9 |
 | Q3 | 2026-11-03 | 🟠 The phone's Back button left the whole room (or the house) instead of closing the page on top. Now every page or sheet that opens over the screen (letters, a letter, capsule, helpers, a photo, the decorating panel, lantern and share sheets, "make it final") adds a history step, so Back closes just that. `src/lib/useBackState.js`. | *(this commit)* |
 | Q2 | 2026-11-03 | 🔴 On small phones (360×640) the keeper's room panel covered the whole wall: photos shrank to a speck. The panel now takes at most ~56% of the screen and scrolls. | *(this review)* |
 | Q15 | 2026-11-03 | 🟢 Time capsule: after a photo that couldn't be opened, picking the same file again did nothing. | *(this review)* |
-| — | 2026-11-03 | Export zip stalled forever (fflate's background worker); switched to `zipSync`. Found by the export browser test. | 67f09db |
-| — | 2026-11-03 | Helpers saw "Choose a day for it to open" on the capsule card, but only the keeper can. | 49fd6ee |
-| — | 2026-11-03 | Invite link landed on "Enter your gift code / Open my house" wording; now "Join the house". | 49fd6ee |
-| — | 2026-11-03 | Capsule page called a React hook inside a condition (would crash on some renders). Caught in review before testing. | e3e765c |
+| - | 2026-11-03 | Export zip stalled forever (fflate's background worker); switched to `zipSync`. Found by the export browser test. | 67f09db |
+| - | 2026-11-03 | Helpers saw "Choose a day for it to open" on the capsule card, but only the keeper can. | 49fd6ee |
+| - | 2026-11-03 | Invite link landed on "Enter your gift code / Open my house" wording; now "Join the house". | 49fd6ee |
+| - | 2026-11-03 | Capsule page called a React hook inside a condition (would crash on some renders). Caught in review before testing. | e3e765c |
 
 ---
 
 ## What is tested, and how
+
+Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:browser` (~4 min), or `npm test` for both. See `tests/README.md`.
 
 | Feature | Database tests (rolled back, never saved) | Browser test (headless Chrome, throwaway accounts) |
 |---|---|---|
 | Admin page & orders | 29 | create order, letter, mark paid, unlock, search |
 | Time capsule | 34 + real storage service check | choose day, seal letter + photo, refuse earlier day, open on the day, street notice |
 | Helpers | 38 (+ admin & capsule tests re-run on top) | invite → join by link → write letter → keeper sees and removes |
-| Download everything | — | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
+| Download everything | - | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
-| Back button (Q3) | — | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
+| Back button (Q3) | - | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
 | Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted) |
-| Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | — |
+| Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | - |
 
 ## Phone checklist (for the founder, on real phones)
 
@@ -97,7 +99,7 @@ Write what went wrong under a new review entry below.
 - **Phones:** found Q2 (fixed) at 360×640; Back button behaviour Q3 confirmed on the capsule page.
 - **Speed:** landing 89 KB gzip; 3D town, sign-in, admin and export each download only when needed.
   Export code is 8.6 KB gzip and loads only on the button press.
-- **Found:** Q1 no backups (🔴), Q3–Q10 above; fixed Q2 and Q15.
+- **Found:** Q1 no backups (🔴), Q3-Q10 above; fixed Q2 and Q15.
 
 ### 2026-11-03 · Nightly backups (Q1, start of Phase 4)
 - **Built:** `scripts/backup/` (backup, check, unpack, restore), `.github/workflows/nightly-backup.yml`,

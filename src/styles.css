@@ -282,7 +282,7 @@ textarea.text-field {
   flex: none;
 }
 
-/* Floating "Your house — tap to decorate" button above your house.
+/* Floating "Your house - tap to decorate" button above your house.
    The 3D scene sets its position (transform) every frame; the bubble inside does the bobbing. */
 .house-label {
   position: absolute;

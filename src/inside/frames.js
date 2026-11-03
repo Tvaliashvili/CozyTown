@@ -4,7 +4,7 @@ export const ROOM_WIDTH = 390
 export const ROOM_HEIGHT = 480
 
 // The picture frames on the wall. A photo's "slot" in the database is its place in this list.
-// The database only allows slots 0–4 (supabase/migrations/20261103200000_inside_the_house.sql),
+// The database only allows slots 0-4 (supabase/migrations/20261103200000_inside_the_house.sql),
 // so adding a frame here needs a new migration too.
 //   tilt: degrees, so the frames look hung by hand
 //   look: 'wood', 'dark' or 'cream' (colors in room.css)

@@ -10,7 +10,10 @@
     "backup": "node scripts/backup/backup.js",
     "backup:check": "node scripts/backup/restore.js check",
     "backup:extract": "node scripts/backup/restore.js extract",
-    "backup:restore": "node scripts/backup/restore.js restore"
+    "backup:restore": "node scripts/backup/restore.js restore",
+    "test:db": "node tests/db/run.js",
+    "test:browser": "node tests/browser/run.js",
+    "test": "node tests/db/run.js && node tests/browser/run.js"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -27,6 +30,7 @@
     "age-encryption": "^0.3.1",
     "aws4fetch": "^1.0.20",
     "pg": "^8.23.1",
+    "puppeteer-core": "^24.43.1",
     "vite": "^6.4.5"
   }
 }

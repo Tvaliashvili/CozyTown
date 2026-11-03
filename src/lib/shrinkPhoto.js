@@ -1,4 +1,4 @@
-// Phone photos are often 3–8 MB. We shrink them on the phone before uploading, so the upload is
+// Phone photos are often 3-8 MB. We shrink them on the phone before uploading, so the upload is
 // quick on mobile data and the room opens fast for visitors on budget phones.
 // 1280 px on the longest side still looks sharp when a photo is opened full screen.
 const LONGEST_SIDE = 1280

@@ -2,8 +2,8 @@ import { supabase } from '../lib/supabase.js'
 
 // Everything inside a house: photos on the walls and letters in the mailbox.
 // Who may do what is decided by the database (supabase/migrations), not here:
-//   photos  — anyone with the house link can see them; only the keeper hangs or removes them.
-//   letters — only the keeper can read and write them.
+//   photos  - anyone with the house link can see them; only the keeper hangs or removes them.
+//   letters - only the keeper can read and write them.
 
 // The photos on the walls, each with the address of its picture file.
 export async function loadPhotos(code) {
@@ -30,7 +30,7 @@ export async function houseId(code) {
 }
 
 // Uploads a shrunk photo (from shrinkPhoto) and hangs it in a frame.
-// slot = which frame (0–4). Returns the new photo, ready to show.
+// slot = which frame (0-4). Returns the new photo, ready to show.
 export async function hangPhoto(code, { blob, width, height }, slot, caption) {
   const id = await houseId(code)
   const extension = blob.type === 'image/webp' ? 'webp' : 'jpg'

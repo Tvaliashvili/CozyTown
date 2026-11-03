@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useI18n } from '../i18n/i18n.jsx'
 import { LockIcon } from './icons.jsx'
 
-// "Is this the one?" — shown before the keeper locks the outside of their house.
+// "Is this the one?" - shown before the keeper locks the outside of their house.
 // onConfirm must return a promise; while it runs the buttons are disabled so nobody taps twice.
 export default function FinishDialog({ onConfirm, onCancel }) {
   const { t } = useI18n()

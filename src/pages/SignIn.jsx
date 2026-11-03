@@ -8,7 +8,7 @@ import { BackIcon, EyeIcon, EyeOffIcon, KeyIcon, LockIcon } from '../ui/icons.js
 import './pages.css'
 
 // Turns the database's error into a friendly message.
-// The English texts come from claim_house() in supabase/migrations — keep them in step.
+// The English texts come from claim_house() in supabase/migrations - keep them in step.
 function claimErrorKey(message) {
   if (message.includes('No house')) return 'signin.error.notFound'
   if (message.includes('already claimed')) return 'signin.error.claimed'

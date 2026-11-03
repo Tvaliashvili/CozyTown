@@ -104,7 +104,7 @@
   accent-color: var(--accent);
 }
 
-/* Plot buttons 1–8 */
+/* Plot buttons 1-8 */
 .admin-plots {
   display: flex;
   flex-wrap: wrap;

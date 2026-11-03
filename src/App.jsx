@@ -29,7 +29,7 @@ export default function App() {
     )
   }
 
-  // /town is the demo street. /h/<code> is someone's house — that address is printed
+  // /town is the demo street. /h/<code> is someone's house - that address is printed
   // on QR cards and keychains, so it must never change.
   if (path === '/town' || path.startsWith('/h/')) {
     // "/h/abcd234567/" → "ABCD234567". Codes only use capital letters, so a hand-typed
