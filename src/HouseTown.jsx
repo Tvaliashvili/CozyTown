@@ -255,6 +255,11 @@ export default function HouseTown({ code, inside }) {
     }
     bottom = (
       <div className="street-actions">
+        {house.capsuleNews && (
+          <p className="capsule-news" role="status">
+            {t('capsule.news')}
+          </p>
+        )}
         {lanternPart}
         <button type="button" className="big-button accent" onClick={goInside}>
           <DoorIcon />
@@ -283,7 +288,15 @@ export default function HouseTown({ code, inside }) {
         onDoneEditing={saveNow}
         onEnter={house.claimed ? goInside : undefined}
       />
-      {inside && <Room code={code} title={name} isKeeper={house.isKeeper} onLeave={goOutside} />}
+      {inside && (
+        <Room
+          code={code}
+          title={name}
+          isKeeper={house.isKeeper}
+          onLeave={goOutside}
+          onCapsuleSeen={() => setHouse((current) => ({ ...current, capsuleNews: false }))}
+        />
+      )}
       {confirming && <FinishDialog onConfirm={finish} onCancel={() => setConfirming(false)} />}
     </>
   )

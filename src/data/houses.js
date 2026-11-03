@@ -28,6 +28,8 @@ export async function loadHouse(code) {
     designFinal: house.design_final,
     // Only the number. Who lit them and what they wrote is for the keeper's eyes only.
     lanternCount: house.lantern_count,
+    // Keeper only: the time capsule's day has come and they haven't looked inside yet.
+    capsuleNews: house.capsule_news,
     neighbours,
   }
 }

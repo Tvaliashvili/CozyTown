@@ -84,6 +84,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
   Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
   Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`).
+- The **time capsule** (`src/inside/Capsule.jsx`, `src/data/capsule.js`) is one chest per house with one
+  opening day (Tbilisi time). The keeper picks the day and can only move it later. Items (letter and/or
+  photo) can be added until then. Nobody reads the tables directly; `get_capsule`, `add_to_capsule` and
+  `open_capsule` check the date. Capsule photos sit in the private `capsule` bucket, downloadable only once
+  open. `get_house().capsule_news` tells the keeper on the street when it has opened.
 - `/h/<code>/card` is the printable bank-card-size card (`src/card/`), for the keeper or an admin.
   While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
   a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the

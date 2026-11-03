@@ -969,3 +969,16 @@ textarea.text-field {
     animation: none;
   }
 }
+
+/* "Your time capsule has opened!" above the street buttons, for the keeper */
+.capsule-news {
+  margin: 0;
+  padding: 12px 18px;
+  border-radius: 20px;
+  background: #fff4d6;
+  color: var(--ink);
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: 0 0 0 3px var(--gold), var(--shadow);
+}

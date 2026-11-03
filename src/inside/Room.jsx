@@ -3,18 +3,23 @@ import RoomArt from './RoomArt.jsx'
 import AddPhoto from './AddPhoto.jsx'
 import PhotoViewer from './PhotoViewer.jsx'
 import Letters from './Letters.jsx'
+import Capsule, { countInside } from './Capsule.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
 import { FRAMES } from './frames.js'
 import { loadLetters, loadPhotos } from '../data/inside.js'
+import { loadCapsule } from '../data/capsule.js'
+import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
-import { AddPhotoIcon, BackIcon, LetterIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, BackIcon, LetterIcon, LockIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
 // The room inside a house (/h/<code>/inside). It covers the street, which stays loaded underneath.
 //   Keeper  → hangs photos in the frames, reads and writes letters, shares the house link.
 //   Visitor → looks at the photos. Letters are private, so visitors don't see them at all.
-export default function Room({ code, title, isKeeper, onLeave }) {
-  const { t } = useI18n()
+// onCapsuleSeen: called when the keeper opens a time capsule whose day has come,
+// so the street stops saying "your time capsule has opened".
+export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) {
+  const { t, lang } = useI18n()
   const [photos, setPhotos] = useState(null) // null = still loading
   const [photosFailed, setPhotosFailed] = useState(false)
   const [letters, setLetters] = useState(null) // keeper only; null = still loading
@@ -22,6 +27,10 @@ export default function Room({ code, title, isKeeper, onLeave }) {
   const [adding, setAdding] = useState(null) // { file, slot } while "Hang this photo?" is open
   const [viewing, setViewing] = useState(null) // the photo opened full screen
   const [lettersOpen, setLettersOpen] = useState(false)
+  // Keeper only: the time capsule chest. undefined = still loading, null = no chest yet.
+  const [capsule, setCapsule] = useState(undefined)
+  const [capsuleFailed, setCapsuleFailed] = useState(false)
+  const [capsuleOpen, setCapsuleOpen] = useState(false)
 
   // One hidden file picker for every frame; slotToFill remembers which frame asked for it.
   const fileInput = useRef(null)
@@ -33,7 +42,30 @@ export default function Room({ code, title, isKeeper, onLeave }) {
     if (isKeeper) {
       setLettersFailed(false)
       loadLetters(code).then(setLetters, () => setLettersFailed(true))
+      loadChest()
     }
+  }
+
+  function loadChest() {
+    setCapsuleFailed(false)
+    loadCapsule(code).then(setCapsule, () => setCapsuleFailed(true))
+  }
+
+  function showCapsule() {
+    if (capsuleFailed) {
+      loadChest()
+      return
+    }
+    setCapsuleOpen(true)
+    if (capsule?.isOpen) onCapsuleSeen?.()
+  }
+
+  // What the time capsule card says under its title.
+  let capsuleText = t('capsule.cardNew')
+  if (capsuleFailed) capsuleText = t('capsule.cardFailed')
+  else if (capsule?.isOpen) capsuleText = t('capsule.cardOpen')
+  else if (capsule) {
+    capsuleText = `${t('capsule.cardLocked').replace('{date}', formatDay(capsule.opensOn, lang))} · ${countInside(t, capsule.itemCount)}`
   }
 
   useEffect(loadEverything, [code, isKeeper])
@@ -163,6 +195,16 @@ export default function Room({ code, title, isKeeper, onLeave }) {
                 <span>{t('room.lettersText')}</span>
               </span>
             </button>
+
+            {(capsule !== undefined || capsuleFailed) && (
+              <button type="button" className={capsule?.isOpen ? 'room-card glowing' : 'room-card'} onClick={showCapsule}>
+                <LockIcon />
+                <span>
+                  <strong>{t('capsule.title')}</strong>
+                  <span>{capsuleText}</span>
+                </span>
+              </button>
+            )}
           </>
         ) : (
           photos?.length > 0 && <p className="room-note">{t('room.visitorNote')}</p>
@@ -190,6 +232,15 @@ export default function Room({ code, title, isKeeper, onLeave }) {
           onRetry={loadEverything}
           onChange={setLetters}
           onClose={() => setLettersOpen(false)}
+        />
+      )}
+      {capsuleOpen && (
+        <Capsule
+          code={code}
+          capsule={capsule}
+          isKeeper={isKeeper}
+          onChange={setCapsule}
+          onClose={() => setCapsuleOpen(false)}
         />
       )}
     </div>

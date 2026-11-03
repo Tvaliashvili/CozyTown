@@ -20,7 +20,7 @@ function withUrl(photo) {
 // Only the keeper can look the id up (the database hides other people's houses).
 const houseIds = new Map()
 
-async function houseId(code) {
+export async function houseId(code) {
   if (!houseIds.has(code)) {
     const { data, error } = await supabase.from('houses').select('id').eq('code', code).single()
     if (error) throw error
