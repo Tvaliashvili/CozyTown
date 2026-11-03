@@ -22,9 +22,13 @@ export default function App() {
   // /town is the demo street. /h/<code> is someone's house — that address is printed
   // on QR cards and keychains, so it must never change.
   if (path === '/town' || path.startsWith('/h/')) {
+    // "/h/abcd234567/" → "ABCD234567". Codes only use capital letters, so a hand-typed
+    // lowercase link still works.
+    const houseCode = path.startsWith('/h/') ? path.slice(3).replace(/\/+$/, '').toUpperCase() : null
     return (
       <Suspense fallback={<div className="app" />}>
-        <TownApp />
+        {/* key: going from one house to another starts fresh instead of reusing the old one */}
+        <TownApp key={houseCode ?? 'demo'} houseCode={houseCode} />
       </Suspense>
     )
   }

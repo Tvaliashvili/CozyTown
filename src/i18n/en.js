@@ -131,4 +131,26 @@ export default {
   'signin.error.notFound': "We couldn't find a house with this code. Check the letters and try again.",
   'signin.error.claimed': 'This gift has already been opened by someone else.',
   'signin.error.generic': 'Something went wrong. Please try again.',
+
+  // ---------- A real house (/h/<code>) ----------
+  'house.aCozyHouse': 'A cozy house',
+  'house.claimIt': 'Got this house as a gift? Open it',
+  'house.missing.title': "We couldn't find this house",
+  'house.missing.text': 'Check the link, or scan the QR code again.',
+  'house.failed.title': "The house didn't load",
+  'house.failed.text': 'Check your internet connection and try again.',
+  'house.home': 'Go to the home page',
+  tryAgain: 'Try again',
+  'save.error': "Your last change wasn't saved. Check your internet — it will try again when you tap.",
+
+  // ---------- Making the outside final ----------
+  'finish.button': 'Make it final',
+  'finish.title': 'Is this the one?',
+  'finish.text': 'Once it’s final, your house will look like this on the street. Photos, letters and lanterns stay open — add them any time.',
+  'finish.price': 'Changing the outside later is a paid redesign: 15 ₾.',
+  'finish.confirm': 'Yes, make it final',
+  'finish.cancel': 'Keep decorating',
+  'finish.saving': 'Saving…',
+  'finish.error': "It didn't save. Check your internet and try again.",
+  'finish.done': 'Your house is ready on the street!',
 }

@@ -23,9 +23,11 @@ small files, clear names, short comments that explain *why*. Explain changes in 
   Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
 - **Accounts**: only keepers sign in. Visitors need no account and can light a lantern anonymously.
 - **Easy enough for grandparents**: tap-to-move camera, no avatar, no joystick, big buttons.
-- **The outside of a house is designed once**: it can be changed freely until it's submitted;
-  after that the server refuses design changes, and a redesign is a paid extra (manual for now:
-  admin unlocks it after payment). Photos, letters and lanterns are not affected.
+- **The outside of a house is designed once, by the keeper** (the recipient, after claiming the gift;
+  the admin can set a starting design from the buyer's order). It can be changed freely until it's
+  submitted; after that the server refuses design changes, and a redesign is a paid extra, **15 ₾**
+  (manual for now: admin calls `admin_unlock_design()` after payment). Photos, letters and lanterns
+  are not affected.
 - **Time capsule**: locked even for the keeper; the server refuses to reveal contents before the date.
 - **QR URLs are printed on physical objects — the URL format must never change.**
   Format: `https://cozytown.ge/h/<code>`.
@@ -67,7 +69,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 
 ## How the site is organised
 - Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (Google sign-in + gift-code claim),
-  `/town` demo street and `/h/<code>` a house (both `src/TownApp.jsx`). A tiny router in `src/router.jsx`.
+  `/town` demo street saved in the browser (`src/TownApp.jsx`) and `/h/<code>` a real house from the
+  database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
+  same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
+- Designs from the database always go through `cleanDesign()` (`src/data/design.js`), which drops
+  any value the customizer doesn't offer.
 - The town and the sign-in page are lazy-loaded, so the landing page doesn't download three.js or
   the Supabase client. Keep it that way: the landing page must stay light for budget phones.
 - Illustrations are SVG files in `public/art/`; small icons are in `src/ui/icons.jsx`.

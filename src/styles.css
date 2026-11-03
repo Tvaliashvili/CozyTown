@@ -88,6 +88,68 @@ body {
   border-color: transparent;
 }
 
+/* Big rounded buttons. Links and buttons look the same. */
+.big-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 28px;
+  border: none;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.25);
+}
+
+.big-button:active {
+  transform: scale(0.97);
+}
+
+.big-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.big-button.accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.big-button.soft {
+  background: var(--sand);
+  box-shadow: none;
+}
+
+.big-button.white {
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(74, 59, 51, 0.12);
+}
+
+.big-button.dark {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+/* Red box for things that went wrong */
+.error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fde0dc;
+  color: #8a2f22;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 /* ---------- The 3D town ---------- */
 
 /* The whole screen is the town; the sky is a CSS gradient behind the 3D canvas.
@@ -438,5 +500,143 @@ body {
 @keyframes slide-in {
   from {
     transform: translateX(110%);
+  }
+}
+
+/* ---------- Real houses: finishing the design, messages ---------- */
+
+/* Not tappable (a visitor's view, or a finished house): drags pass straight through to the town */
+.house-label.static {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* "Make it final" at the bottom of the decorating panel */
+.finish-button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  margin-top: 10px;
+  border: 2px dashed var(--accent);
+  border-radius: 18px;
+  background: #fff;
+  color: var(--accent);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.finish-button:active {
+  transform: scale(0.97);
+}
+
+.save-warning {
+  flex: none;
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #8a2f22;
+}
+
+/* The "Is this the one?" box, centered over a dimmed town */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(30, 20, 50, 0.55);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 22px 22px;
+  border-radius: 28px;
+  background: var(--cream);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  animation: pop-in 0.25s ease-out;
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+}
+
+.dialog h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+}
+
+.dialog p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.dialog-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--sand);
+  color: var(--accent);
+}
+
+/* The price line stands out a little, so nobody misses it */
+.dialog-note {
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--sand);
+  font-weight: 700;
+}
+
+.dialog .big-button {
+  width: 100%;
+}
+
+/* "No such house" and "didn't load" pages: the message box on the dusk sky */
+.house-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* "Got this house as a gift?" button, where the hint usually sits */
+.gift-call {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.hint.finished {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog {
+    animation: none;
   }
 }

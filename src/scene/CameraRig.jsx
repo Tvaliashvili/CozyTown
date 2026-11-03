@@ -23,17 +23,17 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }
 
+// startX: where along the street the camera starts (in front of the house being shown).
 // focusX: when set, the camera glides close to the house at that X (for decorating)
 // and dragging is switched off. When null, you can slide along the street.
-export default function CameraRig({ focusX = null }) {
+export default function CameraRig({ startX = PLOT_XS[3], focusX = null }) {
   const { camera, gl, size, invalidate } = useThree()
-  // Start in front of a plot near the middle, not between two plots.
-  const targetX = useRef(PLOT_XS[3])
+  const targetX = useRef(startX)
   // How many world units one pixel of finger movement is worth, so the street follows the finger.
   const unitsPerPixel = useRef(0.05)
   const focused = useRef(false)
   const goal = useRef(new Vector3())
-  const look = useRef(new Vector3(PLOT_XS[3], STREET_LOOK_HEIGHT, PLOT_Z + 1))
+  const look = useRef(new Vector3(startX, STREET_LOOK_HEIGHT, PLOT_Z + 1))
   const lookGoal = useRef(new Vector3())
 
   focused.current = focusX !== null

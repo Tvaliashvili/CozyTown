@@ -1,7 +1,6 @@
 import { getMaterial } from './materials.js'
 import { PLOT_XS, PLOT_WIDTH, SIDEWALK_Z, ROAD_Z, STREET_LENGTH } from './layout.js'
 import Plot from './Plot.jsx'
-import { MY_PLOT, NEIGHBOURS } from '../data/design.js'
 
 const COLORS = {
   grass: '#9dc96b',
@@ -35,7 +34,7 @@ const HILLS = [
   [22, -30, 24, 2.5, 9, COLORS.hill],
 ]
 
-export default function Street({ myDesign, onSelectMine, labelRef }) {
+export default function Street({ myPlot, myDesign, neighbours, onSelectMine, labelRef }) {
   return (
     <group>
       {/* Grass everywhere */}
@@ -55,10 +54,10 @@ export default function Street({ myDesign, onSelectMine, labelRef }) {
       </mesh>
 
       {PLOT_XS.map((x, i) =>
-        i === MY_PLOT ? (
+        i === myPlot ? (
           <Plot key={x} x={x} design={myDesign} onSelect={onSelectMine} labelRef={labelRef} />
         ) : (
-          <Plot key={x} x={x} design={NEIGHBOURS[i]} />
+          <Plot key={x} x={x} design={neighbours[i]} />
         ),
       )}
 

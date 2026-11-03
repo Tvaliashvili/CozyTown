@@ -52,57 +52,6 @@
   gap: 12px;
 }
 
-/* Big rounded buttons. Links and buttons look the same. */
-.big-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 58px;
-  padding: 0 28px;
-  border: none;
-  border-radius: 999px;
-  background: var(--cream);
-  color: var(--ink);
-  font: inherit;
-  font-size: 18px;
-  font-weight: 800;
-  text-decoration: none;
-  cursor: pointer;
-  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.25);
-}
-
-.big-button:active {
-  transform: scale(0.97);
-}
-
-.big-button:disabled {
-  opacity: 0.45;
-  cursor: default;
-  transform: none;
-}
-
-.big-button.accent {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.big-button.soft {
-  background: var(--sand);
-  box-shadow: none;
-}
-
-.big-button.white {
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(74, 59, 51, 0.12);
-}
-
-.big-button.dark {
-  background: var(--ink);
-  color: var(--cream);
-}
-
 /* ---------- Landing: hero ---------- */
 
 .landing {
@@ -697,16 +646,6 @@
 
 .code-input:disabled {
   opacity: 0.55;
-}
-
-.error {
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: #fde0dc;
-  color: #8a2f22;
-  font-weight: 700;
-  line-height: 1.45;
 }
 
 .text-button {

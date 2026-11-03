@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { TABS } from '../data/options.js'
 import { useI18n } from '../i18n/i18n.jsx'
-import { CheckIcon, TAB_ICONS } from './icons.jsx'
+import { CheckIcon, LockIcon, TAB_ICONS } from './icons.jsx'
 
 // The bottom panel for decorating your house. Every tap changes the 3D house right away.
-export default function Customizer({ design, onChange, onClose }) {
+// onFinish: if given (a real house, not the demo), shows the "Make it final" button.
+// saveFailed: shows a small warning when the last change didn't reach the database.
+export default function Customizer({ design, onChange, onClose, onFinish, saveFailed }) {
   const { t } = useI18n()
   const [tabId, setTabId] = useState(TABS[0].id)
   const tab = TABS.find((each) => each.id === tabId)
@@ -74,6 +76,18 @@ export default function Customizer({ design, onChange, onClose }) {
           </div>
         ))}
       </div>
+
+      {saveFailed && (
+        <p className="save-warning" role="alert">
+          {t('save.error')}
+        </p>
+      )}
+      {onFinish && (
+        <button className="finish-button" onClick={onFinish}>
+          <LockIcon />
+          {t('finish.button')}
+        </button>
+      )}
     </section>
   )
 }

@@ -4,7 +4,6 @@ import Street from './Street.jsx'
 import CameraRig from './CameraRig.jsx'
 import { setGlowIntensity } from './materials.js'
 import { PLOT_XS } from './layout.js'
-import { MY_PLOT } from '../data/design.js'
 
 // Must match --horizon in styles.css so the far ground fades into the sky.
 const HORIZON_COLOR = '#f6cfae'
@@ -15,7 +14,9 @@ const debug = new URLSearchParams(window.location.search).has('debug')
 // Only downloaded in debug mode, so normal visitors don't pay for it.
 const Stats = debug ? lazy(() => import('@react-three/drei').then((m) => ({ default: m.Stats }))) : null
 
-export default function Town({ myDesign, editing, onSelectMine, labelRef, onReady }) {
+// myPlot: which plot (counted from the left) is the house being shown.
+// neighbours: { plotNumber: design } for the other houses; plots not listed are free.
+export default function Town({ myPlot, myDesign, neighbours, editing, onSelectMine, labelRef, onReady }) {
   return (
     <Canvas
       // "demand": only redraw when something changes, instead of 60 times a second.
@@ -51,8 +52,8 @@ export default function Town({ myDesign, editing, onSelectMine, labelRef, onRead
         shadow-camera-bottom={-24}
       />
 
-      <Street myDesign={myDesign} onSelectMine={onSelectMine} labelRef={labelRef} />
-      <CameraRig focusX={editing ? PLOT_XS[MY_PLOT] : null} />
+      <Street myPlot={myPlot} myDesign={myDesign} neighbours={neighbours} onSelectMine={onSelectMine} labelRef={labelRef} />
+      <CameraRig startX={PLOT_XS[myPlot]} focusX={editing ? PLOT_XS[myPlot] : null} />
       <ShadowRefresher design={myDesign} />
       <BreathingLights />
       <ReadySignal onReady={onReady} />

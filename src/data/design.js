@@ -1,4 +1,6 @@
-// A house design is a plain object. In Phase 2 this exact shape gets saved to the database.
+import { TABS } from './options.js'
+
+// A house design is a plain object. This exact shape is saved in the database (houses.design).
 export const DEFAULT_DESIGN = {
   wallColor: '#f6e7d0',
   roofStyle: 'gable',
@@ -13,10 +15,24 @@ export const DEFAULT_DESIGN = {
   lanterns: 2,
 }
 
-// Which plot is "your house" in this prototype (index into PLOT_XS, counted from the left).
+// Every field and the values it may have, taken from the customizer's tabs.
+const ALLOWED = Object.fromEntries(TABS.flatMap((tab) => tab.controls.map((c) => [c.field, c.options])))
+
+// Keeps only values the customizer offers; anything else falls back to the default.
+// Designs come from the database and from people's browsers, so we never trust them blindly.
+// This also means designs saved before a new option existed still work.
+export function cleanDesign(raw) {
+  const clean = { ...DEFAULT_DESIGN }
+  for (const field of Object.keys(clean)) {
+    if (raw && ALLOWED[field]?.includes(raw[field])) clean[field] = raw[field]
+  }
+  return clean
+}
+
+// The demo street at /town: which plot is "your house" (index into PLOT_XS, counted from the left).
 export const MY_PLOT = 3
 
-// Pretend neighbours so the street feels lived-in. Plots not listed here are free.
+// Pretend neighbours on the demo street, so it feels lived-in. Plots not listed here are free.
 export const NEIGHBOURS = {
   1: {
     wallColor: '#c9daf0', roofStyle: 'hip', roofColor: '#4f6d8f', doorStyle: 'square', doorColor: '#fff6e9',
@@ -38,12 +54,11 @@ export const NEIGHBOURS = {
 
 const STORAGE_KEY = 'myHouseDesign'
 
+// The demo house is kept in this browser only; real houses live in the database (houses.js).
 // localStorage can be blocked (private browsing), so every access is wrapped in try/catch.
 export function loadDesign() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    // Merging with the default means designs saved before a new option existed still work.
-    return saved ? { ...DEFAULT_DESIGN, ...saved } : DEFAULT_DESIGN
+    return cleanDesign(JSON.parse(localStorage.getItem(STORAGE_KEY)))
   } catch {
     return DEFAULT_DESIGN
   }
