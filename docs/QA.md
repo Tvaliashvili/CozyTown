@@ -17,7 +17,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
-| Q1 | 🔴 | Backups | **Built, not running yet.** The nightly encrypted backup to Cloudflare R2 is written and tested (see `docs/BACKUPS.md`), but it can't run until R2 is switched on and the six GitHub secrets are added. Until then there is still no backup. | **Founder:** the one-time setup in `docs/BACKUPS.md`, and two safe copies of `BACKUP_PRIVATE_KEY`. Then Claude runs the first real backup and `npm run backup:check`, and moves Q1 to Fixed. |
 | Q4 | 🟠 | Testing | **The tests aren't in the project.** About 100 database tests and 6 browser tests exist, but only in Claude's temporary folders, so they can't be re-run later to catch something breaking. | Move them into `tests/` with `npm run test:db` and `npm run test:browser`. |
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
@@ -65,7 +64,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Download everything | — | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
 | Back button (Q3) | — | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
-| Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. **Not yet run:** upload to R2, GitHub's nightly run, sealed capsule photos (none exist yet) |
+| Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted) |
 | Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | — |
 
 ## Phone checklist (for the founder, on real phones)
@@ -109,5 +108,5 @@ Write what went wrong under a new review entry below.
 - **Security:** the repo is public, so the job prints only counts and sizes. It runs only on its schedule
   or by hand, never for pull requests, so forks never get the secrets. The Supabase secret key is used only
   by these scripts, never in `src/`.
-- **Tested:** see the "Backups" row above. Waiting for the founder's R2 setup to test the real upload.
+- **Tested:** see the "Backups" row above. Founder made the R2 key and Supabase secret key; Claude made the bucket and set the GitHub secrets with `gh`. First GitHub run passed.
 - **Found:** Q16 (full copies will outgrow 10 GB one day).
