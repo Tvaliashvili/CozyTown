@@ -22,11 +22,17 @@ export default async function run({ db, browser, check, newUser, newHouse, openP
   await supa.from('photos').insert({ house_id: house.id, path: wallPath, slot: 0, caption: 'Summer in Kakheti <3', width: 400, height: 300 })
   await supa.from('letters').insert({ house_id: house.id, from_name: 'Mum', body: 'Happy birthday!\n<script>alert(1)</script>' })
   await supa.rpc('light_lantern', { house_code: house.code, from_name: 'Nana', message: 'Thinking of you' })
-  await supa.rpc('set_capsule_date', { house_code: house.code, open_date: daysFromNow(3) })
   const capsulePath = `${house.id}/${crypto.randomUUID()}.jpg`
   r = await supa.storage.from('capsule').upload(capsulePath, photo, { contentType: 'image/jpeg' })
   if (r.error) throw r.error
-  await supa.rpc('add_to_capsule', { house_code: house.code, letter_from: 'Dad', letter_body: 'For later', photo_path: capsulePath, photo_width: 400, photo_height: 300 })
+  r = await supa.rpc('seal_capsule', {
+    house_code: house.code,
+    open_date: daysFromNow(3),
+    letter_from: 'Dad',
+    letter_body: 'For later',
+    photos: [{ path: capsulePath, width: 400, height: 300 }],
+  })
+  if (r.error) throw r.error
 
   const downloads = fs.mkdtempSync(path.join(os.tmpdir(), 'cozytown-export-'))
   try {

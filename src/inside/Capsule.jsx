@@ -1,23 +1,27 @@
 import { useEffect, useRef, useState } from 'react'
-import { addToCapsule, openCapsule, setCapsuleDate } from '../data/capsule.js'
+import { loadCapsule, openCapsule, sealCapsule } from '../data/capsule.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { formatDate, formatDay } from '../lib/formatDate.js'
 import { shrinkPhoto } from '../lib/shrinkPhoto.js'
 import { useBackState } from '../lib/useBackState.js'
-import { AddPhotoIcon, BackIcon, LockIcon, PenIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, BackIcon, LockIcon } from '../ui/icons.jsx'
+
+// The database refuses more than this too (seal_capsule in 20261107000000_seal_capsule_once.sql).
+const MAX_PHOTOS = 10
 
 // The time capsule: a full-screen page over the room, like the mailbox. For people who decorate.
-// capsule lives in Room (its card shows the date): null = no chest yet, otherwise
+// capsule lives in Room (its card shows the date): null = not sealed yet, otherwise
 // { opensOn, itemCount, isOpen }. onChange gives Room the new state.
 //
-//   No chest yet → the keeper picks the day it opens.
-//   Locked       → put letters and photos in; the keeper can move the day later (never earlier).
-//   Open         → read everything inside.
+//   Not sealed yet → the keeper writes a letter, adds photos, picks the day, and locks it, all at once.
+//                    A last step warns that this can't be undone. Helpers just see "not made yet".
+//   Locked         → shows the day it opens. Nothing more can go in, and the day can't change.
+//   Open           → read everything inside.
 export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) {
   const { t, lang } = useI18n()
-  // 'main' | 'add' | 'date'. The phone's Back button goes back to 'main', like the Back button on screen.
+  // 'main' | 'confirm' (the "are you sure?" step). The phone's Back button goes back to the form.
   const [view, setView] = useBackState('main')
-  const [sealed, setSealed] = useState(false) // just put something in
+  const [sealed, setSealed] = useState(false) // just locked it
   // A screen reader starts reading from the title when the page opens or changes view.
   const heading = useRef(null)
   useEffect(() => heading.current?.focus(), [view])
@@ -30,34 +34,7 @@ export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) 
   let content
   if (capsule?.isOpen) {
     content = <OpenedCapsule code={code} capsule={capsule} />
-  } else if (!capsule || view === 'date') {
-    content = isKeeper ? (
-      <ChooseDate
-        code={code}
-        capsule={capsule}
-        onChosen={(opensOn) => {
-          onChange({ itemCount: 0, ...capsule, opensOn, isOpen: false })
-          setView('main')
-        }}
-        onCancel={capsule ? () => setView('main') : null}
-      />
-    ) : (
-      <p className="capsule-text">{t('capsule.noDateHelper')}</p>
-    )
-  } else if (view === 'add') {
-    content = (
-      <AddToCapsule
-        code={code}
-        capsule={capsule}
-        onAdded={() => {
-          onChange({ ...capsule, itemCount: capsule.itemCount + 1 })
-          setSealed(true)
-          setView('main')
-        }}
-        onCancel={() => setView('main')}
-      />
-    )
-  } else {
+  } else if (capsule) {
     content = (
       <>
         <LockedChest capsule={capsule} />
@@ -66,17 +43,25 @@ export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) 
             {t('capsule.sealed').replace('{date}', formatDay(capsule.opensOn, lang))}
           </p>
         )}
-        <button type="button" className="big-button accent" onClick={() => { setSealed(false); setView('add') }}>
-          <PenIcon />
-          {t('capsule.add')}
-        </button>
-        {isKeeper && (
-          <button type="button" className="link-button quiet" onClick={() => setView('date')}>
-            {t('capsule.moveLater')}
-          </button>
-        )}
       </>
     )
+  } else if (isKeeper) {
+    content = (
+      <FillCapsule
+        code={code}
+        confirming={view === 'confirm'}
+        onConfirm={() => setView('confirm')}
+        onEdit={() => setView('main')}
+        onSealed={(chest) => {
+          onChange(chest)
+          setSealed(true)
+          setView('main')
+        }}
+        onAlreadySealed={() => loadCapsule(code).then(onChange, () => {})}
+      />
+    )
+  } else {
+    content = <p className="capsule-text">{t('capsule.notMadeHelper')}</p>
   }
 
   return (
@@ -116,114 +101,137 @@ export function countInside(t, n) {
   return t(n === 1 ? 'capsule.inside.one' : 'capsule.inside.many').replace('{n}', n)
 }
 
-// 'YYYY-MM-DD' for the day after the given one (or after today), for the date box's lowest choice.
-function dayAfter(day) {
-  const date = day ? new Date(`${day}T00:00:00Z`) : new Date()
-  date.setUTCDate(date.getUTCDate() + 1)
-  return date.toISOString().slice(0, 10)
+// "a letter", "3 photos" or "a letter and 3 photos", for the "are you sure?" step.
+function whatGoesIn(t, hasLetter, photoCount) {
+  const photos = photoCount === 0 ? null
+    : t(photoCount === 1 ? 'capsule.whatPhotos.one' : 'capsule.whatPhotos.many').replace('{n}', photoCount)
+  if (hasLetter && photos) return t('capsule.whatBoth').replace('{letter}', t('capsule.whatLetter')).replace('{photos}', photos)
+  return hasLetter ? t('capsule.whatLetter') : photos
 }
 
-function ChooseDate({ code, capsule, onChosen, onCancel }) {
-  const { t } = useI18n()
-  const [date, setDate] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [errorKey, setErrorKey] = useState(null)
-
-  async function save(event) {
-    event.preventDefault()
-    setSaving(true)
-    setErrorKey(null)
-    try {
-      await setCapsuleDate(code, date)
-      onChosen(date)
-    } catch (error) {
-      setErrorKey(error.reason ? `capsule.error.${error.reason}` : 'capsule.error.generic')
-      setSaving(false)
-    }
-  }
-
-  return (
-    <form className="letter-form" onSubmit={save}>
-      <p className="capsule-text">{capsule ? t('capsule.moveText') : t('capsule.chooseText')}</p>
-      <label className="field-label" htmlFor="capsule-date">
-        {t('capsule.dateLabel')}
-      </label>
-      <input
-        id="capsule-date"
-        className="text-field"
-        type="date"
-        required
-        min={dayAfter(capsule?.opensOn)}
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        disabled={saving}
-      />
-      <p className="capsule-small">{t('capsule.dateRule')}</p>
-      {errorKey && (
-        <p className="error" role="alert">
-          {t(errorKey)}
-        </p>
-      )}
-      <button type="submit" className="big-button accent" disabled={saving || !date}>
-        <LockIcon />
-        {saving ? t('capsule.saving') : t('capsule.setDate')}
-      </button>
-      {onCancel && (
-        <button type="button" className="big-button soft" onClick={onCancel} disabled={saving}>
-          {t('add.cancel')}
-        </button>
-      )}
-    </form>
-  )
+// 'YYYY-MM-DD' for tomorrow, the date box's lowest choice. (The server checks in Tbilisi time.)
+function tomorrow() {
+  const date = new Date()
+  date.setDate(date.getDate() + 1)
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
-function AddToCapsule({ code, capsule, onAdded, onCancel }) {
+// The form and its "are you sure?" step are one component, so going back from the warning
+// keeps everything that was written and chosen.
+function FillCapsule({ code, confirming, onConfirm, onEdit, onSealed, onAlreadySealed }) {
   const { t, lang } = useI18n()
   const [body, setBody] = useState('')
   const [fromName, setFromName] = useState('')
-  const [photo, setPhoto] = useState(null) // what shrinkPhoto() returns
-  const [preview, setPreview] = useState(null)
-  // 'ready' | 'preparing' (shrinking the photo) | 'saving' | 'failed' | 'unreadable'
+  const [photos, setPhotos] = useState([]) // [{ shrunk: what shrinkPhoto() returns, preview: a blob: URL }]
+  const [date, setDate] = useState('')
+  // 'ready' | 'preparing' (shrinking photos) | 'saving' | 'unreadable' | 'tooMany' | 'failed'
   const [state, setState] = useState('ready')
+  const [errorKey, setErrorKey] = useState(null) // when 'failed'
+  const [progress, setProgress] = useState(null) // { done, total } while photos upload
   const fileInput = useRef(null)
 
-  // Free the preview's memory when it changes or the form closes.
-  useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview])
+  // Free the previews' memory when the page closes.
+  const photosRef = useRef(photos)
+  photosRef.current = photos
+  useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), [])
 
-  function pickPhoto() {
+  function pickPhotos() {
     fileInput.current.value = '' // so choosing the same photo again (after a problem) still counts
     fileInput.current.click()
   }
 
-  async function onFileChosen(event) {
-    const file = event.target.files[0]
-    if (!file) return
+  async function onFilesChosen(event) {
+    const room = MAX_PHOTOS - photos.length
+    const files = [...event.target.files]
+    if (files.length === 0) return
     setState('preparing')
-    try {
-      const shrunk = await shrinkPhoto(file)
-      setPhoto(shrunk)
-      setPreview(URL.createObjectURL(shrunk.blob))
-      setState('ready')
-    } catch {
-      setState('unreadable')
+    const added = []
+    let unreadable = false
+    // One at a time: shrinking several big photos at once can run a budget phone out of memory.
+    for (const file of files.slice(0, room)) {
+      try {
+        const shrunk = await shrinkPhoto(file)
+        added.push({ shrunk, preview: URL.createObjectURL(shrunk.blob) })
+      } catch {
+        unreadable = true
+      }
     }
+    setPhotos((current) => [...current, ...added])
+    if (unreadable) setState('unreadable')
+    else if (files.length > room) setState('tooMany')
+    else setState('ready')
   }
 
-  async function seal(event) {
+  function removePhoto(photo) {
+    URL.revokeObjectURL(photo.preview)
+    setPhotos((current) => current.filter((p) => p !== photo))
+  }
+
+  function askToConfirm(event) {
     event.preventDefault()
+    setState('ready')
+    onConfirm()
+  }
+
+  async function lock() {
     setState('saving')
+    setErrorKey(null)
     try {
-      await addToCapsule(code, { fromName, body, photo })
-      onAdded()
-    } catch {
+      await sealCapsule(
+        code,
+        { date, fromName, body, photos: photos.map((p) => p.shrunk) },
+        (done, total) => setProgress({ done, total }),
+      )
+      const itemCount = (body.trim() ? 1 : 0) + photos.length
+      onSealed({ opensOn: date, itemCount, isOpen: false })
+    } catch (error) {
+      if (error.reason === 'sealed') onAlreadySealed()
+      setErrorKey(error.reason ? `capsule.error.${error.reason}` : 'capsule.error.generic')
       setState('failed')
+      setProgress(null)
     }
   }
 
-  const busy = state === 'saving' || state === 'preparing'
+  const hasLetter = body.trim() !== ''
+  const day = date ? formatDay(date, lang) : ''
+
+  if (confirming) {
+    const saving = state === 'saving'
+    return (
+      <div className="letter-form">
+        <div className="capsule-warning">
+          <span className="capsule-lock" aria-hidden="true">
+            <LockIcon />
+          </span>
+          <p>
+            <strong>{t('capsule.confirmTitle').replace('{date}', day)}</strong>
+          </p>
+          <p>{t('capsule.confirmText').replace('{date}', day)}</p>
+          <p>{t('capsule.confirmInside').replace('{what}', whatGoesIn(t, hasLetter, photos.length))}</p>
+        </div>
+        {state === 'failed' && (
+          <p className="error" role="alert">
+            {t(errorKey)}
+          </p>
+        )}
+        <button type="button" className="big-button accent" onClick={lock} disabled={saving}>
+          <LockIcon />
+          {!saving ? t('capsule.confirmYes')
+            : progress ? t('capsule.uploading').replace('{done}', progress.done).replace('{total}', progress.total)
+            : t('capsule.locking')}
+        </button>
+        <button type="button" className="big-button soft" onClick={onEdit} disabled={saving}>
+          {t('capsule.confirmBack')}
+        </button>
+      </div>
+    )
+  }
+
+  const busy = state === 'preparing'
   return (
-    <form className="letter-form" onSubmit={seal}>
-      <p className="capsule-text">{t('capsule.addText').replace('{date}', formatDay(capsule.opensOn, lang))}</p>
+    <form className="letter-form" onSubmit={askToConfirm}>
+      <p className="capsule-text">{t('capsule.fillText')}</p>
+
       <label className="field-label" htmlFor="capsule-body">
         {t('capsule.bodyLabel')}
       </label>
@@ -234,23 +242,7 @@ function AddToCapsule({ code, capsule, onAdded, onCancel }) {
         maxLength={5000}
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        disabled={busy}
       />
-
-      {preview ? (
-        <div className="capsule-photo-preview">
-          <img src={preview} alt="" />
-          <button type="button" className="link-button" onClick={() => { setPhoto(null); setPreview(null) }} disabled={busy}>
-            {t('capsule.removePhoto')}
-          </button>
-        </div>
-      ) : (
-        <button type="button" className="big-button soft" onClick={pickPhoto} disabled={busy}>
-          <AddPhotoIcon />
-          {state === 'preparing' ? t('add.preparing') : t('capsule.addPhoto')}
-        </button>
-      )}
-      <input ref={fileInput} type="file" accept="image/*" hidden onChange={onFileChosen} />
 
       <label className="field-label" htmlFor="capsule-from">
         {t('letters.fromLabel')}
@@ -264,18 +256,47 @@ function AddToCapsule({ code, capsule, onAdded, onCancel }) {
         placeholder={t('letters.fromPlaceholder')}
         value={fromName}
         onChange={(e) => setFromName(e.target.value)}
-        disabled={busy}
       />
 
+      <p className="field-label">{t('capsule.photosLabel')}</p>
+      {photos.length > 0 && (
+        <ul className="capsule-photo-list">
+          {photos.map((photo) => (
+            <li key={photo.preview}>
+              <img src={photo.preview} alt="" />
+              <button type="button" className="capsule-photo-remove" onClick={() => removePhoto(photo)} aria-label={t('capsule.removePhoto')}>
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {photos.length < MAX_PHOTOS && (
+        <button type="button" className="big-button soft" onClick={pickPhotos} disabled={busy}>
+          <AddPhotoIcon />
+          {busy ? t('add.preparing') : t('capsule.addPhotos')}
+        </button>
+      )}
+      <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={onFilesChosen} />
       {state === 'unreadable' && <p className="error" role="alert">{t('add.unreadable')}</p>}
-      {state === 'failed' && <p className="error" role="alert">{t('capsule.addFailed')}</p>}
-      <p className="capsule-small">{t('capsule.noTakingBack')}</p>
-      <button type="submit" className="big-button accent" disabled={busy || (!body.trim() && !photo)}>
+      {state === 'tooMany' && <p className="error" role="alert">{t('capsule.photoLimit')}</p>}
+
+      <label className="field-label" htmlFor="capsule-date">
+        {t('capsule.dateLabel')}
+      </label>
+      <input
+        id="capsule-date"
+        className="text-field"
+        type="date"
+        required
+        min={tomorrow()}
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+      />
+
+      <button type="submit" className="big-button accent" disabled={busy || !date || (!hasLetter && photos.length === 0)}>
         <LockIcon />
-        {state === 'saving' ? t('capsule.sealing') : t('capsule.seal')}
-      </button>
-      <button type="button" className="big-button soft" onClick={onCancel} disabled={state === 'saving'}>
-        {t('add.cancel')}
+        {t('capsule.lock')}
       </button>
     </form>
   )
@@ -308,9 +329,13 @@ function OpenedCapsule({ code, capsule }) {
     <>
       <p className="capsule-opened">{t('capsule.openedOn').replace('{date}', formatDay(capsule.opensOn, lang))}</p>
       {items.length === 0 && <p className="letters-empty">{t('capsule.openedEmpty')}</p>}
-      {items.map((item) => (
+      {items.map((item, i) => (
         <article key={item.id} className="letter-paper">
-          <p className="letter-date">{t('capsule.sealedOn').replace('{date}', formatDate(item.created_at, lang))}</p>
+          {/* Everything is sealed at once now, so the date only needs saying on the first one.
+              Capsules from before (filled bit by bit) show it again whenever the day changes. */}
+          {(i === 0 || formatDate(item.created_at, lang) !== formatDate(items[i - 1].created_at, lang)) && (
+            <p className="letter-date">{t('capsule.sealedOn').replace('{date}', formatDate(item.created_at, lang))}</p>
+          )}
           {item.photoUrl && (
             <img
               className="capsule-photo"

@@ -93,15 +93,17 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
   Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`).
 - The **time capsule** (`src/inside/Capsule.jsx`, `src/data/capsule.js`) is one chest per house with one
-  opening day (Tbilisi time). The keeper picks the day and can only move it later. Items (letter and/or
-  photo) can be added until then. Nobody reads the tables directly; `get_capsule`, `add_to_capsule` and
-  `open_capsule` check the date. Capsule photos sit in the private `capsule` bucket, downloadable only once
-  open. `get_house().capsule_news` tells the keeper on the street when it has opened.
+  opening day (Tbilisi time). **Filled and locked once** (founder, Nov 2026): on one page the keeper writes a
+  letter, adds up to 10 photos and picks the day, then a warning step, then `seal_capsule()` saves it all at
+  once. After that nothing can be added and the day can't move. Helpers can't make or fill it. Nobody reads
+  the tables directly; `get_capsule`, `seal_capsule` and `open_capsule` check the rules. Capsule photos sit
+  in the private `capsule` bucket (upload: keeper, before sealing), downloadable only once open.
+  `get_house().capsule_news` tells the keeper on the street when it has opened.
 - **Helpers** (co-decorators, `src/inside/Helpers.jsx`, `src/data/helpers.js`): the keeper makes a one-time
   invite code (14 days) and sends `/signin?code=<code>`. The sign-in code box takes gift codes (→ keeper)
-  and invite codes (→ helper) through the same `claim_house()`. Helpers hang photos, write letters and fill
-  the capsule, but read only their own letters, can't change the outside or the capsule's day, and don't
-  see lanterns. `can_edit_house()` = keeper or helper; `is_house_keeper()` = keeper only.
+  and invite codes (→ helper) through the same `claim_house()`. Helpers hang photos and write letters,
+  but read only their own letters, can't change the outside or the capsule (they see it once it opens),
+  and don't see lanterns. `can_edit_house()` = keeper or helper; `is_house_keeper()` = keeper only.
 - **Download everything** (keeper only, bottom of the room): `src/export/exportHouse.js` builds the zip on the
   phone with `fflate` (`zipSync`; the worker version stalled) and is lazy-loaded on the button press.
   It holds photos/, letters/, capsule/ (only once open), lanterns.txt and an offline index.html with a

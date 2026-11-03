@@ -2,10 +2,11 @@ import { supabase } from '../lib/supabase.js'
 import { houseId } from './inside.js'
 
 // The time capsule: one chest per house that stays shut until its day (Tbilisi time).
-// The locking is done by the database (supabase/migrations/20261104100000_time_capsule.sql):
-// before the day it refuses to hand over anything, even to the keeper. This file just asks.
+// The locking is done by the database (supabase/migrations/20261104100000_time_capsule.sql and
+// 20261107000000_seal_capsule_once.sql): the keeper fills and seals it once, and before the day
+// the database refuses to hand over anything, even to the keeper. This file just asks.
 
-// The chest from outside: { opensOn: '2030-02-14', itemCount, isOpen }, or null if there's no chest yet.
+// The chest from outside: { opensOn: '2030-02-14', itemCount, isOpen }, or null if it isn't sealed yet.
 export async function loadCapsule(code) {
   const { data, error } = await supabase.rpc('get_capsule', { house_code: code })
   if (error) throw error
@@ -13,40 +14,38 @@ export async function loadCapsule(code) {
   return chest ? { opensOn: chest.opens_on, itemCount: chest.item_count, isOpen: chest.is_open } : null
 }
 
-// Choose the day it opens, or move it later. date is 'YYYY-MM-DD' (what a date box gives).
-// The error gets a "reason" the screen can explain: 'past', 'tooFar', 'earlier' or undefined.
-export async function setCapsuleDate(code, date) {
-  const { error } = await supabase.rpc('set_capsule_date', { house_code: code, open_date: date })
+// Seals the capsule in one go: the letter, the photos and the day it opens. After this nothing can
+// be added and the day can't change. date is 'YYYY-MM-DD' (what a date box gives); photos is a list
+// of what shrinkPhoto() returns. onProgress(done, total) is called as each photo finishes uploading.
+// The error gets a "reason" the screen can explain: 'past', 'tooFar', 'sealed' or undefined.
+export async function sealCapsule(code, { date, fromName, body, photos }, onProgress) {
+  const id = photos.length > 0 ? await houseId(code) : null
+  const uploaded = []
+  // One at a time: kinder to a slow phone connection than all at once.
+  for (const photo of photos) {
+    const extension = photo.blob.type === 'image/webp' ? 'webp' : 'jpg'
+    // Private bucket: this file can't be downloaded by anyone until the chest opens.
+    const path = `${id}/${crypto.randomUUID()}.${extension}`
+    const { error } = await supabase.storage.from('capsule').upload(path, photo.blob, { contentType: photo.blob.type })
+    if (error) throw error
+    uploaded.push({ path, width: photo.width, height: photo.height })
+    onProgress?.(uploaded.length, photos.length)
+  }
+  const { error } = await supabase.rpc('seal_capsule', {
+    house_code: code,
+    open_date: date,
+    letter_from: fromName.trim() || null,
+    letter_body: body.trim() || null,
+    photos: uploaded,
+  })
+  // If this fails, the uploaded files stay behind unused (the app can't delete capsule files).
+  // The nightly backup run removes files no capsule points to after 7 days (Q7).
   if (error) {
     if (error.message.includes('in the future')) error.reason = 'past'
     else if (error.message.includes('too far')) error.reason = 'tooFar'
-    else if (error.message.includes('only move later')) error.reason = 'earlier'
+    else if (error.message.includes('already sealed')) error.reason = 'sealed'
     throw error
   }
-}
-
-// Seals a letter and/or a photo inside. photo is what shrinkPhoto() returns, or null.
-export async function addToCapsule(code, { fromName, body, photo }) {
-  let path = null
-  if (photo) {
-    const id = await houseId(code)
-    const extension = photo.blob.type === 'image/webp' ? 'webp' : 'jpg'
-    // Private bucket: this file can't be downloaded by anyone until the chest opens.
-    path = `${id}/${crypto.randomUUID()}.${extension}`
-    const { error } = await supabase.storage.from('capsule').upload(path, photo.blob, { contentType: photo.blob.type })
-    if (error) throw error
-  }
-  const { error } = await supabase.rpc('add_to_capsule', {
-    house_code: code,
-    letter_from: fromName.trim() || null,
-    letter_body: body.trim() || null,
-    photo_path: path,
-    photo_width: photo?.width ?? null,
-    photo_height: photo?.height ?? null,
-  })
-  // The photo file can't be deleted while the chest is locked (nobody can touch it), so if this
-  // fails it just stays behind unused. Rare, and harmless.
-  if (error) throw error
 }
 
 // Everything inside, oldest first, once the day has come. Photos get a link that works for a day.

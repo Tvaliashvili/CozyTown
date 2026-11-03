@@ -25,9 +25,11 @@ None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
 ### Accepted (checked, deliberately left as is)
 - **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. (Founder OK, 2026-11-04.)
 - **Q12** Helpers only read the letters they wrote; the rest of the mailbox is the keeper's. (Founder OK, 2026-11-04.)
-- **Q13** One time capsule per house; its day can move later, never earlier. (Founder OK, 2026-11-04.)
+- **Q13** One time capsule per house. ~~Its day can move later, never earlier.~~ Changed by the founder on 2026-11-04: the keeper
+  fills it (letter + up to 10 photos) and picks the day on one page, then locks it once. After that nothing can be added
+  and the day can't move. Helpers can no longer put things in.
 - **Q14** Invites work once, for 14 days; up to 10 helpers per house. (Founder OK, 2026-11-04.)
-- Signed-in people can ask `capsule_is_open(id)` and `is_house_keeper(id)` about any house id. They only answer
+- Signed-in people can ask `capsule_is_open(id)`, `capsule_is_sealed(id)` and `is_house_keeper(id)` about any house id. They only answer
   yes/no, and house ids are never shown to anyone outside the house. The storage rules need them to be callable.
 - The admin page is English only (only the founder uses it).
 - Gift codes stay in the database after claiming; `claim_house()` refuses a used one for anyone else.
@@ -64,10 +66,10 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Feature | Database tests (rolled back, never saved) | Browser test (headless Chrome, throwaway accounts) |
 |---|---|---|
 | Admin page & orders | 29 | create order, letter, mark paid, unlock, search |
-| Time capsule | 34 + real storage service check | choose day, seal letter + photo, refuse earlier day, open on the day, street notice |
+| Time capsule | 37 (sealed once: refused twice, after opening, by helpers; no uploads after sealing; old functions gone; letter first, then photos in order) + real storage service check | 18 checks: letter + 2 photos + day on one page, remove a photo, past day refused, warning step saves nothing, going back keeps everything, locked = nothing more can go in, open on the day shows both photos, street notice |
 | Helpers | 38 (+ admin & capsule tests re-run on top) | invite → join by link → write letter → keeper sees and removes |
 | Download everything | - | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
-| Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
+| Georgian layout | 357 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
 | Back button (Q3) | - | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
 | Landing page stays light (Q6) | - | 9 checks (`landing.test.js`), en + ka: the landing page downloads no other-page texts, no town, no database client; no text key (like `signin.title`) on screen on the landing page, on sign-in reached from it, or on `/town` opened directly. Found the footer's Terms/Privacy texts had moved by mistake |
 | Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted). **Once-only photo copies (Q16) and tidy-up (Q7), 2026-11-03:** a folder backup opened, extracted photos were byte-identical to the live ones, one changed byte in a photo copy was caught; the old-style backup still opens; two real runs on R2 with a planted, backdated left-over file: run 1 copied 4 photos and deleted the planted file only, run 2 copied 0 and removed the planted copy no backup needed; `backup:check` then opened all 3 photos. Not rehearsed: a full restore from a new-style backup into an empty project |
@@ -82,7 +84,7 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 2. Sign in, open the test house. Does the street move smoothly when you slide?
 3. Go inside. Can you see the wall *and* the buttons? Add a photo from the camera.
 4. Letters: write one, read it, press the phone's Back button. It should go back to the list, then to the room, then to the street, one step at a time.
-5. Time capsule: choose a day, put in a letter and a photo.
+5. Time capsule: write a letter, add 2-3 photos, choose a day, lock it. Is the warning clear? After locking, is it obvious nothing more can go in?
 6. Family helpers: invite your second email, open the link on another phone, join.
 7. Download everything. Does the zip save? Open `index.html` from it in airplane mode.
 8. Light a lantern as a visitor (signed out). Does the keeper see it?
@@ -153,3 +155,22 @@ Write what went wrong under a new review entry below.
   the room, capsule, helpers, card...) is now in `ka-app.js`. Same keys, same DRAFT notes.
 - **Tests:** `npm run test:browser` all green, 109 checks. Both languages have the same 63 + 291 keys.
 - **Founder confirmed Q11-Q14** (2026-11-04): moved to "Accepted".
+
+### 2026-11-04 · Time capsule is filled and locked once
+- **Why:** founder: choosing a day first and then adding things again and again felt odd. A time capsule should be
+  filled, locked and left alone.
+- **Built:** one page with the letter, "from", up to 10 photos (chosen several at once, each removable) and the day.
+  "Lock the time capsule" shows a warning step ("Lock it until ...? After this you can't add anything, change anything
+  or look inside...", plus what's going in) with "Yes, lock it" / "Go back and change something" (keeps everything).
+  Photos upload one at a time with "photo 2 of 3". Then the locked chest, with no buttons.
+- **Database** (migration `20261107000000_seal_capsule_once.sql`, tested rolled back, then applied): `set_capsule_date`
+  and `add_to_capsule` are gone. New `seal_capsule()` takes the day, letter and photos in one go, keeper only, and
+  refuses a second time. Capsule photo uploads: keeper only, and only before sealing (new yes/no helper
+  `capsule_is_sealed(id)`, same kind as `capsule_is_open`). Capsules made the old way count as sealed.
+- **Changed for helpers:** they no longer add to the capsule (only the keeper picks the day, so only the keeper makes it).
+  Helper texts, Terms (EN + KA) and CLAUDE.md updated. Privacy page needed no change.
+- **Not handled:** if the keeper leaves the page half-way, what they wrote is lost (not saved as a draft). If sealing
+  fails after photos uploaded, those files are cleaned up by the nightly run after 7 days (Q7).
+- **Founder:** new Georgian capsule texts are DRAFT, like the rest.
+- **Tests:** `npm run test:db` 176 passed; `npm run test:browser` 115 passed (capsule: 18 checks).
+

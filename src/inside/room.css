@@ -512,17 +512,70 @@
   background: #fff4d6;
 }
 
-.capsule-photo-preview {
+/* "Lock it until ...?": the last step before sealing. Same shape as the chest, warmer colour. */
+.capsule-warning {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  padding: 24px 20px;
+  border-radius: 20px;
+  background: #fff4d6;
+  text-align: center;
+  box-shadow: 0 0 0 3px var(--gold);
 }
 
-.capsule-photo-preview img {
-  max-width: 100%;
-  max-height: 220px;
+.capsule-warning p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.capsule-warning strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+/* "Photos (up to 10)" is a heading over the photo grid, not a label for one box */
+p.field-label {
+  margin: 0;
+}
+
+/* The chosen photos: small squares, three across even on a 360 px phone */
+.capsule-photo-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.capsule-photo-list li {
+  position: relative;
+}
+
+.capsule-photo-list img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
   border-radius: 12px;
+}
+
+/* A big round × in the corner: easy to hit with a thumb */
+.capsule-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 253, 248, 0.92);
+  color: var(--ink);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .capsule-photo {
@@ -533,10 +586,8 @@
   border-radius: 12px;
 }
 
-/* "Move the date later": a link, but not a warning-red one */
-.link-button.quiet {
-  color: var(--ink-soft);
-  text-decoration: underline;
+.capsule-photo:first-child {
+  margin-top: 0;
 }
 
 /* ---------- Family helpers (Helpers.jsx) ---------- */

@@ -23,7 +23,7 @@ function en(c) {
         heading: 'Gift codes and keepers',
         paragraphs: [
           'Each house comes with a gift code. The first person to use it becomes the keeper: the one who looks after the house. A gift code works once, so keep it safe until it is used.',
-          'The keeper can invite helpers to add photos, letters and things for the time capsule. The keeper can remove a helper at any time. What a helper added stays in the house.',
+          'The keeper can invite helpers to add photos and letters. The keeper can remove a helper at any time. What a helper added stays in the house.',
           'You must be 18 or older to buy a house or to make an account, or have permission from a parent or guardian.',
         ],
       },
@@ -36,7 +36,7 @@ function en(c) {
       {
         heading: 'The time capsule',
         paragraphs: [
-          'The time capsule opens on the day the keeper chooses. Before that day nobody can open it, not the keeper and not us, even if you ask. The day can be moved later, never earlier.',
+          'The keeper fills the time capsule and locks it once, choosing the day it opens. After it is locked nothing can be added or changed, and the day cannot be moved. Before that day nobody can open it, not the keeper and not us, even if you ask.',
         ],
       },
       {
@@ -99,7 +99,7 @@ function ka(c) {
         heading: 'სასაჩუქრე კოდები და მეპატრონეები',
         paragraphs: [
           'ყველა სახლს თან ახლავს სასაჩუქრე კოდი. ვინც მას პირველი გამოიყენებს, ხდება მეპატრონე: ის, ვინც სახლს უვლის. სასაჩუქრე კოდი ერთხელ მუშაობს, ამიტომ გამოყენებამდე კარგად შეინახეთ.',
-          'მეპატრონეს შეუძლია მოიწვიოს დამხმარეები, რომ დაამატონ ფოტოები, წერილები და ნივთები დროის კაფსულისთვის. მეპატრონეს შეუძლია დამხმარის მოხსნა ნებისმიერ დროს. რაც დამხმარემ დაამატა, სახლში რჩება.',
+          'მეპატრონეს შეუძლია მოიწვიოს დამხმარეები, რომ დაამატონ ფოტოები და წერილები. მეპატრონეს შეუძლია დამხმარის მოხსნა ნებისმიერ დროს. რაც დამხმარემ დაამატა, სახლში რჩება.',
           'სახლის ყიდვა ან ანგარიშის შექმნა შეგიძლიათ 18 წლიდან, ან მშობლის ან მეურვის ნებართვით.',
         ],
       },
@@ -112,7 +112,7 @@ function ka(c) {
       {
         heading: 'დროის კაფსულა',
         paragraphs: [
-          'დროის კაფსულა იხსნება იმ დღეს, რომელსაც მეპატრონე აირჩევს. ამ დღემდე მას ვერავინ გახსნის, ვერც მეპატრონე და ვერც ჩვენ, თუნდაც გვთხოვოთ. დღის გადაწევა შეიძლება მხოლოდ უფრო გვიან, ადრე არასდროს.',
+          'მეპატრონე დროის კაფსულას ერთხელ ავსებს და კეტავს, და ირჩევს დღეს, როცა გაიხსნება. ჩაკეტვის შემდეგ მასში ვეღარაფერი დაემატება და ვეღარაფერი შეიცვლება, და დღის გადაწევაც აღარ შეიძლება. ამ დღემდე მას ვერავინ გახსნის, ვერც მეპატრონე და ვერც ჩვენ, თუნდაც გვთხოვოთ.',
         ],
       },
       {

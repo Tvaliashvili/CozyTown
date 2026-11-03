@@ -1,4 +1,5 @@
-// Database tests for the time capsule. Run with: npm run test:db
+// Database tests for the time capsule: filled and sealed once by the keeper, then locked until
+// its day. Run with: npm run test:db
 const KEEPER = '11111111-1111-1111-1111-111111111111'
 const STRANGER = '22222222-2222-2222-2222-222222222222'
 const ADMIN = '33333333-3333-3333-3333-333333333333'
@@ -17,48 +18,67 @@ export default async function run(db, { as, attempt, check }) {
   const { code, id: houseId } = house
   const today = (await db.query(`select (now() at time zone 'Asia/Tbilisi')::date::text d`)).rows[0].d
   const inDays = async (n) => (await db.query(`select ((now() at time zone 'Asia/Tbilisi')::date + $1::int)::text d`, [n])).rows[0].d
+  const photo = (name) => ({ path: `${houseId}/${name}.webp`, width: 800, height: 600 })
+  const seal = (date, from, body, photos = []) =>
+    attempt('select public.seal_capsule($1, $2, $3, $4, $5)', [code, date, from, body, JSON.stringify(photos)])
 
   // Nobody else gets near it
   await as('anon')
   let r = await attempt('select * from public.get_capsule($1)', [code])
   check('visitor cannot see the capsule', Boolean(r.error), r.error)
+  r = await seal(await inDays(30), null, 'hello')
+  check('visitor cannot seal a capsule', Boolean(r.error), r.error)
   await as(STRANGER)
   r = await attempt('select * from public.get_capsule($1)', [code])
   check('stranger cannot see the capsule', r.error?.includes('Only the keeper'), r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, await inDays(30)])
-  check('stranger cannot set a date', Boolean(r.error), r.error)
+  r = await seal(await inDays(30), null, 'hello')
+  check('stranger cannot seal a capsule', Boolean(r.error), r.error)
+  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/evil.webp`, STRANGER])
+  check('stranger cannot upload into the capsule', Boolean(r.error), r.error)
   await as(ADMIN)
   r = await attempt('select * from public.get_capsule($1)', [code])
   check('admin cannot see the capsule', Boolean(r.error), r.error)
 
+  // The old step-by-step functions are gone
   await as(KEEPER)
-  r = await attempt('select * from public.get_capsule($1)', [code])
-  check('keeper: no chest yet = no row', r.result?.rows.length === 0, r.error)
-  r = await attempt(`select public.add_to_capsule($1, 'Mum', 'hello')`, [code])
-  check('adding before a date is refused', r.error?.includes('opening date first'), r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, today])
-  check('today is refused', r.error?.includes('in the future'), r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, '2200-01-01'])
-  check('far future is refused', r.error?.includes('too far'), r.error)
   r = await attempt('select public.set_capsule_date($1, $2)', [code, await inDays(30)])
-  check('keeper sets a date 30 days away', !r.error, r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, await inDays(10)])
-  check('moving earlier is refused', r.error?.includes('only move later'), r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, await inDays(40)])
-  check('moving later works', !r.error, r.error)
+  check('set_capsule_date no longer exists', r.error?.includes('does not exist'), r.error)
+  r = await attempt(`select public.add_to_capsule($1, 'Mum', 'hello')`, [code])
+  check('add_to_capsule no longer exists', r.error?.includes('does not exist'), r.error)
 
-  r = await attempt(`select public.add_to_capsule($1, 'Mum', 'For your 18th birthday')`, [code])
-  check('keeper puts a letter in', !r.error, r.error)
-  r = await attempt(`select public.add_to_capsule($1, null, '   ')`, [code])
-  check('empty item is refused', r.error?.includes('letter or a photo'), r.error)
-  r = await attempt(`select public.add_to_capsule($1, null, null, $2, 800, 600)`, [code, `${houseId}/abc.webp`])
-  check('keeper puts a photo in', !r.error, r.error)
-  r = await attempt(`select public.add_to_capsule($1, null, null, $2, 800, 600)`, [code, `00000000-0000-0000-0000-000000000000/abc.webp`])
-  check('photo from another folder is refused', Boolean(r.error), r.error)
+  // The keeper fills it in
+  r = await attempt('select * from public.get_capsule($1)', [code])
+  check('keeper: not sealed yet = no row', r.result?.rows.length === 0, r.error)
+  r = await seal(today, 'Mum', 'hello')
+  check('today is refused', r.error?.includes('in the future'), r.error)
+  r = await seal('2200-01-01', 'Mum', 'hello')
+  check('far future is refused', r.error?.includes('too far'), r.error)
+  r = await seal(await inDays(30), 'Mum', '   ')
+  check('an empty capsule is refused', r.error?.includes('letter or a photo'), r.error)
+  r = await seal(await inDays(30), 'Mum', 'hello', Array.from({ length: 11 }, (_, i) => photo(`p${i}`)))
+  check('more than 10 photos is refused', r.error?.includes('Up to 10'), r.error)
+  r = await seal(await inDays(30), null, null, [{ path: '00000000-0000-0000-0000-000000000000/abc.webp', width: 1, height: 1 }])
+  check('a photo from another house folder is refused', Boolean(r.error), r.error)
+  r = await attempt('select * from public.get_capsule($1)', [code])
+  check('refused attempts leave no capsule behind', r.result?.rows.length === 0, r.error)
 
+  // Photos are uploaded before sealing
+  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/a.webp`, KEEPER])
+  check('keeper uploads a capsule photo before sealing', !r.error, r.error)
+  r = await attempt(`select name from storage.objects where bucket_id = 'capsule'`)
+  check('keeper cannot see capsule files while locked', r.result?.rows.length === 0, r.error)
+
+  r = await seal(await inDays(30), 'Mum', 'For your 18th birthday', [photo('a'), photo('b')])
+  check('keeper seals a letter and 2 photos in one go', !r.error, r.error)
   r = await attempt('select * from public.get_capsule($1)', [code])
   const chest = r.result?.rows[0]
-  check('chest shows date, 2 items, locked', chest?.item_count === 2 && chest?.is_open === false && Boolean(chest?.opens_on), JSON.stringify(chest))
+  check('chest shows date, 3 items, locked', chest?.item_count === 3 && chest?.is_open === false && Boolean(chest?.opens_on), JSON.stringify(chest))
+
+  // Sealed means sealed
+  r = await seal(await inDays(60), 'Mum', 'one more thing')
+  check('sealing a second time is refused', r.error?.includes('already sealed'), r.error)
+  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/late.webp`, KEEPER])
+  check('uploading after sealing is refused', Boolean(r.error), r.error)
   r = await attempt('select * from public.open_capsule($1)', [code])
   check('keeper cannot open it early', r.error?.includes('still locked'), r.error)
   r = await attempt('select * from public.capsule_items')
@@ -67,17 +87,10 @@ export default async function run(db, { as, attempt, check }) {
   check('keeper cannot read capsules table directly', Boolean(r.error), r.error)
   r = await attempt(`update public.capsules set opens_on = '2000-01-01'`)
   check('keeper cannot change the date directly', Boolean(r.error), r.error)
+  r = await attempt(`insert into public.capsule_items (house_id, body) values ($1, 'sneaky')`, [houseId])
+  check('keeper cannot slip something in directly', Boolean(r.error), r.error)
   r = await attempt('select * from public.get_house($1)', [code])
   check('no capsule news while locked', r.result?.rows[0]?.capsule_news === false, r.error)
-
-  // Storage: put a file in while locked, but can't look at it
-  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/abc.webp`, KEEPER])
-  check('keeper uploads a capsule photo while locked', !r.error, r.error)
-  r = await attempt(`select name from storage.objects where bucket_id = 'capsule'`)
-  check('keeper cannot see capsule files while locked', r.result?.rows.length === 0, r.error)
-  await as(STRANGER)
-  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/evil.webp`, STRANGER])
-  check('stranger cannot upload into the capsule', Boolean(r.error), r.error)
 
   // The day comes
   await as(null)
@@ -97,21 +110,23 @@ export default async function run(db, { as, attempt, check }) {
   await as(KEEPER)
   // "Download everything" reads it without counting as looking inside (QA Q8)
   r = await attempt('select * from public.open_capsule($1, mark_seen => false)', [code])
-  check('the zip can read it on the day', r.result?.rows.length === 2, r.error)
+  check('the zip can read it on the day', r.result?.rows.length === 3, r.error)
   r = await attempt('select * from public.get_house($1)', [code])
   check('reading it for the zip keeps the news', r.result?.rows[0]?.capsule_news === true, r.error)
   r = await attempt('select * from public.open_capsule($1)', [code])
-  check('keeper opens it on the day', r.result?.rows.length === 2 && r.result.rows[0].body === 'For your 18th birthday', r.error ?? JSON.stringify(r.result?.rows))
+  const items = r.result?.rows ?? []
+  check(
+    'keeper opens it: the letter first, signed, then the photos in order',
+    items.length === 3 && items[0].body === 'For your 18th birthday' && items[0].from_name === 'Mum'
+      && items[1].photo_path.endsWith('/a.webp') && items[2].photo_path.endsWith('/b.webp') && items[1].from_name === null,
+    r.error ?? JSON.stringify(items),
+  )
   r = await attempt('select * from public.get_house($1)', [code])
   check('news goes away after opening', r.result?.rows[0]?.capsule_news === false, r.error)
   r = await attempt(`select name from storage.objects where bucket_id = 'capsule'`)
   check('keeper sees capsule files once open', r.result?.rows.length === 1, r.error)
-  r = await attempt(`select public.add_to_capsule($1, null, 'late')`, [code])
-  check('adding after opening is refused', r.error?.includes('already open'), r.error)
-  r = await attempt('select public.set_capsule_date($1, $2)', [code, await inDays(50)])
-  check('re-locking an open capsule is refused', r.error?.includes('already open'), r.error)
-  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/late.webp`, KEEPER])
-  check('uploading after opening is refused', Boolean(r.error), r.error)
+  r = await seal(await inDays(50), null, 'late')
+  check('re-sealing an open capsule is refused', r.error?.includes('already sealed'), r.error)
 
   await as(null)
 }
