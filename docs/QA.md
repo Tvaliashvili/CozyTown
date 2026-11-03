@@ -1,0 +1,97 @@
+# QA log · Cozy Town
+
+Testing, quality checks and code reviews, kept over time. Newest review at the bottom.
+
+**How to read it**
+- **Severity**: 🔴 high = can lose data, leak private things, or block a customer · 🟠 medium = real people
+  will trip over it · 🟢 low = small, or only in rare cases.
+- Every finding has an ID (Q1, Q2…) that never changes, so it can be mentioned in commits and chats.
+- When something is fixed, it moves to "Fixed" with the date and commit.
+
+**For Claude, each session:** after finishing a main piece of work, test it and add what you found here.
+Every few features, do a wider review (security, phones, Georgian, speed) and add a dated entry to the review log.
+
+---
+
+## Open findings
+
+| ID | Sev | Area | What's wrong | Suggested fix |
+|---|---|---|---|---|
+| Q1 | 🔴 | Backups | **There is no backup.** Supabase free has no automatic backups, and CLAUDE.md promises our own nightly backup of the database *and* photo files from the start. If the database were lost today, every house, letter and photo would be gone. | A nightly GitHub Action: `pg_dump` of the database plus a copy of both storage buckets, saved somewhere free and private (e.g. Cloudflare R2, 10 GB free). **Needs the founder:** where to keep backups. Must be done before the pilot (Phase 4). |
+| Q3 | 🟠 | Phones | The phone's **Back button** on the Letters, Time capsule and Family helpers pages leaves the whole room (back to the street) instead of just closing that page. Grandparents use Back a lot. | When one of those pages opens, add a history entry; when Back is pressed, close only that page. |
+| Q4 | 🟠 | Testing | **The tests aren't in the project.** About 100 database tests and 6 browser tests exist, but only in Claude's temporary folders, so they can't be re-run later to catch something breaking. | Move them into `tests/` with `npm run test:db` and `npm run test:browser`. |
+| Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
+| Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
+| Q7 | 🟢 | Storage | Photo **files can be left behind** with nothing pointing to them: when a house is deleted (rows go, files stay), or when a capsule photo uploads but sealing it fails. They cost storage space, nothing else. | A cleanup step in the nightly backup script (Q1): delete files whose house or photo row no longer exists. |
+| Q8 | 🟢 | Capsule | If the keeper presses "Download everything" after the capsule opens but *before* looking inside, the zip counts as looking, so the "Your time capsule has opened!" notice disappears. | Let the export read the capsule without marking it seen. |
+| Q9 | 🟢 | Accessibility | Letters, Time capsule and Family helpers pages don't move screen-reader focus to their title when they open (the share sheet does). | Focus the title on open, like `ShareSheet.jsx`. |
+| Q10 | 🟢 | Sign-in | The invite note says "Sign in or create an account in step 1" even to someone already signed in. | Show a shorter note when signed in. |
+
+### Questions for the founder (product choices made without asking)
+- **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. OK, or only their own?
+- **Q12** Helpers only read the letters they wrote; the rest of the mailbox is the keeper's. OK?
+- **Q13** One time capsule per house; its day can move later, never earlier. OK?
+- **Q14** Invites work once, for 14 days; up to 10 helpers per house. OK?
+
+### Accepted (checked, deliberately left as is)
+- Signed-in people can ask `capsule_is_open(id)` and `is_house_keeper(id)` about any house id. They only answer
+  yes/no, and house ids are never shown to anyone outside the house. The storage rules need them to be callable.
+- The admin page is English only (only the founder uses it).
+- Gift codes stay in the database after claiming; `claim_house()` refuses a used one for anyone else.
+
+---
+
+## Fixed
+
+| ID | Date | What | Commit |
+|---|---|---|---|
+| Q2 | 2026-11-03 | 🔴 On small phones (360×640) the keeper's room panel covered the whole wall: photos shrank to a speck. The panel now takes at most ~56% of the screen and scrolls. | *(this review)* |
+| Q15 | 2026-11-03 | 🟢 Time capsule: after a photo that couldn't be opened, picking the same file again did nothing. | *(this review)* |
+| — | 2026-11-03 | Export zip stalled forever (fflate's background worker); switched to `zipSync`. Found by the export browser test. | 67f09db |
+| — | 2026-11-03 | Helpers saw "Choose a day for it to open" on the capsule card, but only the keeper can. | 49fd6ee |
+| — | 2026-11-03 | Invite link landed on "Enter your gift code / Open my house" wording; now "Join the house". | 49fd6ee |
+| — | 2026-11-03 | Capsule page called a React hook inside a condition (would crash on some renders). Caught in review before testing. | e3e765c |
+
+---
+
+## What is tested, and how
+
+| Feature | Database tests (rolled back, never saved) | Browser test (headless Chrome, throwaway accounts) |
+|---|---|---|
+| Admin page & orders | 29 | create order, letter, mark paid, unlock, search |
+| Time capsule | 34 + real storage service check | choose day, seal letter + photo, refuse earlier day, open on the day, street notice |
+| Helpers | 38 (+ admin & capsule tests re-run on top) | invite → join by link → write letter → keeper sees and removes |
+| Download everything | — | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
+| Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
+| Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | — |
+
+## Phone checklist (for the founder, on real phones)
+
+Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with someone over 60 holding the phone.
+
+1. Open the landing page on mobile data. Does it appear within ~3 seconds?
+2. Sign in, open the test house. Does the street move smoothly when you slide?
+3. Go inside. Can you see the wall *and* the buttons? Add a photo from the camera.
+4. Letters: write one, read it, press the phone's Back button (see Q3).
+5. Time capsule: choose a day, put in a letter and a photo.
+6. Family helpers: invite your second email, open the link on another phone, join.
+7. Download everything. Does the zip save? Open `index.html` from it in airplane mode.
+8. Light a lantern as a visitor (signed out). Does the keeper see it?
+9. Print the card at home (fold-over A4). Does the QR open the house?
+
+Write what went wrong under a new review entry below.
+
+---
+
+## Review log
+
+### 2026-11-03 · Phase 3 review (admin, capsule, helpers, export)
+- **Code reviewed:** every file changed in Phase 3 (`src/admin/`, `src/inside/Capsule.jsx`, `Helpers.jsx`,
+  `Room.jsx`, `src/export/`, `src/data/*.js`, `src/pages/SignIn.jsx`, 4 migrations).
+- **Database:** RLS on all tables; every security-definer function checks who's asking and uses
+  `set search_path = ''`; visitors' callable functions listed above; helpers can't spoof `created_by`
+  (not in the insert grant). Re-ran the admin and capsule tests after the helpers migration: all pass.
+- **Phones:** found Q2 (fixed) at 360×640; Back button behaviour Q3 confirmed on the capsule page.
+- **Speed:** landing 89 KB gzip; 3D town, sign-in, admin and export each download only when needed.
+  Export code is 8.6 KB gzip and loads only on the button press.
+- **Found:** Q1 no backups (🔴), Q3–Q10 above; fixed Q2 and Q15.

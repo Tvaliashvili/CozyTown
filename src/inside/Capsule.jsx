@@ -186,6 +186,11 @@ function AddToCapsule({ code, capsule, onAdded, onCancel }) {
   // Free the preview's memory when it changes or the form closes.
   useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview])
 
+  function pickPhoto() {
+    fileInput.current.value = '' // so choosing the same photo again (after a problem) still counts
+    fileInput.current.click()
+  }
+
   async function onFileChosen(event) {
     const file = event.target.files[0]
     if (!file) return
@@ -236,7 +241,7 @@ function AddToCapsule({ code, capsule, onAdded, onCancel }) {
           </button>
         </div>
       ) : (
-        <button type="button" className="big-button soft" onClick={() => fileInput.current.click()} disabled={busy}>
+        <button type="button" className="big-button soft" onClick={pickPhoto} disabled={busy}>
           <AddPhotoIcon />
           {state === 'preparing' ? t('add.preparing') : t('capsule.addPhoto')}
         </button>

@@ -114,6 +114,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - Illustrations are SVG files in `public/art/`; small icons are in `src/ui/icons.jsx`.
 - The approved design lives on the Claude Design canvas "Cozy Town Design".
 
+## Quality (QA log)
+`docs/QA.md` is the running QA/QC and code-review log: open findings with severity, what's fixed,
+what's tested and how, a phone checklist for the founder, and dated reviews. After each main piece of
+work, test it and update the log; every few features, do a wider review (security, phones, Georgian, speed).
+
 ## How the 3D code works (read before changing src/scene)
 - Run `npm run dev` (Vite 6 — Node is 22.11, too old for Vite 7). `?debug` shows FPS and exposes `window.__gl`.
 - **The canvas only redraws on demand** (`frameloop="demand"` in `Town.jsx`). Anything that animates
