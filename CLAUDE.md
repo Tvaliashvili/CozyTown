@@ -143,6 +143,28 @@ houses, seasonal decorations, subscription, legacy keeper for memorial/baby hous
 ## Pricing hypothesis (test, not decided)
 Digital house ~39 ₾ · with printed card ~49 ₾ · with engraved wooden keychain ~69–79 ₾.
 
+## Ways to earn beyond selling houses (ideas, founder liked them, Nov 2026)
+**Rule**: nothing paid ever locks away what's already there. If someone stops paying, their house,
+photos and letters stay visible and downloadable; only *new* paid extras stop. Lanterns stay free.
+1. **Small gifts left at a house**: for a few lari, anyone leaves a bouquet, birthday cake, balloon
+   or New Year tree with a short note; it appears on the doorstep (ties into the living street).
+   Repeats every birthday/anniversary. Memorial houses: only quiet gifts (candle, flowers), never pushed.
+2. **Seasonal decorations**: New Year lights and snow, spring flowers, Valentine's; sold each season, every year.
+3. **Physical products from the house**: yearly printed photo book of its photos and letters,
+   framed picture of the house, house-shaped New Year ornament (same print shops as cards/keychains).
+4. **Optional "Cozy Town Plus" (later, ~5–9 ₾/month)**: more photos/albums, voice notes, more
+   co-decorators, letters scheduled for a future date, seasonal decorations included.
+   The basic house is complete without it.
+5. **Group and business houses**: weddings (guests leave letters/photos; sold via wedding planners),
+   colleague farewells/retirements, school graduation classes.
+6. **Partner shops**: real flowers or cake from a Tbilisi florist/bakery delivered with the digital gift, for a commission.
+
+**Avoid**: ads on the street; selling or sharing anything about people's houses.
+**Limits**: small payments need the Bank of Georgia / TBC gateway (nobody bank-transfers 3 ₾),
+and they only sell if people come back to the house (living street, bigger room).
+**Order**: at launch with manual payment → physical products, wedding/group houses. After the
+gateway → gifts at the door, seasonal decorations. Later → Plus subscription, partner shops.
+
 ## Founder owns
 Landing page and CSS styling, Georgian copy and translations, choosing colors/props for the look,
 phone and grandparent testing, print/engraving shops, Instagram, handling first orders.
