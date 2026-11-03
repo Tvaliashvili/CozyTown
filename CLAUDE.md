@@ -79,6 +79,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
   Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
   Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`).
+- `/h/<code>/card` is the printable bank-card-size card (`src/card/`), for the keeper or an admin.
+  While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
+  a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the
+  current address), because they get printed. Keepers reach it from the street's share button.
 - Designs from the database always go through `cleanDesign()` (`src/data/design.js`), which drops
   any value the customizer doesn't offer.
 - The town and the sign-in page are lazy-loaded, so the landing page doesn't download three.js or
