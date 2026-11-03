@@ -15,9 +15,27 @@ function claimErrorKey(message) {
   return 'signin.error.generic'
 }
 
+// Same idea for Supabase's sign-in errors. Newer Supabase sends a short code; older text is a fallback.
+function accountErrorKey(error) {
+  const code = error.code ?? ''
+  const message = error.message ?? ''
+  if (code === 'invalid_credentials' || message.includes('Invalid login')) return 'signin.error.wrongPassword'
+  if (code === 'user_already_exists' || message.includes('already registered')) return 'signin.error.exists'
+  if (code === 'weak_password' || message.includes('Password should')) return 'signin.error.weakPassword'
+  if (code === 'email_address_invalid' || message.includes('invalid format')) return 'signin.error.badEmail'
+  return 'signin.error.generic'
+}
+
 export default function SignIn() {
   const { t } = useI18n()
   const session = useSession()
+  // Most people arriving here are opening a gift for the first time, so start on "create account".
+  const [mode, setMode] = useState('signUp')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [accountError, setAccountError] = useState(null)
   const [houses, setHouses] = useState([])
   const [giftCode, setGiftCode] = useState('')
   const [opening, setOpening] = useState(false)
@@ -37,12 +55,29 @@ export default function SignIn() {
       .then(({ data }) => setHouses(data ?? []))
   }, [session])
 
-  function signInWithGoogle() {
-    // Google sends them back to this page, already signed in.
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/signin` },
-    })
+  // Email + password for now. We don't send a "confirm your email" message yet (no email service),
+  // so Supabase signs people in straight away. Once our own email is set up, we can add confirmation
+  // and "forgot password" links.
+  async function submitAccount(event) {
+    event.preventDefault()
+    setAccountError(null)
+    setBusy(true)
+    const credentials = { email: email.trim(), password }
+    const { error } = mode === 'signUp'
+      ? await supabase.auth.signUp(credentials)
+      : await supabase.auth.signInWithPassword(credentials)
+    setBusy(false)
+    if (error) {
+      setAccountError(accountErrorKey(error))
+      return
+    }
+    // useSession() notices the new session and the page switches to "Signed in as…".
+    setPassword('')
+  }
+
+  function switchMode() {
+    setMode(mode === 'signUp' ? 'signIn' : 'signUp')
+    setAccountError(null)
   }
 
   async function claimGift(event) {
@@ -59,6 +94,10 @@ export default function SignIn() {
   }
 
   const signedIn = Boolean(session)
+  // The gift code is entered only once. Keepers who already have a house just tap "Open" in step 1,
+  // so for them the code box stays tucked away behind a small link (for a second gift).
+  const [wantsAnotherGift, setWantsAnotherGift] = useState(false)
+  const showGiftForm = !signedIn || houses.length === 0 || wantsAnotherGift
 
   return (
     <div className="signin">
@@ -93,17 +132,56 @@ export default function SignIn() {
               </button>
             </>
           ) : (
-            <>
-              <button type="button" className="big-button google" onClick={signInWithGoogle} disabled={session === undefined}>
-                <span className="google-mark" aria-hidden="true">G</span>
-                {t('signin.google')}
+            <form className="account-form" onSubmit={submitAccount}>
+              <label htmlFor="email" className="small">{t('signin.email')}</label>
+              <input
+                id="email"
+                className="text-input"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <label htmlFor="password" className="small">
+                {t('signin.password')}
+                {mode === 'signUp' && <> · {t('signin.passwordHint')}</>}
+              </label>
+              <input
+                id="password"
+                className="text-input"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete={mode === 'signUp' ? 'new-password' : 'current-password'}
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {/* Typing a password blind is hard on a phone, especially for grandparents. */}
+              <button type="button" className="text-button" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? t('signin.hidePassword') : t('signin.showPassword')}
               </button>
+              {accountError && <p className="error" role="alert">{t(accountError)}</p>}
+              <button type="submit" className="big-button accent" disabled={session === undefined || busy}>
+                {busy ? t('signin.working') : mode === 'signUp' ? t('signin.createAccount') : t('signin.logIn')}
+              </button>
+              <button type="button" className="text-button" onClick={switchMode}>
+                {mode === 'signUp' ? t('signin.haveAccount') : t('signin.newHere')}
+              </button>
+              {mode === 'signIn' && <p className="small">{t('signin.forgot')}</p>}
               <p className="small">{t('signin.keeperHint')}</p>
-            </>
+            </form>
           )}
         </section>
 
-        <form className="card signin-step" onSubmit={claimGift}>
+        {!showGiftForm && (
+          <button type="button" className="text-button" onClick={() => setWantsAnotherGift(true)}>
+            {t('signin.anotherGift')}
+          </button>
+        )}
+
+        {showGiftForm && <form className="card signin-step" onSubmit={claimGift}>
           <h2><span className="step-badge">2</span>{t('signin.step2')}</h2>
           {/* The box below stays locked until step 1 is done, so say so right at the top. */}
           {!signedIn && (
@@ -129,7 +207,8 @@ export default function SignIn() {
           <button type="submit" className="big-button accent" disabled={!signedIn || !giftCode.trim() || opening}>
             <KeyIcon />
             {opening ? t('signin.opening') : t('signin.open')}
-          </button>        </form>
+          </button>
+        </form>}
 
         <p className="small centered">{t('signin.visitHint')}</p>
       </main>

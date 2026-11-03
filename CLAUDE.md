@@ -47,8 +47,10 @@ small files, clear names, short comments that explain *why*. Explain changes in 
 | Payments | **Manual for MVP** (bank transfer, orders via Instagram/Facebook/form, admin page creates houses). Stripe doesn't serve Georgia; later use Bank of Georgia or TBC e-commerce gateway |
 
 Consequences of "no email yet":
-- Keeper login is **Google sign-in only** until custom SMTP exists (Supabase's default mailer
-  won't send to regular users). Add email login links once SMTP is set up.
+- Keeper login is **email + password with no email confirmation** (Supabase "Confirm email" is off,
+  because its default mailer won't send to regular users). Google sign-in was set aside (founder,
+  Nov 2026) as too fiddly for now. There is no "forgot password" email: the admin resets passwords by hand.
+  Once custom SMTP exists, turn on confirmation and add password-reset links.
 - Notifications ("someone lit a lantern", "your capsule opened") are **in-app** for now:
   shown when the keeper next opens their house.
 
@@ -65,10 +67,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - Database changes live in `supabase/migrations/` (one SQL file per change, never edit an applied one).
   Applied by a Node `pg` script over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`,
   user `postgres.<ref>`. Test first inside a transaction that rolls back.
-- Admin: after the founder's first Google sign-in, add their user id to `public.admins` in the SQL editor.
+- Admin: after the founder first signs up, add their user id to `public.admins` in the SQL editor.
 
 ## How the site is organised
-- Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (Google sign-in + gift-code claim),
+- Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (email + password sign-in + gift-code claim),
   `/town` demo street saved in the browser (`src/TownApp.jsx`) and `/h/<code>` a real house from the
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
@@ -104,7 +106,7 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - [x] **Phase 1 — 3D prototype (wk 2–4)**: one street (~8 plots), tap-to-move camera,
       customizer (roof, colors, door, windows, garden, mailbox, lanterns). Test on a cheap Android.
       *(Built Nov 2026; still needs a real budget-Android test.)*
-- [ ] **Phase 2 — Real houses (wk 5–7)**: Google login, gift-code claim, save houses, one cozy
+- [ ] **Phase 2 — Real houses (wk 5–7)**: keeper login, gift-code claim, save houses, one cozy
       interior room with photo frames and mailbox letters, private link, QR, printable PDF card, lanterns.
 - [ ] **Phase 3 — Capsule & sharing (wk 8–9)**: server-locked time capsule, co-decorator invites,
       export zip, Georgian/English, admin page for manual orders.

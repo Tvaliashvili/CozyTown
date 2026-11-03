@@ -7,7 +7,7 @@ export function useSession() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    // Also fires when someone comes back from Google, or signs out.
+    // Also fires when someone signs in or out.
     const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next))
     return () => data.subscription.unsubscribe()
   }, [])

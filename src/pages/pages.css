@@ -571,7 +571,7 @@
 }
 
 /* Wide screens (computers, tablets, phones turned sideways): the two steps sit side by side,
-   Google on the left and the gift code on the right, on a card floating over the dusk sky.
+   signing in on the left and the gift code on the right, on a card floating over the dusk sky.
    The welcome text is on the left and the whole house on the right, standing on the card.
    The house shrinks on shorter screens so everything fits without scrolling. */
 @media (min-width: 820px) {
@@ -676,22 +676,23 @@
   color: var(--ink-soft);
 }
 
-.big-button.google {
-  background: #fff;
-  border: 2px solid #ecdcc6;
-  font-size: 17px;
-  box-shadow: 0 4px 12px rgba(74, 59, 51, 0.08);
+/* Email + password in step 1 */
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.google-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--sand);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
+.text-input {
+  min-height: 56px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: 2px solid #d9c3a5;
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-size: 18px; /* 16px or more stops iPhones zooming in when the box is tapped */
 }
 
 .code-input {
@@ -749,4 +750,9 @@
   font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* "Have another gift code?" link that replaces step 2 for keepers who already have a house */
+.signin-sheet > .text-button {
+  align-self: center;
 }
