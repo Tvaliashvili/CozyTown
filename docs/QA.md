@@ -40,6 +40,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Date | What | Commit |
 |---|---|---|---|
+| Q17 | 2026-11-03 | 🟢 A link tapped in the very first instant after a page loaded changed the address but not the page (the router started listening a moment late). Found by the new legal-pages test. `usePath` now catches up once when it starts listening. | *(this commit)* |
 | Q8 | 2026-11-03 | 🟢 "Download everything" counted as looking inside an opened capsule, so the street notice vanished unseen. `open_capsule()` got a `mark_seen` switch (migration `20261106000000`, applied); the zip passes false. | *(this commit)* |
 | Q9 | 2026-11-03 | 🟢 Letters, Time capsule and Family helpers now move screen-reader focus to their title when they open (Letters and the capsule also when they change view). | *(this commit)* |
 | Q10 | 2026-11-03 | 🟢 The invite note told already signed-in people to sign in. Now it just says to tap the button. Georgian text is DRAFT. | *(this commit)* |
@@ -127,5 +128,6 @@ Write what went wrong under a new review entry below.
   (`src/legal/company.js`), a decision on the refund rule and the age limit (proposals in `terms.js`), the Georgian
   review, and ideally a lawyer before the first paid order.
 - **Tests:** `npm test` all green: 175 database checks, 100 browser checks. Landing page still 89 KB gzip.
+- **Found and fixed:** Q17 (router missed a very early tap).
 - **Noticed:** in headless Chrome, Georgian dates show in English ("November 3, 2026") because that Chrome has no
   Georgian date data. Real phones should be fine; check on the phone test (Q5).

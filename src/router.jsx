@@ -18,6 +18,9 @@ export function usePath() {
   useEffect(() => {
     const update = () => setPath(window.location.pathname)
     window.addEventListener('popstate', update)
+    // A link tapped in the first instant, before this listener existed, changed the address
+    // without anyone hearing it. Catch up once.
+    update()
     return () => window.removeEventListener('popstate', update)
   }, [])
   return path

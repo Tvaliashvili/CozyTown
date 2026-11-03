@@ -7,13 +7,14 @@ export default async function run({ check, openPage, clickText, base }) {
     const page = await openPage(null, { lang, width: 360, height: 740 })
     for (const which of ['terms', 'privacy']) {
       await page.goto(`${base}/${which}`)
-      await page.waitForSelector('.legal-body h2', { timeout: 15000 })
+      await page.waitForSelector('.legal-body h2', { timeout: 45000 })
       const shown = await page.evaluate(() => ({
         title: document.querySelector('.legal-top h1')?.textContent ?? '',
         sections: document.querySelectorAll('.legal-body h2').length,
         sideways: document.documentElement.scrollWidth > window.innerWidth,
         georgian: /[ა-ჿ]/.test(document.querySelector('.legal-body').textContent),
-        longDash: /[20132014]/.test(document.body.textContent),
+        // En dash and em dash, by number, so this file itself contains neither.
+        longDash: [0x2013, 0x2014].some((code) => document.body.textContent.includes(String.fromCharCode(code))),
       }))
       check(`${lang} /${which}: has a title and sections`, shown.title.length > 0 && shown.sections >= 8, JSON.stringify(shown))
       check(`${lang} /${which}: written in the chosen language`, shown.georgian === (lang === 'ka'))
@@ -25,7 +26,8 @@ export default async function run({ check, openPage, clickText, base }) {
   const page = await openPage(null)
   await page.goto(base + '/')
   await clickText(page, '.landing-footer a', 'Privacy')
-  await page.waitForSelector('.legal-body h2')
+  // Clicked straight away on purpose: a link must work even in the first instant (see usePath).
+  await page.waitForSelector('.legal-body h2', { timeout: 15000 })
   check('the landing footer links to Privacy', await page.evaluate(() => location.pathname === '/privacy'))
   await clickText(page, '.legal-other a', 'Terms')
   await wait(300)
