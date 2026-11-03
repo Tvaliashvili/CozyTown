@@ -147,7 +147,8 @@ features, not in temporary folders. A new function visitors may call goes into `
   normal DOM element (rendered in `App.jsx`) to a 3D point.
 - Budget at last check: ~120 draw calls, ~2.4k triangles in phone street view.
 - House geometry is built from parts in `src/scene/parts/`, sized by `parts/dimensions.js`.
-  Options live in `src/data/options.js`; translations in `src/i18n/`.
+  Options live in `src/data/options.js`; translations in `src/i18n/`: `en.js`/`ka.js` hold only the landing page's
+  texts; every other text goes in `en-app.js`/`ka-app.js`, which download with the first non-landing page (Q6).
 
 ## MVP plan (target: selling by ~Jan 25, 2027; Valentine's Feb 14; Georgian Mother's Day Mar 3)
 - [ ] **Phase 0 - Setup & validation (wk 1)**: name, domain, Instagram, founder builds landing page

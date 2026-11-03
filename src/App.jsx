@@ -1,15 +1,19 @@
 import { lazy, Suspense } from 'react'
 import Landing from './pages/Landing.jsx'
 import { usePath } from './router.jsx'
+import { loadAppTexts } from './i18n/i18n.jsx'
 
 // The 3D town (three.js) and the sign-in page (the database client) are big,
-// so each is only downloaded when someone opens it.
+// so each is only downloaded when someone opens it, together with the texts beyond the landing page.
 // The landing page stays small and fast, even on budget phones.
-const TownApp = lazy(() => import('./TownApp.jsx'))
-const SignIn = lazy(() => import('./pages/SignIn.jsx'))
-const CardPage = lazy(() => import('./card/CardPage.jsx'))
-const AdminPage = lazy(() => import('./admin/AdminPage.jsx'))
-const LegalPage = lazy(() => import('./legal/LegalPage.jsx'))
+function lazyPage(load) {
+  return lazy(() => Promise.all([load(), loadAppTexts()]).then(([page]) => page))
+}
+const TownApp = lazyPage(() => import('./TownApp.jsx'))
+const SignIn = lazyPage(() => import('./pages/SignIn.jsx'))
+const CardPage = lazyPage(() => import('./card/CardPage.jsx'))
+const AdminPage = lazyPage(() => import('./admin/AdminPage.jsx'))
+const LegalPage = lazyPage(() => import('./legal/LegalPage.jsx'))
 
 export default function App() {
   const path = usePath()
