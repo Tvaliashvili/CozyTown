@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase.js'
 import { useSession } from '../lib/useSession.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
-import { BackIcon, KeyIcon, LockIcon } from '../ui/icons.jsx'
+import { BackIcon, EyeIcon, EyeOffIcon, KeyIcon, LockIcon } from '../ui/icons.jsx'
 import './pages.css'
 
 // Turns the database's error into a friendly message.
@@ -148,20 +148,28 @@ export default function SignIn() {
                 {t('signin.password')}
                 {mode === 'signUp' && <> · {t('signin.passwordHint')}</>}
               </label>
-              <input
-                id="password"
-                className="text-input"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete={mode === 'signUp' ? 'new-password' : 'current-password'}
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              {/* Typing a password blind is hard on a phone, especially for grandparents. */}
-              <button type="button" className="text-button" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? t('signin.hidePassword') : t('signin.showPassword')}
-              </button>
+              <div className="password-box">
+                <input
+                  id="password"
+                  className="text-input"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete={mode === 'signUp' ? 'new-password' : 'current-password'}
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                {/* Typing a password blind is hard on a phone, especially for grandparents. */}
+                <button
+                  type="button"
+                  className="eye-button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? t('signin.hidePassword') : t('signin.showPassword')}
+                  title={showPassword ? t('signin.hidePassword') : t('signin.showPassword')}
+                >
+                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
               {accountError && <p className="error" role="alert">{t(accountError)}</p>}
               <button type="submit" className="big-button accent" disabled={session === undefined || busy}>
                 {busy ? t('signin.working') : mode === 'signUp' ? t('signin.createAccount') : t('signin.logIn')}
