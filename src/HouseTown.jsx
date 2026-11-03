@@ -3,6 +3,7 @@ import StreetView from './StreetView.jsx'
 import FinishDialog from './ui/FinishDialog.jsx'
 import LanternSheet from './ui/LanternSheet.jsx'
 import KeeperLanterns from './ui/KeeperLanterns.jsx'
+import ShareSheet from './ui/ShareSheet.jsx'
 import Room from './inside/Room.jsx'
 import {
   isNewLantern,
@@ -42,6 +43,7 @@ export default function HouseTown({ code, inside }) {
   const [keeperLanterns, setKeeperLanterns] = useState(null)
   const [keeperLanternsFailed, setKeeperLanternsFailed] = useState(false)
   const [lanternListOpen, setLanternListOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false) // keeper only: link, QR code and printable card
   // The newest lantern we've already told the database the keeper has seen, so we tell it only once.
   const seenSent = useRef(null)
 
@@ -208,6 +210,8 @@ export default function HouseTown({ code, inside }) {
         onClose={() => setLanternOpen(false)}
       />
     )
+  } else if (shareOpen) {
+    bottom = <ShareSheet code={code} onClose={() => setShareOpen(false)} />
   } else if (lanternListOpen) {
     bottom = (
       <KeeperLanterns
@@ -267,7 +271,8 @@ export default function HouseTown({ code, inside }) {
         design={house.design}
         lanterns={house.lanternCount}
         showAccount={house.isKeeper}
-        focusHouse={lanternOpen || lanternListOpen}
+        onShare={house.isKeeper ? () => setShareOpen(true) : undefined}
+        focusHouse={lanternOpen || lanternListOpen || shareOpen}
         neighbours={house.neighbours}
         onChange={changeDesign}
         canEdit={canEdit}

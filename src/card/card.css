@@ -1,0 +1,322 @@
+/* ---------- The printable card page (/h/<code>/card) ---------- */
+
+.card-page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: max(14px, env(safe-area-inset-top)) 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-page h1 {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.card-message {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  line-height: 1.5;
+}
+
+.card-message h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+/* "Nobody has opened this house yet": the card carries the gift code, so handle it with care */
+.card-gift-note {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--sand);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.card-preview {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* On screen the card is drawn at its real size (85.6 mm is about 324 pixels, which fits
+   even small phones), with the rounded corners a real card has. */
+.card-preview .card-side {
+  border-radius: 3.2mm;
+  box-shadow: var(--shadow-card);
+}
+
+.card-preview figcaption {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.card-modes {
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-modes legend {
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* One of the two ways to print. The whole box is tappable. */
+.card-mode {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 2px solid #e6d5bd;
+  border-radius: 18px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.card-mode.chosen {
+  border-color: var(--accent);
+}
+
+.card-mode input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.card-mode > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.45;
+}
+
+.card-mode > span > span {
+  color: var(--ink-soft);
+}
+
+/* ---------- The card itself (sizes in mm and pt, because it's for paper) ---------- */
+
+.card-side {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  display: flex;
+  /* Print backgrounds and colors even if the print window says "no background graphics" */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Picture side */
+.card-front {
+  color: var(--cream);
+}
+
+.card-front-art {
+  position: absolute;
+  inset: 0;
+}
+
+.card-front-words {
+  position: relative; /* above the picture */
+  width: 40mm;
+}
+
+.card-brand {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-family: var(--font-display);
+  font-size: 9pt;
+  font-weight: 700;
+}
+
+.card-brand svg {
+  width: 6mm;
+  height: 6mm;
+}
+
+.card-front h2 {
+  margin: 3mm 0 0;
+  font-family: var(--font-display);
+  font-size: 14pt;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* QR side */
+.card-back {
+  gap: 4mm;
+  align-items: center;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.card-qr {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5mm;
+}
+
+/* The white box around the QR code is the "quiet zone" scanners need to find it */
+.card-qr-code {
+  width: 27mm;
+  height: 27mm;
+  padding: 2.5mm;
+  border-radius: 2mm;
+  background: #fff;
+}
+
+.card-qr-code svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.card-url {
+  font-size: 5.5pt;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.card-back-words {
+  min-width: 0;
+  font-size: 7.5pt;
+  line-height: 1.35;
+}
+
+.card-back-words h2 {
+  margin: 0 0 1.5mm;
+  font-family: var(--font-display);
+  font-size: 11pt;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.card-back-words p {
+  margin: 0;
+}
+
+.card-back-words ol {
+  margin: 0;
+  padding-left: 3.5mm;
+}
+
+.card-back-words li + li {
+  margin-top: 0.8mm;
+}
+
+.card-back-words .card-gift-code {
+  margin-top: 1.5mm;
+  padding: 1.2mm 2mm;
+  border-radius: 1.5mm;
+  background: var(--sand);
+  font-size: 10pt;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ---------- Printing ---------- */
+
+.card-print {
+  display: none;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  /* Print only the card, nothing else from the page */
+  .card-page > :not(.card-print) {
+    display: none !important;
+  }
+
+  .card-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+  }
+
+  .card-print {
+    display: block;
+  }
+
+  /* Print-shop file: one side per page, each page exactly the card size plus bleed */
+  .print-page {
+    break-after: page;
+  }
+
+  .print-page:last-child {
+    break-after: auto;
+  }
+
+  /* Home printing: back and front side by side near the top of an A4 sheet */
+  .print-a4 {
+    padding: 20mm 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8mm;
+  }
+
+  /* A thin cutting line around the outside, and short dashed marks above and below
+     showing where to fold (not across the card itself, where they'd show on the fold) */
+  .fold-strip {
+    position: relative;
+    display: flex;
+    outline: 0.2mm solid #999;
+  }
+
+  .fold-strip::before,
+  .fold-strip::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    height: 6mm;
+    border-left: 0.3mm dashed #999;
+  }
+
+  .fold-strip::before {
+    bottom: 100%;
+  }
+
+  .fold-strip::after {
+    top: 100%;
+  }
+
+  .print-a4-help {
+    margin: 0;
+    max-width: 150mm;
+    font-size: 10pt;
+    text-align: center;
+    color: #555;
+  }
+}

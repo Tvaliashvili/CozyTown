@@ -93,3 +93,21 @@ export async function removeLantern(lantern) {
   const { error } = await supabase.from('lanterns').delete().eq('id', lantern.id)
   if (error) throw error
 }
+
+// What the printable card needs. Only the keeper and admins can see a house this way,
+// so it returns null for anyone else (or when signed out).
+// giftCode is only filled in while nobody has claimed the house yet; after that it's used up.
+export async function loadCardInfo(code) {
+  // Signed out, the database refuses outright (an error, not an empty answer), so don't even ask.
+  const { data: auth } = await supabase.auth.getSession()
+  if (!auth.session) return null
+
+  const { data, error } = await supabase
+    .from('houses')
+    .select('title, gift_code, keeper_id')
+    .eq('code', code)
+    .maybeSingle()
+  if (error) throw error
+  if (!data) return null
+  return { title: data.title, giftCode: data.keeper_id ? null : data.gift_code }
+}

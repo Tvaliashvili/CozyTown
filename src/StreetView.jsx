@@ -5,7 +5,7 @@ import Customizer from './ui/Customizer.jsx'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
 import { Link } from './router.jsx'
-import { BackIcon, PersonIcon, SlideIcon } from './ui/icons.jsx'
+import { BackIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
 
 // The street screen, shared by the demo street (/town) and real houses (/h/<code>).
 //
@@ -16,6 +16,7 @@ import { BackIcon, PersonIcon, SlideIcon } from './ui/icons.jsx'
 // onEnter: when you can't decorate, tapping the house (or its label) calls this to step inside.
 // lanterns: how many visitor lanterns glow in the garden.
 // showAccount: a button to the account page (where you can sign out). For keepers.
+// onShare: a "Share your house" button in the top bar calls this. For keepers.
 // focusHouse: a panel in "bottom" (like the lantern screen) covers part of the street, so the
 // camera comes close and frames the house in the space left over, like it does for decorating.
 export default function StreetView({
@@ -23,6 +24,7 @@ export default function StreetView({
   design,
   lanterns = 0,
   showAccount = false,
+  onShare,
   focusHouse = false,
   neighbours,
   onChange,
@@ -90,6 +92,11 @@ export default function StreetView({
           </div>
         </div>
         <div className="top-bar-buttons">
+          {onShare && (
+            <button type="button" className="pill-button" onClick={onShare} aria-label={t('share.button')}>
+              <ShareIcon />
+            </button>
+          )}
           {/* Opens the sign-in page, which shows who's signed in and has "Sign out".
               Not a sign-out button right here: one accidental tap would lock a grandparent out,
               and there's no password-reset email yet. */}

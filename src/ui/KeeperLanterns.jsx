@@ -69,7 +69,7 @@ export default function KeeperLanterns({ list, failed, count, onRetry, onRemoved
       </div>
       {content}
       <button type="button" className="big-button soft" onClick={onClose}>
-        {t('keeperLantern.close')}
+        {t('close')}
       </button>
     </section>
   )

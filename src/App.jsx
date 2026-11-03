@@ -7,6 +7,7 @@ import { usePath } from './router.jsx'
 // The landing page stays small and fast, even on budget phones.
 const TownApp = lazy(() => import('./TownApp.jsx'))
 const SignIn = lazy(() => import('./pages/SignIn.jsx'))
+const CardPage = lazy(() => import('./card/CardPage.jsx'))
 
 export default function App() {
   const path = usePath()
@@ -26,6 +27,14 @@ export default function App() {
     // lowercase link still works. "/h/<code>/inside" is the room inside the same house.
     const [codePart, page] = path.startsWith('/h/') ? path.slice(3).split('/') : []
     const houseCode = codePart ? codePart.toUpperCase() : null
+    // The printable card is a plain page: no 3D town needed.
+    if (houseCode && page === 'card') {
+      return (
+        <Suspense fallback={null}>
+          <CardPage code={houseCode} />
+        </Suspense>
+      )
+    }
     return (
       <Suspense fallback={<div className="app" />}>
         {/* key: going from one house to another starts fresh instead of reusing the old one.

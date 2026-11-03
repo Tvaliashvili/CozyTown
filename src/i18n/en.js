@@ -135,7 +135,7 @@ export default {
   'signin.signOut': 'Sign out',
   'signin.anotherGift': 'Got another gift code? Enter it here',
   'signin.step2': 'Enter your gift code',
-  'signin.codeHint': "It's inside your card or on the keychain's tag.",
+  'signin.codeHint': "It's on your card or on the keychain's tag.",
   'signin.open': 'Open my house',
   'signin.opening': 'Opening…',
   'signin.signInFirst': 'Sign in or create an account in step 1 first. Then you can type your code here.',
@@ -157,6 +157,7 @@ export default {
   'house.failed.text': 'Check your internet connection and try again.',
   'house.home': 'Go to the home page',
   tryAgain: 'Try again',
+  close: 'Close',
   'save.error': "Your last change wasn't saved. Check your internet — it will try again when you tap.",
 
   // ---------- Making the outside final ----------
@@ -263,5 +264,40 @@ export default {
   'keeperLantern.removeYes': 'Yes, remove it',
   'keeperLantern.removeFailed': "It didn't work. Check your internet and try again.",
   'keeperLantern.keep': 'Keep it',
-  'keeperLantern.close': 'Close',
+
+  // ---------- Sharing the house (keeper) ----------
+  'share.button': 'Share your house',
+  'share.title': 'Share your house',
+  'share.text': 'Anyone with this link can visit, see the photos and light a lantern. Letters stay private.',
+  'share.linkLabel': 'Link to your house',
+  'share.share': 'Send the link…',
+  'share.copy': 'Copy the link',
+  'share.copied': 'Copied!',
+  'share.copyFailed': "Couldn't copy it. Press and hold the link above to copy it.",
+  'share.card': 'Print a card',
+
+  // ---------- The printable card ----------
+  'card.title': 'Printable card',
+  'card.backToHouse': 'Back to the house',
+  'card.loading': 'One moment…',
+  'card.notAllowed.title': 'Only the keeper can print this card',
+  'card.notAllowed.text': 'Sign in with the account that looks after this house.',
+  'card.giftNote': "Nobody has opened this house yet, so the card shows the gift code. Whoever has the code can claim the house: give it only to the person it's for.",
+  'card.frontSide': 'Front',
+  'card.backSide': 'Back',
+  'card.howTitle': 'How will you print it?',
+  'card.modeShop': 'At a print shop',
+  'card.shopHelp': 'Makes a PDF the size of a bank card, with 3 mm extra on every side for cutting. Tell the shop: “85.6 × 54 mm, 3 mm bleed included, two-sided.” In the print window, choose “Save as PDF”.',
+  'card.modeHome': 'At home',
+  'card.homeHelp': 'Prints on an A4 sheet. You cut it out and fold it in the middle, so no two-sided printing is needed. Thicker paper works best.',
+  'card.homeCutHelp': 'Cut along the outer line. Fold in the middle (where the dashes are), with the pictures facing out.',
+  'card.print': 'Print or save as PDF',
+  // On the card itself
+  'card.front.title': 'A little house, just for you',
+  'card.gift.title': 'Your house is waiting',
+  'card.gift.step1': 'Point your phone camera at the code.',
+  'card.gift.step2': 'Tap “{button}”.',
+  'card.gift.step3': 'Enter your gift code:',
+  'card.visit.title': 'Come visit',
+  'card.visit.text': 'Point your phone camera at the code to step inside.',
 }

@@ -894,6 +894,53 @@ textarea.text-field {
   text-align: center;
 }
 
+/* ---------- Sharing the house (keeper) ---------- */
+
+/* Uses the lantern sheet's look; on phones it stops below the house, like the lantern list */
+.lantern-sheet.share-sheet {
+  max-height: 66dvh;
+}
+
+@media (min-width: 900px) and (orientation: landscape) {
+  .lantern-sheet.share-sheet {
+    max-height: calc(100dvh - 104px);
+  }
+}
+
+.share-text {
+  margin: 0 0 4px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.share-link-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* Big enough that a friend can scan it straight off this screen */
+.share-qr {
+  flex: none;
+  width: 96px;
+  height: 96px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.share-qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.share-link {
+  min-width: 0;
+  font-size: 15px;
+}
+
 /* A quiet button for things you rarely need, like deleting */
 .link-button {
   display: inline-flex;
