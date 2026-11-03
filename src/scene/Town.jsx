@@ -16,7 +16,10 @@ const Stats = debug ? lazy(() => import('@react-three/drei').then((m) => ({ defa
 
 // myPlot: which plot (counted from the left) is the house being shown.
 // neighbours: { plotNumber: design } for the other houses; plots not listed are free.
-export default function Town({ myPlot, myDesign, neighbours, editing, onSelectMine, labelRef, onReady }) {
+// myLanterns: how many visitor lanterns glow in front of the house being shown.
+// editing: a panel covers part of the screen, so the camera frames the house in the space left.
+// tallPanel: that panel is the tall lantern screen (see CameraRig).
+export default function Town({ myPlot, myDesign, myLanterns, neighbours, editing, tallPanel, onSelectMine, labelRef, onReady }) {
   return (
     <Canvas
       // "demand": only redraw when something changes, instead of 60 times a second.
@@ -52,8 +55,15 @@ export default function Town({ myPlot, myDesign, neighbours, editing, onSelectMi
         shadow-camera-bottom={-24}
       />
 
-      <Street myPlot={myPlot} myDesign={myDesign} neighbours={neighbours} onSelectMine={onSelectMine} labelRef={labelRef} />
-      <CameraRig startX={PLOT_XS[myPlot]} focusX={editing ? PLOT_XS[myPlot] : null} />
+      <Street
+        myPlot={myPlot}
+        myDesign={myDesign}
+        myLanterns={myLanterns}
+        neighbours={neighbours}
+        onSelectMine={onSelectMine}
+        labelRef={labelRef}
+      />
+      <CameraRig startX={PLOT_XS[myPlot]} focusX={editing ? PLOT_XS[myPlot] : null} tallPanel={tallPanel} />
       <ShadowRefresher design={myDesign} />
       <BreathingLights />
       <ReadySignal onReady={onReady} />

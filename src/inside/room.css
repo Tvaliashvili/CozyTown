@@ -239,37 +239,7 @@
   }
 }
 
-/* ----- Typing boxes (adding a photo, writing a letter) ----- */
-
-.field-label {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-  text-align: left;
-}
-
-.text-field {
-  width: 100%;
-  min-height: 54px;
-  padding: 0 16px;
-  border: 2px solid #d9c3a5;
-  border-radius: 16px;
-  background: #fff;
-  color: var(--ink);
-  font: inherit;
-  font-size: 17px; /* 16px or more stops iPhones zooming in when you tap the box */
-}
-
-textarea.text-field {
-  padding: 12px 16px;
-  line-height: 1.5;
-  resize: vertical;
-}
-
-.text-field:focus {
-  outline: none;
-  border-color: var(--accent);
-}
+/* Typing boxes (.field-label, .text-field) are in src/styles.css: the lantern screen uses them too. */
 
 /* ----- "Hang this photo?" ----- */
 

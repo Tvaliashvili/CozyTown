@@ -2,6 +2,7 @@ import { getMaterial } from './materials.js'
 import { PLOT_WIDTH, PLOT_Z } from './layout.js'
 import { WALL_HEIGHT, GABLE_RISE, HOUSE_Z } from './parts/dimensions.js'
 import House from './House.jsx'
+import GardenLanterns from './parts/GardenLanterns.jsx'
 import ScreenAnchor from './ScreenAnchor.jsx'
 
 const COLORS = {
@@ -17,7 +18,8 @@ const TAP_TOLERANCE = 10
 
 // One plot: a lawn and a stone path, plus either a house or a "free plot" sign.
 // onSelect makes the house tappable; labelRef pins an HTML label (from App.jsx) above the roof.
-export default function Plot({ x, design, onSelect, labelRef }) {
+// lanterns: how many visitor lanterns glow on the lawn (only known for the house being shown).
+export default function Plot({ x, design, onSelect, labelRef, lanterns = 0 }) {
   function handleClick(event) {
     if (!onSelect || event.delta > TAP_TOLERANCE) return
     event.stopPropagation()
@@ -51,6 +53,8 @@ export default function Plot({ x, design, onSelect, labelRef }) {
       ) : (
         <FreeSign />
       )}
+
+      <GardenLanterns count={lanterns} />
 
       {labelRef && <ScreenAnchor target={labelRef} position={[0, WALL_HEIGHT + GABLE_RISE + 1.1, HOUSE_Z]} />}
     </group>

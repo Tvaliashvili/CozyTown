@@ -228,4 +228,25 @@ export default {
   'letters.deleteYes': 'დიახ, წაშლა',
   'letters.deleteFailed': 'ვერ მოხერხდა. შეამოწმეთ ინტერნეტი და სცადეთ ხელახლა.',
   'letters.keep': 'დატოვება',
+
+  // ---------- ქუჩის ზედა ზოლი (DRAFT: founder to review) ----------
+  'street.home': 'მთავარი გვერდი',
+  'street.account': 'თქვენი ანგარიში და გასვლა',
+
+  // ---------- სტუმრების ფარნები (DRAFT: founder to review) ----------
+  'lantern.title': 'ფარნის ანთება',
+  'lantern.textNone': 'აცნობეთ, რომ აქ იყავით. თქვენი ფარანი ბაღში პირველი იქნება.',
+  'lantern.textOne': 'აცნობეთ, რომ აქ იყავით. ბაღში უკვე ერთი ფარანი ანთია.',
+  'lantern.textMany': 'აცნობეთ, რომ აქ იყავით. ბაღში უკვე {n} ფარანი ანთია.',
+  'lantern.nameLabel': 'თქვენი სახელი (არასავალდებულო)',
+  'lantern.namePlaceholder': 'ნანა',
+  'lantern.messageLabel': 'რამდენიმე სიტყვა (არასავალდებულო)',
+  'lantern.messagePlaceholder': 'შენზე ვფიქრობ',
+  'lantern.lightMine': 'ჩემი ფარნის ანთება',
+  'lantern.lighting': 'ინთება…',
+  'lantern.notNow': 'ახლა არა',
+  'lantern.note': 'ანგარიში საჭირო არ არის. ფარანი დაელოდება მათ, როცა შემდეგ სახლს გახსნიან.',
+  'lantern.lit': 'თქვენი ფარანი ბაღში ანთია',
+  'lantern.failed': 'ვერ აინთო. შეამოწმეთ ინტერნეტი და სცადეთ ხელახლა.',
+  'lantern.tooMany': 'ბოლო ერთ საათში აქ ბევრი ფარანი აინთო. გთხოვთ, ცოტა მოგვიანებით სცადოთ.',
 }

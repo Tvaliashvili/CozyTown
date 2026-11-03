@@ -56,6 +56,26 @@ export const ShareIcon = () => (
   <Line size={18}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" /></Line>
 )
 export const DoorIcon = () => <Line><path d="M6 21V9a6 6 0 0 1 12 0v12" /><path d="M4 21h16" /><circle cx="14.5" cy="14" r="1" /></Line>
+export const PersonIcon = () => <Line><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></Line>
+
+// Visitor lanterns. These two are filled, not line icons: a flame reads best as a solid shape.
+export const FlameIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 2c-3 4-5 7-5 10a5 5 0 0 0 10 0c0-3-2-6-5-10z" fill="#f08a5d" />
+    <path d="M12 11c-1.4 2-2 3.3-2 4.5a2 2 0 0 0 4 0c0-1.2-.6-2.5-2-4.5z" fill="#fff3cf" />
+  </svg>
+)
+export const LanternPicture = () => (
+  <svg width="52" height="60" viewBox="0 0 52 60" aria-hidden="true">
+    <circle cx="26" cy="32" r="26" fill="#ffd978" opacity="0.35" />
+    <path d="M26 2v6" stroke="#4a3b33" strokeWidth="3" strokeLinecap="round" />
+    <rect x="19" y="8" width="14" height="5" rx="2" fill="#4a3b33" />
+    <path d="M14 16 h24 l4 10 h-32z" fill="#4a3b33" />
+    <rect x="12" y="26" width="28" height="24" rx="4" fill="#ffe08a" stroke="#4a3b33" strokeWidth="3" />
+    <path d="M26 31 c-4 5 -4 9 0 12 c4 -3 4 -7 0 -12z" fill="#f08a5d" />
+    <rect x="10" y="50" width="32" height="6" rx="2" fill="#4a3b33" />
+  </svg>
+)
 
 // One icon per customizer tab (ids from src/data/options.js).
 export const TAB_ICONS = {

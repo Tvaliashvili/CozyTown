@@ -26,7 +26,9 @@ function clamp(value, min, max) {
 // startX: where along the street the camera starts (in front of the house being shown).
 // focusX: when set, the camera glides close to the house at that X (for decorating)
 // and dragging is switched off. When null, you can slide along the street.
-export default function CameraRig({ startX = PLOT_XS[3], focusX = null }) {
+// tallPanel: on phones, the panel covering the bottom is taller than the decorating one
+// (the lantern screen), so the house has to sit higher up.
+export default function CameraRig({ startX = PLOT_XS[3], focusX = null, tallPanel = false }) {
   const { camera, gl, size, invalidate } = useThree()
   const targetX = useRef(startX)
   // How many world units one pixel of finger movement is worth, so the street follows the finger.
@@ -42,7 +44,7 @@ export default function CameraRig({ startX = PLOT_XS[3], focusX = null }) {
   // The town only redraws on request, so ask for a frame whenever the camera has somewhere to go.
   useEffect(() => {
     invalidate()
-  }, [focusX, invalidate])
+  }, [focusX, tallPanel, invalidate])
 
   useEffect(() => {
     const el = gl.domElement
@@ -106,6 +108,10 @@ export default function CameraRig({ startX = PLOT_XS[3], focusX = null }) {
       const panelShare = SIDE_PANEL_SPACE / size.width
       const halfVisibleWidth = distance * Math.tan(fovRadians / 2) * (size.width / size.height)
       shiftX = panelShare * halfVisibleWidth
+    } else if (tallPanel) {
+      // Tall panel at the bottom: aim lower still, so the house and its garden fit in the top third.
+      distance = 22
+      lookHeight = -3.4
     } else {
       // Panel at the bottom: aim low so the whole house, roof included, sits in the top half.
       distance = 18

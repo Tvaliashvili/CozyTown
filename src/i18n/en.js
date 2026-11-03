@@ -226,4 +226,25 @@ export default {
   'letters.deleteYes': 'Yes, delete it',
   'letters.deleteFailed': "It didn't work. Check your internet and try again.",
   'letters.keep': 'Keep it',
+
+  // ---------- The street's top bar ----------
+  'street.home': 'Home page',
+  'street.account': 'Your account and signing out',
+
+  // ---------- Visitor lanterns ----------
+  'lantern.title': 'Light a lantern',
+  'lantern.textNone': 'Say you stopped by. Yours will be the first lantern in the garden.',
+  'lantern.textOne': 'Say you stopped by. One lantern is already glowing in the garden.',
+  'lantern.textMany': 'Say you stopped by. {n} lanterns are already glowing in the garden.',
+  'lantern.nameLabel': 'Your name (optional)',
+  'lantern.namePlaceholder': 'Nana',
+  'lantern.messageLabel': 'A few words (optional)',
+  'lantern.messagePlaceholder': 'Thinking of you',
+  'lantern.lightMine': 'Light my lantern',
+  'lantern.lighting': 'Lighting it…',
+  'lantern.notNow': 'Not now',
+  'lantern.note': "No account needed. It'll be waiting for them the next time they open the house.",
+  'lantern.lit': 'Your lantern is glowing in the garden',
+  'lantern.failed': "It didn't light. Check your internet and try again.",
+  'lantern.tooMany': 'Lots of lanterns were lit here in the last hour. Please try again a little later.',
 }

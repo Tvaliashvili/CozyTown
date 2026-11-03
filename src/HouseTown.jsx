@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import StreetView from './StreetView.jsx'
 import FinishDialog from './ui/FinishDialog.jsx'
+import LanternSheet from './ui/LanternSheet.jsx'
 import Room from './inside/Room.jsx'
 import { loadHouse, saveHouseDesign, submitHouseDesign } from './data/houses.js'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
 import { Link, navigate } from './router.jsx'
-import { DoorIcon, GiftIcon, HouseIcon } from './ui/icons.jsx'
+import { DoorIcon, FlameIcon, GiftIcon, HouseIcon } from './ui/icons.jsx'
 
 // Wait this long after the last tap before saving, so a burst of taps becomes one save.
 const SAVE_DELAY_MS = 700
@@ -17,7 +18,8 @@ const FINISHED_MESSAGE_MS = 6000
 //   Keeper, design not final yet → can decorate, every change is saved, then "Make it final".
 //   Keeper, design final         → looks at it.
 //   Anyone else                  → looks at it. If nobody has claimed it yet, they're offered the gift-code page.
-// Once claimed, everyone can step inside (/h/<code>/inside, the "inside" prop) to see the room.
+// Once claimed, everyone can step inside (/h/<code>/inside, the "inside" prop) to see the room,
+// and visitors can light a lantern in the garden.
 export default function HouseTown({ code, inside }) {
   const { t } = useI18n()
   // 'loading' | 'missing' | 'failed' | 'ready'
@@ -26,6 +28,8 @@ export default function HouseTown({ code, inside }) {
   const [saveFailed, setSaveFailed] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [justFinished, setJustFinished] = useState(false)
+  const [lanternOpen, setLanternOpen] = useState(false)
+  const [lanternLit, setLanternLit] = useState(false) // this visitor lit one during this visit
 
   // The latest design that hasn't been sent to the database yet, and the timer that will send it.
   const unsaved = useRef(null)
@@ -90,6 +94,13 @@ export default function HouseTown({ code, inside }) {
     setTimeout(() => setJustFinished(false), FINISHED_MESSAGE_MS)
   }
 
+  // The new lantern appears in the garden right away; the sheet closes so the visitor can see it.
+  function onLanternLit() {
+    setHouse((current) => ({ ...current, lanternCount: current.lanternCount + 1 }))
+    setLanternOpen(false)
+    setLanternLit(true)
+  }
+
   function goInside() {
     navigate(`/h/${code}/inside`, { state: { fromStreet: true } })
   }
@@ -137,12 +148,41 @@ export default function HouseTown({ code, inside }) {
         {t('house.claimIt')}
       </Link>
     )
-  } else {
+  } else if (lanternOpen) {
     bottom = (
-      <button type="button" className="big-button accent enter-call" onClick={goInside}>
-        <DoorIcon />
-        {t('room.enter')}
-      </button>
+      <LanternSheet
+        code={code}
+        count={house.lanternCount}
+        onLit={onLanternLit}
+        onClose={() => setLanternOpen(false)}
+      />
+    )
+  } else {
+    // Keepers don't light lanterns at their own house; the lanterns are for them.
+    let lanternPart = null
+    if (lanternLit) {
+      lanternPart = (
+        <p className="lantern-lit" role="status">
+          <FlameIcon />
+          {t('lantern.lit')}
+        </p>
+      )
+    } else if (!house.isKeeper) {
+      lanternPart = (
+        <button type="button" className="big-button gold" onClick={() => setLanternOpen(true)}>
+          <FlameIcon />
+          {t('lantern.title')}
+        </button>
+      )
+    }
+    bottom = (
+      <div className="street-actions">
+        {lanternPart}
+        <button type="button" className="big-button accent" onClick={goInside}>
+          <DoorIcon />
+          {t('room.enter')}
+        </button>
+      </div>
     )
   }
 
@@ -151,6 +191,9 @@ export default function HouseTown({ code, inside }) {
       <StreetView
         plot={house.plot}
         design={house.design}
+        lanterns={house.lanternCount}
+        showAccount={house.isKeeper}
+        focusHouse={lanternOpen}
         neighbours={house.neighbours}
         onChange={changeDesign}
         canEdit={canEdit}
