@@ -355,6 +355,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.6rem;
+  outline: none; /* it's focused only for screen readers, so no ring */
 }
 
 .letters-empty {

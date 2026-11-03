@@ -50,8 +50,10 @@ export async function addToCapsule(code, { fromName, body, photo }) {
 }
 
 // Everything inside, oldest first, once the day has come. Photos get a link that works for a day.
-export async function openCapsule(code) {
-  const { data, error } = await supabase.rpc('open_capsule', { house_code: code })
+// markSeen: false for "Download everything", so the zip doesn't count as the keeper looking inside
+// and the "it has opened!" notice stays until they really do.
+export async function openCapsule(code, { markSeen = true } = {}) {
+  const { data, error } = await supabase.rpc('open_capsule', { house_code: code, mark_seen: markSeen })
   if (error) throw error
   const paths = data.filter((item) => item.photo_path).map((item) => item.photo_path)
   const urls = {}

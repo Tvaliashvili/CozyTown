@@ -95,6 +95,11 @@ export default async function run(db, { as, attempt, check }) {
   check('stranger cannot see capsule files', r.result?.rows.length === 0, r.error)
 
   await as(KEEPER)
+  // "Download everything" reads it without counting as looking inside (QA Q8)
+  r = await attempt('select * from public.open_capsule($1, mark_seen => false)', [code])
+  check('the zip can read it on the day', r.result?.rows.length === 2, r.error)
+  r = await attempt('select * from public.get_house($1)', [code])
+  check('reading it for the zip keeps the news', r.result?.rows[0]?.capsule_news === true, r.error)
   r = await attempt('select * from public.open_capsule($1)', [code])
   check('keeper opens it on the day', r.result?.rows.length === 2 && r.result.rows[0].body === 'For your 18th birthday', r.error ?? JSON.stringify(r.result?.rows))
   r = await attempt('select * from public.get_house($1)', [code])

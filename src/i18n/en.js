@@ -364,6 +364,7 @@ export default {
   'helpers.youHelp': "You're helping to decorate this house.",
   'letters.onlyOwn': 'You see the letters you wrote. The rest of the mailbox is just for the keeper.',
   'signin.invited': "You've been invited to help decorate a house. Sign in or create an account in step 1, then tap the button below.",
+  'signin.invitedSignedIn': "You've been invited to help decorate a house. Tap the button below to join.",
   'signin.error.inviteUsed': 'This invitation has already been used. Ask the keeper for a new one.',
   'signin.error.inviteExpired': 'This invitation has expired. Ask the keeper for a new one.',
   'signin.error.ownHouse': 'This is your own house. You are already its keeper.',

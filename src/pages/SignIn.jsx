@@ -204,7 +204,7 @@ export default function SignIn() {
 
         {showGiftForm && <form className="card signin-step" onSubmit={claimGift}>
           <h2><span className="step-badge">2</span>{codeFromLink ? t('signin.step2Invite') : t('signin.step2')}</h2>
-          {codeFromLink && <p className="signin-invited">{t('signin.invited')}</p>}
+          {codeFromLink && <p className="signin-invited">{t(signedIn ? 'signin.invitedSignedIn' : 'signin.invited')}</p>}
           {/* The box below stays locked until step 1 is done, so say so right at the top. */}
           {!signedIn && (
             <p className="signin-locked">

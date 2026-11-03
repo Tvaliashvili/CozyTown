@@ -24,6 +24,8 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   const h = await openPage(helper)
   await h.goto(`${base}/signin?code=${inviteCode}`)
   await h.waitForSelector('.signin-invited', { timeout: 20000 })
+  await wait(1000)
+  check('signed in already, the note just says to tap the button (Q10)', !(await text(h, '.signin-invited')).includes('step 1'))
   check('the code is already filled in', (await h.$eval('#gift-code', (input) => input.value)).replace(/-/g, '') === inviteCode.replace(/-/g, ''))
   await h.waitForFunction(() => !document.querySelector('form.signin-step button[type=submit]').disabled, { timeout: 15000 })
   await h.click('form.signin-step button[type=submit]')

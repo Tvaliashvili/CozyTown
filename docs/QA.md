@@ -20,9 +20,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
 | Q7 | 🟢 | Storage | Photo **files can be left behind** with nothing pointing to them: when a house is deleted (rows go, files stay), or when a capsule photo uploads but sealing it fails. They cost storage space, nothing else. | A cleanup step in the nightly backup script (Q1): delete files whose house or photo row no longer exists. |
-| Q8 | 🟢 | Capsule | If the keeper presses "Download everything" after the capsule opens but *before* looking inside, the zip counts as looking, so the "Your time capsule has opened!" notice disappears. | Let the export read the capsule without marking it seen. |
-| Q9 | 🟢 | Accessibility | Letters, Time capsule and Family helpers pages don't move screen-reader focus to their title when they open (the share sheet does). | Focus the title on open, like `ShareSheet.jsx`. |
-| Q10 | 🟢 | Sign-in | The invite note says "Sign in or create an account in step 1" even to someone already signed in. | Show a shorter note when signed in. |
 | Q16 | 🟢 | Backups | Every backup is a full copy of all photos, and 42 are kept. R2's free 10 GB fills up at about 200 MB per backup (~1,000 photos). The script fails loudly at 8 GB. | Before that: copy each photo to R2 only once (photos never change), and keep only the database nightly. |
 
 ### Questions for the founder (product choices made without asking)
@@ -43,6 +40,9 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Date | What | Commit |
 |---|---|---|---|
+| Q8 | 2026-11-03 | 🟢 "Download everything" counted as looking inside an opened capsule, so the street notice vanished unseen. `open_capsule()` got a `mark_seen` switch (migration `20261106000000`, applied); the zip passes false. | *(this commit)* |
+| Q9 | 2026-11-03 | 🟢 Letters, Time capsule and Family helpers now move screen-reader focus to their title when they open (Letters and the capsule also when they change view). | *(this commit)* |
+| Q10 | 2026-11-03 | 🟢 The invite note told already signed-in people to sign in. Now it just says to tap the button. Georgian text is DRAFT. | *(this commit)* |
 | Q4 | 2026-11-03 | 🟠 The tests lived only in Claude's temporary folders. Now they are in `tests/`: `npm run test:db` (9 files, 173 checks, all rolled back) and `npm run test:browser` (7 files, 72 checks, throwaway accounts removed). See `tests/README.md`. | *(this commit)* |
 | Q1 | 2026-11-03 | 🔴 There was no backup. Now every night (05:00 Tbilisi) GitHub saves the database, login accounts and every photo, encrypted, to Cloudflare R2: 30 nightly + 12 monthly. `/admin` turns red if backups stop. First real run on GitHub passed and `npm run backup:check` opened it. See `docs/BACKUPS.md`. | 12efae9 |
 | Q3 | 2026-11-03 | 🟠 The phone's Back button left the whole room (or the house) instead of closing the page on top. Now every page or sheet that opens over the screen (letters, a letter, capsule, helpers, a photo, the decorating panel, lantern and share sheets, "make it final") adds a history step, so Back closes just that. `src/lib/useBackState.js`. | *(this commit)* |

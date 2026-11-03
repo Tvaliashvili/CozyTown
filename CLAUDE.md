@@ -65,8 +65,9 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   (the public publishable key, safe in the browser; data access is controlled by database rules).
   Never commit secrets or put the service/secret key in frontend code.
 - Database changes live in `supabase/migrations/` (one SQL file per change, never edit an applied one).
-  Applied by a Node `pg` script over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`,
-  user `postgres.<ref>`. Test first inside a transaction that rolls back.
+  Applied over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`, user `postgres.<ref>`:
+  test first with `npm run test:db -- --with supabase/migrations/<file>.sql` (rolled back), then apply with
+  `npm run migrate -- supabase/migrations/<file>.sql`.
 - Hosting is a Cloudflare **Worker with static assets** (not Pages), name `cozytown`, live at
   https://cozytown.sandrotvaliashvili10.workers.dev. Settings in `wrangler.jsonc` (SPA fallback so
   `/h/<code>` works). Cloudflare builds from GitHub `main` on each push; the build needs the two

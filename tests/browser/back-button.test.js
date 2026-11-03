@@ -57,9 +57,16 @@ export default async function run({ check, newUser, newHouse, openPage, clickTex
   await wait(700)
   await isAt('the on-screen Back button closes letters', { dialog: null, room: true, depth: 0 })
 
-  for (const name of ['Time capsule', 'Family helpers']) {
+  // Screen readers start at the page title (QA Q9)
+  const titleFocused = () => page.evaluate(() => document.activeElement === document.querySelector('.letters h2'))
+  for (const name of ['Letters', 'Time capsule', 'Family helpers']) {
     await clickText(page, '.room-card', name)
     await wait(300)
+    check(`${name}: the title has focus`, await titleFocused())
+    if (name === 'Letters') {
+      await back()
+      continue
+    }
     await isAt(`${name} opens`, { dialog: name, depth: 1 })
     await back()
     await isAt(`Back closes ${name}`, { dialog: null, room: true, depth: 0 })

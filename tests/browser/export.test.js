@@ -66,6 +66,8 @@ export default async function run({ db, browser, check, newUser, newHouse, openP
     html = strFromU8(files['index.html'] ?? new Uint8Array())
     check('an opened capsule is in the zip', html.includes('For later') && names.some((n) => n.startsWith('capsule/') && n.endsWith('.jpg')))
     check('lanterns.txt has the lantern', strFromU8(files['lanterns.txt'] ?? new Uint8Array()).includes('Nana'))
+    const { rows: [chest] } = await db.query('select keeper_opened_at from public.capsules where house_id = $1', [house.id])
+    check('downloading does not count as looking inside (Q8)', chest.keeper_opened_at === null)
 
     // Open the offline page from disk with the internet switched off
     const out = path.join(downloads, 'unzipped')

@@ -11,6 +11,7 @@
     "backup:check": "node scripts/backup/restore.js check",
     "backup:extract": "node scripts/backup/restore.js extract",
     "backup:restore": "node scripts/backup/restore.js restore",
+    "migrate": "node scripts/migrate.js",
     "test:db": "node tests/db/run.js",
     "test:browser": "node tests/browser/run.js",
     "test": "node tests/db/run.js && node tests/browser/run.js"

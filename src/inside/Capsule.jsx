@@ -18,6 +18,9 @@ export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) 
   // 'main' | 'add' | 'date'. The phone's Back button goes back to 'main', like the Back button on screen.
   const [view, setView] = useBackState('main')
   const [sealed, setSealed] = useState(false) // just put something in
+  // A screen reader starts reading from the title when the page opens or changes view.
+  const heading = useRef(null)
+  useEffect(() => heading.current?.focus(), [view])
 
   function back() {
     if (view !== 'main') setView('main')
@@ -84,7 +87,7 @@ export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) 
             <BackIcon />
             {t('letters.back')}
           </button>
-          <h2 id="capsule-title">{t('capsule.title')}</h2>
+          <h2 id="capsule-title" ref={heading} tabIndex={-1}>{t('capsule.title')}</h2>
         </div>
         {content}
       </div>

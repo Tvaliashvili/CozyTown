@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createInvite, inviteUrl, loadHelpers, removeHelper } from '../data/helpers.js'
 import { groupGiftCode } from '../data/links.js'
 import { useI18n } from '../i18n/i18n.jsx'
@@ -13,6 +13,9 @@ export default function Helpers({ code, onClose }) {
   const [invite, setInvite] = useState(null) // the invite code just made
   // 'idle' | 'making' | 'failed' | 'tooMany'
   const [inviteState, setInviteState] = useState('idle')
+  // A screen reader starts reading from the title when the page opens.
+  const heading = useRef(null)
+  useEffect(() => heading.current?.focus(), [])
 
   function load() {
     setFailed(false)
@@ -38,7 +41,7 @@ export default function Helpers({ code, onClose }) {
             <BackIcon />
             {t('letters.back')}
           </button>
-          <h2 id="helpers-title">{t('helpers.title')}</h2>
+          <h2 id="helpers-title" ref={heading} tabIndex={-1}>{t('helpers.title')}</h2>
         </div>
 
         <p className="capsule-text">{t('helpers.text')}</p>

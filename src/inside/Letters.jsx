@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { deleteLetter, sendLetter } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { formatDate } from '../lib/formatDate.js'
@@ -14,6 +14,9 @@ export default function Letters({ code, letters, failed, onRetry, onChange, onCl
   // The phone's Back button goes from a letter back to the list, like the Back button on screen.
   const [reading, setReading] = useBackState(null)
   const [writing, setWriting] = useBackState(false)
+  // A screen reader starts reading from the title when the page opens or changes view.
+  const heading = useRef(null)
+  useEffect(() => heading.current?.focus(), [writing, reading])
 
   function back() {
     if (reading || writing) {
@@ -80,7 +83,7 @@ export default function Letters({ code, letters, failed, onRetry, onChange, onCl
             <BackIcon />
             {t('letters.back')}
           </button>
-          <h2 id="letters-title">{writing ? t('letters.write') : t('room.lettersTitle')}</h2>
+          <h2 id="letters-title" ref={heading} tabIndex={-1}>{writing ? t('letters.write') : t('room.lettersTitle')}</h2>
         </div>
         {content}
       </div>

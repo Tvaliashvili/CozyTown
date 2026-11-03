@@ -21,7 +21,7 @@ export async function exportHouse({ code, title, design, t, lang }) {
     loadAllLanterns(code),
     loadCapsule(code),
   ])
-  const capsuleItems = capsule?.isOpen ? await openCapsule(code) : []
+  const capsuleItems = capsule?.isOpen ? await openCapsule(code, { markSeen: false }) : []
 
   const files = {}
   // Photos are already compressed, so they're stored as they are (level 0) to save the phone's effort.
