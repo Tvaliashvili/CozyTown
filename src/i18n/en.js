@@ -247,4 +247,21 @@ export default {
   'lantern.lit': 'Your lantern is glowing in the garden',
   'lantern.failed': "It didn't light. Check your internet and try again.",
   'lantern.tooMany': 'Lots of lanterns were lit here in the last hour. Please try again a little later.',
+
+  // ---------- The keeper's lanterns (who stopped by) ----------
+  'keeperLantern.title': 'Lanterns from visitors',
+  'keeperLantern.new': '{n} new',
+  'keeperLantern.newTag': 'New',
+  'keeperLantern.textOne': 'One lantern is glowing in your garden.',
+  'keeperLantern.textMany': '{n} lanterns are glowing in your garden.',
+  'keeperLantern.someone': 'Someone stopped by',
+  'keeperLantern.loading': 'Finding your lanterns…',
+  'keeperLantern.failed': "Your lanterns didn't load. Check your internet and try again.",
+  'keeperLantern.onlyNewest': 'Showing the newest {n}.',
+  'keeperLantern.remove': 'Remove',
+  'keeperLantern.removeSure': 'Take this lantern out of your garden?',
+  'keeperLantern.removeYes': 'Yes, remove it',
+  'keeperLantern.removeFailed': "It didn't work. Check your internet and try again.",
+  'keeperLantern.keep': 'Keep it',
+  'keeperLantern.close': 'Close',
 }

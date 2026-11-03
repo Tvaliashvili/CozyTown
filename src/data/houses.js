@@ -58,3 +58,38 @@ export async function lightLantern(code, fromName, message) {
     throw error
   }
 }
+
+// The keeper's own view of the lanterns: who lit them and what they wrote, newest first.
+// Only the keeper gets anything back (the database hides lanterns from everyone else).
+// seenUntil: the newest lantern the keeper has already looked at (empty if never). Anything newer is "new".
+export const KEEPER_LANTERN_LIMIT = 100
+
+export async function loadKeeperLanterns(code) {
+  const { data, error } = await supabase
+    .from('houses')
+    .select('keeper_seen_at, lanterns(id, from_name, message, created_at)')
+    .eq('code', code)
+    .order('created_at', { referencedTable: 'lanterns', ascending: false })
+    .limit(KEEPER_LANTERN_LIMIT, { referencedTable: 'lanterns' })
+    .single()
+  if (error) throw error
+  return { lanterns: data.lanterns, seenUntil: data.keeper_seen_at }
+}
+
+export function isNewLantern(lantern, seenUntil) {
+  return !seenUntil || Date.parse(lantern.created_at) > Date.parse(seenUntil)
+}
+
+// Remembers that the keeper has seen every lantern up to this one.
+// We store the lantern's own time, not the phone's clock: a phone set to the wrong time
+// would otherwise hide new lanterns or keep old ones "new" forever.
+export async function markLanternsSeen(code, newestLantern) {
+  const { error } = await supabase.from('houses').update({ keeper_seen_at: newestLantern.created_at }).eq('code', code)
+  if (error) throw error
+}
+
+// The keeper takes away an unwanted lantern (anyone with the link can light one).
+export async function removeLantern(lantern) {
+  const { error } = await supabase.from('lanterns').delete().eq('id', lantern.id)
+  if (error) throw error
+}

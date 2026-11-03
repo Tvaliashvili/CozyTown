@@ -249,4 +249,21 @@ export default {
   'lantern.lit': 'თქვენი ფარანი ბაღში ანთია',
   'lantern.failed': 'ვერ აინთო. შეამოწმეთ ინტერნეტი და სცადეთ ხელახლა.',
   'lantern.tooMany': 'ბოლო ერთ საათში აქ ბევრი ფარანი აინთო. გთხოვთ, ცოტა მოგვიანებით სცადოთ.',
+
+  // ---------- The keeper's lanterns (who stopped by) — DRAFT, founder to review ----------
+  'keeperLantern.title': 'სტუმრების ფარნები',
+  'keeperLantern.new': '{n} ახალი',
+  'keeperLantern.newTag': 'ახალი',
+  'keeperLantern.textOne': 'თქვენს ბაღში ერთი ფარანი ანთია.',
+  'keeperLantern.textMany': 'თქვენს ბაღში {n} ფარანი ანთია.',
+  'keeperLantern.someone': 'ვიღაცამ გამოიარა',
+  'keeperLantern.loading': 'ფარნებს ვეძებთ…',
+  'keeperLantern.failed': 'ფარნები ვერ ჩაიტვირთა. შეამოწმეთ ინტერნეტი და სცადეთ ხელახლა.',
+  'keeperLantern.onlyNewest': 'ნაჩვენებია ბოლო {n}.',
+  'keeperLantern.remove': 'წაშლა',
+  'keeperLantern.removeSure': 'ამოვიღოთ ეს ფარანი თქვენი ბაღიდან?',
+  'keeperLantern.removeYes': 'დიახ, ამოიღეთ',
+  'keeperLantern.removeFailed': 'არ გამოვიდა. შეამოწმეთ ინტერნეტი და სცადეთ ხელახლა.',
+  'keeperLantern.keep': 'დატოვეთ',
+  'keeperLantern.close': 'დახურვა',
 }

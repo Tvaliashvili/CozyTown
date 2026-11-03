@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { deleteLetter, sendLetter } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
+import { formatDate } from '../lib/formatDate.js'
 import { BackIcon, PenIcon, TrashIcon } from '../ui/icons.jsx'
 
 // The mailbox: a full-screen page over the room with the house's letters. Keeper only.
@@ -196,9 +197,7 @@ function WriteLetter({ code, onSent, onCancel }) {
   )
 }
 
-// "3 November 2026", in the language the page is shown in.
 function LetterDate({ letter }) {
   const { lang } = useI18n()
-  const locale = lang === 'ka' ? 'ka-GE' : 'en-GB'
-  return new Date(letter.created_at).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })
+  return formatDate(letter.created_at, lang)
 }

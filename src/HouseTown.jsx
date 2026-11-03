@@ -2,8 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import StreetView from './StreetView.jsx'
 import FinishDialog from './ui/FinishDialog.jsx'
 import LanternSheet from './ui/LanternSheet.jsx'
+import KeeperLanterns from './ui/KeeperLanterns.jsx'
 import Room from './inside/Room.jsx'
-import { loadHouse, saveHouseDesign, submitHouseDesign } from './data/houses.js'
+import {
+  isNewLantern,
+  loadHouse,
+  loadKeeperLanterns,
+  markLanternsSeen,
+  saveHouseDesign,
+  submitHouseDesign,
+} from './data/houses.js'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
 import { Link, navigate } from './router.jsx'
@@ -19,7 +27,7 @@ const FINISHED_MESSAGE_MS = 6000
 //   Keeper, design final         → looks at it.
 //   Anyone else                  → looks at it. If nobody has claimed it yet, they're offered the gift-code page.
 // Once claimed, everyone can step inside (/h/<code>/inside, the "inside" prop) to see the room,
-// and visitors can light a lantern in the garden.
+// and visitors can light a lantern in the garden. The keeper sees who lit them, with the new ones marked.
 export default function HouseTown({ code, inside }) {
   const { t } = useI18n()
   // 'loading' | 'missing' | 'failed' | 'ready'
@@ -30,6 +38,12 @@ export default function HouseTown({ code, inside }) {
   const [justFinished, setJustFinished] = useState(false)
   const [lanternOpen, setLanternOpen] = useState(false)
   const [lanternLit, setLanternLit] = useState(false) // this visitor lit one during this visit
+  // Keeper only: who lit the lanterns, { lanterns, seenUntil } (see loadKeeperLanterns). null until loaded.
+  const [keeperLanterns, setKeeperLanterns] = useState(null)
+  const [keeperLanternsFailed, setKeeperLanternsFailed] = useState(false)
+  const [lanternListOpen, setLanternListOpen] = useState(false)
+  // The newest lantern we've already told the database the keeper has seen, so we tell it only once.
+  const seenSent = useRef(null)
 
   // The latest design that hasn't been sent to the database yet, and the timer that will send it.
   const unsaved = useRef(null)
@@ -37,15 +51,35 @@ export default function HouseTown({ code, inside }) {
 
   function load() {
     setStatus('loading')
+    setKeeperLanterns(null)
     loadHouse(code)
       .then((found) => {
         setHouse(found)
         setStatus(found ? 'ready' : 'missing')
+        // Loaded straight away, so the keeper sees "2 new" on the lantern button without tapping it.
+        if (found?.isKeeper && found.lanternCount > 0) loadLanternList()
       })
       .catch(() => setStatus('failed'))
   }
 
+  function loadLanternList() {
+    setKeeperLanternsFailed(false)
+    loadKeeperLanterns(code).then(setKeeperLanterns, () => setKeeperLanternsFailed(true))
+  }
+
   useEffect(load, [code])
+
+  // Once the keeper has the list in front of them, the database remembers they've seen it,
+  // so next time only lanterns lit after today count as new.
+  // The "new" tags on screen stay until the list closes, so they can still tell which ones are new.
+  useEffect(() => {
+    const newest = keeperLanterns?.lanterns[0]
+    if (!lanternListOpen || !newest || !isNewLantern(newest, keeperLanterns.seenUntil)) return
+    if (seenSent.current === newest.id) return
+    seenSent.current = newest.id
+    // If this fails, they'll just show as new once more next time. Not worth an error message.
+    markLanternsSeen(code, newest).catch(() => {})
+  }, [lanternListOpen, keeperLanterns])
 
   // The town hides the loading screen itself once it's drawn; error pages have to do it here.
   useEffect(() => {
@@ -99,6 +133,23 @@ export default function HouseTown({ code, inside }) {
     setHouse((current) => ({ ...current, lanternCount: current.lanternCount + 1 }))
     setLanternOpen(false)
     setLanternLit(true)
+  }
+
+  function closeLanternList() {
+    setLanternListOpen(false)
+    // They've seen them all now, so the "new" tags and the count on the button go away.
+    setKeeperLanterns((current) => {
+      const newest = current?.lanterns[0]
+      if (!newest || !isNewLantern(newest, current.seenUntil)) return current
+      return { ...current, seenUntil: newest.created_at }
+    })
+  }
+
+  function onLanternRemoved(lantern) {
+    setKeeperLanterns((current) => ({ ...current, lanterns: current.lanterns.filter((l) => l.id !== lantern.id) }))
+    // It disappears from the garden too. With none left there's nothing to list.
+    setHouse((current) => ({ ...current, lanternCount: current.lanternCount - 1 }))
+    if (house.lanternCount === 1) setLanternListOpen(false)
   }
 
   function goInside() {
@@ -157,6 +208,17 @@ export default function HouseTown({ code, inside }) {
         onClose={() => setLanternOpen(false)}
       />
     )
+  } else if (lanternListOpen) {
+    bottom = (
+      <KeeperLanterns
+        list={keeperLanterns}
+        failed={keeperLanternsFailed}
+        count={house.lanternCount}
+        onRetry={loadLanternList}
+        onRemoved={onLanternRemoved}
+        onClose={closeLanternList}
+      />
+    )
   } else {
     // Keepers don't light lanterns at their own house; the lanterns are for them.
     let lanternPart = null
@@ -172,6 +234,18 @@ export default function HouseTown({ code, inside }) {
         <button type="button" className="big-button gold" onClick={() => setLanternOpen(true)}>
           <FlameIcon />
           {t('lantern.title')}
+        </button>
+      )
+    } else if (house.lanternCount > 0) {
+      // The keeper: see who lit them. Only once there's at least one.
+      const newCount = keeperLanterns
+        ? keeperLanterns.lanterns.filter((l) => isNewLantern(l, keeperLanterns.seenUntil)).length
+        : 0
+      lanternPart = (
+        <button type="button" className="big-button gold" onClick={() => setLanternListOpen(true)}>
+          <FlameIcon />
+          {t('keeperLantern.title')}
+          {newCount > 0 && <span className="new-chip">{t('keeperLantern.new').replace('{n}', newCount)}</span>}
         </button>
       )
     }
@@ -193,7 +267,7 @@ export default function HouseTown({ code, inside }) {
         design={house.design}
         lanterns={house.lanternCount}
         showAccount={house.isKeeper}
-        focusHouse={lanternOpen}
+        focusHouse={lanternOpen || lanternListOpen}
         neighbours={house.neighbours}
         onChange={changeDesign}
         canEdit={canEdit}

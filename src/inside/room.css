@@ -434,20 +434,3 @@
   font-weight: 700;
   text-align: center;
 }
-
-/* A quiet button for things you rarely need, like deleting */
-.link-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 48px;
-  margin: 0 auto;
-  padding: 0 16px;
-  border: none;
-  background: none;
-  color: #8a2f22;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
