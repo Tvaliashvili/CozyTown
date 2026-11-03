@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import { useI18n } from '../i18n/i18n.jsx'
-import { houseUrl, shortHouseUrl } from '../data/links.js'
+import { groupGiftCode, houseUrl, shortHouseUrl } from '../data/links.js'
 import { Logo } from '../ui/icons.jsx'
 import QrCode from '../ui/QrCode.jsx'
 
@@ -102,10 +102,4 @@ export function CardBack({ code, giftCode, title, bleed = 0 }) {
       </div>
     </div>
   )
-}
-
-// "GPUD5EPGW4D4" → "GPUD-5EPG-W4D4", easier to copy by hand. The dashes are fine to type:
-// claiming ignores anything that isn't a letter or a number.
-function groupGiftCode(code) {
-  return code.match(/.{1,4}/g).join('-')
 }

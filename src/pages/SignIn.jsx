@@ -55,6 +55,16 @@ export default function SignIn() {
       .then(({ data }) => setHouses(data ?? []))
   }, [session])
 
+  // Admins also get a link to the admin page. Only they see it, so it's in English only.
+  const [isAdmin, setIsAdmin] = useState(false)
+  useEffect(() => {
+    if (!session) {
+      setIsAdmin(false)
+      return
+    }
+    supabase.rpc('is_admin').then(({ data }) => setIsAdmin(data === true))
+  }, [session])
+
   // Email + password for now. We don't send a "confirm your email" message yet (no email service),
   // so Supabase signs people in straight away. Once our own email is set up, we can add confirmation
   // and "forgot password" links.
@@ -127,6 +137,9 @@ export default function SignIn() {
                   {t('signin.openHouse')} {house.title || t('yourHouse')}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link to="/admin" className="big-button soft">Admin page</Link>
+              )}
               <button type="button" className="text-button" onClick={() => supabase.auth.signOut()}>
                 {t('signin.signOut')}
               </button>

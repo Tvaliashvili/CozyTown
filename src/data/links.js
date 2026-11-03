@@ -11,3 +11,8 @@ export function houseUrl(code) {
 export function shortHouseUrl(code) {
   return houseUrl(code).replace('https://', '')
 }
+
+// "ABCDEFGHJKMN" → "ABCD-EFGH-JKMN": easier to read out and type. Dashes are ignored when claiming.
+export function groupGiftCode(code) {
+  return code.match(/.{1,4}/g).join('-')
+}

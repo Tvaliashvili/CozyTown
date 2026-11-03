@@ -8,9 +8,18 @@ import { usePath } from './router.jsx'
 const TownApp = lazy(() => import('./TownApp.jsx'))
 const SignIn = lazy(() => import('./pages/SignIn.jsx'))
 const CardPage = lazy(() => import('./card/CardPage.jsx'))
+const AdminPage = lazy(() => import('./admin/AdminPage.jsx'))
 
 export default function App() {
   const path = usePath()
+
+  if (path === '/admin') {
+    return (
+      <Suspense fallback={null}>
+        <AdminPage />
+      </Suspense>
+    )
+  }
 
   if (path === '/signin') {
     return (

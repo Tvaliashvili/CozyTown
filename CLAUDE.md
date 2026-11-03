@@ -88,6 +88,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
   a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the
   current address), because they get printed. Keepers reach it from the street's share button.
+- `/admin` is the founder's page for manual orders (`src/admin/`, English only, talks through
+  `src/data/admin.js`). One form creates the house, the order (buyer, contact, price, paid, note — kept in
+  `public.orders`, admins only) and the buyer's first letter. The house list marks orders paid, adds
+  letters (write-only: admins can't read letters), unlocks a paid redesign and links to the card.
+  Signed-in admins get an "Admin page" button on `/signin`.
 - Designs from the database always go through `cleanDesign()` (`src/data/design.js`), which drops
   any value the customizer doesn't offer.
 - The town and the sign-in page are lazy-loaded, so the landing page doesn't download three.js or
@@ -118,7 +123,7 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - [ ] **Phase 2 — Real houses (wk 5–7)**: keeper login, gift-code claim, save houses, one cozy
       interior room with photo frames and mailbox letters, private link, QR, printable PDF card, lanterns.
 - [ ] **Phase 3 — Capsule & sharing (wk 8–9)**: server-locked time capsule, co-decorator invites,
-      export zip, Georgian/English, admin page for manual orders.
+      export zip, Georgian/English, admin page for manual orders. *(Admin page built Nov 2026.)*
 - [ ] **Phase 4 — Pilot & polish (wk 10–11)**: 10–20 friends-and-family houses, grandparent
       usability fixes, performance, terms and privacy pages.
 - [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.

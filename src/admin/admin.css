@@ -1,0 +1,259 @@
+/* ---------- The admin page (/admin) ---------- */
+/* Only the founder uses it, mostly on a computer, so it's plain: one column, a lot of forms. */
+
+.admin-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: max(14px, env(safe-area-inset-top)) 16px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-who {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.admin-page h1,
+.admin-page h2 {
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.admin-page h3 {
+  margin: 10px 0 0;
+  font-size: 1.05rem;
+}
+
+.admin-page code {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.admin-page .pill-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.admin-box,
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-box p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+/* Price and "paid" side by side */
+.admin-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.admin-row .admin-field {
+  flex: 0 1 160px;
+}
+
+.admin-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-check input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--accent);
+}
+
+/* Plot buttons 1–8 */
+.admin-plots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-plots .choice {
+  min-width: 56px;
+  background: var(--cream);
+}
+
+.admin-plots .choice:disabled {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+/* The starting design: the customizer's buttons, a bit smaller */
+.admin-design {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--cream);
+}
+
+.admin-design-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swatch.small {
+  width: 42px;
+  height: 42px;
+  border-width: 3px;
+}
+
+.choice.small {
+  min-width: 72px;
+  min-height: 46px;
+}
+
+/* "House created" with its two codes */
+.admin-created {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #e3f0de;
+}
+
+.admin-created p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-actions .pill-button {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+  box-shadow: none;
+}
+
+/* ---------- The list of houses ---------- */
+
+.admin-houses {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-house {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 2px solid var(--sand);
+  border-radius: 18px;
+}
+
+.admin-house-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 1.1rem;
+}
+
+.admin-house p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.admin-house-meta {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.admin-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--sand);
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.chip.green {
+  background: #e3f0de;
+}
+
+.admin-order .paid {
+  color: #3d6b35;
+  font-weight: 800;
+}
+
+.admin-order .unpaid {
+  color: #8a2f22;
+  font-weight: 800;
+}
+
+.admin-note {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  white-space: pre-wrap;
+}
+
+.admin-ok {
+  font-weight: 700;
+  color: #3d6b35;
+}
