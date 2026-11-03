@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#7b6fa8" />
+    <meta name="theme-color" content="#2e2850" />
+    <meta name="description" content="A little house for someone you love. Fill it with photos and letters, and give the key as a gift." />
     <title>Cozy Town</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏡</text></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;700&family=Nunito:wght@400;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Noto+Sans+Georgian:wght@400;600;700&family=Noto+Serif+Georgian:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <!-- Loading screen styles live here (not in styles.css) so it appears instantly, before any JavaScript loads. -->
@@ -23,7 +24,7 @@
         align-items: center;
         justify-content: center;
         gap: 14px;
-        background: linear-gradient(to bottom, #7b6fa8 0%, #f4a58a 38%, #f6cfae 60%);
+        background: linear-gradient(to bottom, #2e2850 0%, #6b4f8c 30%, #c97a86 55%, #f1a98a 75%, #f6cfae 100%);
         color: #fff6e9;
         font-family: 'Nunito', 'Noto Sans Georgian', sans-serif;
         transition: opacity 0.5s ease;
@@ -96,6 +97,8 @@
       <div class="dots"><span></span><span></span><span></span></div>
     </div>
     <script>
+      // The loading screen is only for the 3D town. Other pages appear instantly, so remove it there.
+      if (!/^\/(town|h\/)/.test(location.pathname)) document.getElementById('boot').remove()
       try {
         if (localStorage.getItem('lang') === 'en') document.getElementById('boot-title').textContent = 'Cozy Town'
       } catch {}

@@ -1,7 +1,7 @@
 // Everything a house can be. To add a new color or style, add it here
 // (and a translation in src/i18n for style names).
 
-export const WALL_COLORS = ['#f6e7d0', '#f4c7b8', '#cfe3d2', '#c9daf0', '#f7dc8f', '#e8b4a0', '#d9c8e8', '#ffffff']
+export const WALL_COLORS = ['#f6e7d0', '#f4c7b8', '#cfe3d2', '#a8d8d2', '#c9daf0', '#f7dc8f', '#e8b4a0', '#d9c8e8', '#ffffff']
 export const ROOF_COLORS = ['#c2553f', '#7a4a3a', '#4f6d8f', '#5f8a5a', '#8e5b8a', '#3f3f4f']
 export const DOOR_COLORS = ['#a9774f', '#c94f4f', '#3f6e8c', '#5f8a5a', '#f2c14e', '#fff6e9']
 export const WINDOW_COLORS = ['#fff6e9', '#3f6e8c', '#5f8a5a', '#c94f4f', '#a9774f', '#4a3b33']

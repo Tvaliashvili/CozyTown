@@ -6,7 +6,7 @@ import { setGlowIntensity } from './materials.js'
 import { PLOT_XS } from './layout.js'
 import { MY_PLOT } from '../data/design.js'
 
-// Must match --sky-horizon in styles.css so the far ground fades into the sky.
+// Must match --horizon in styles.css so the far ground fades into the sky.
 const HORIZON_COLOR = '#f6cfae'
 
 // Add ?debug to the address to see the frames-per-second counter.
@@ -35,11 +35,12 @@ export default function Town({ myDesign, editing, onSelectMine, labelRef, onRead
     >
       <fog attach="fog" args={[HORIZON_COLOR, 30, 70]} />
 
-      {/* Warm golden-hour light: soft fill from the sky plus one low sun that casts shadows. */}
-      <hemisphereLight args={['#fff0dc', '#7d9a62', 1.6]} />
+      {/* Early-evening light: a rosy fill from the dusk sky plus one low, warm sun that casts shadows.
+          Kept bright on purpose so the house colors still read clearly. */}
+      <hemisphereLight args={['#ffe6dc', '#6f8a5c', 1.5]} />
       <directionalLight
         position={[-12, 16, 12]}
-        color="#ffd6a8"
+        color="#ffc999"
         intensity={2.2}
         castShadow
         shadow-mapSize={[1024, 1024]}

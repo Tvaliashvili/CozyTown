@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
+  <defs><radialGradient id="glow"><stop offset="0" stop-color="#ffd978" stop-opacity="0.75"/><stop offset="1" stop-color="#ffd978" stop-opacity="0"/></radialGradient></defs>
+  <circle cx="100" cy="120" r="100" fill="url(#glow)"/>
+  <path d="M100 10 v22" stroke="#1d1830" stroke-width="4" stroke-linecap="round"/>
+  <rect x="86" y="30" width="28" height="10" rx="4" fill="#1d1830"/>
+  <path d="M66 46 h68 l10 24 h-88z" fill="#1d1830"/>
+  <rect x="60" y="70" width="80" height="96" rx="8" fill="#ffe08a" stroke="#1d1830" stroke-width="4"/>
+  <rect x="96" y="70" width="8" height="96" fill="#1d1830" opacity="0.5"/>
+  <path d="M100 94 c-10 14 -10 26 0 36 c10 -10 10 -22 0 -36z" fill="#f08a5d"/>
+  <path d="M100 108 c-4 6 -4 11 0 15 c4 -4 4 -9 0 -15z" fill="#fff3cf"/>
+  <rect x="56" y="166" width="88" height="14" rx="5" fill="#1d1830"/>
+  <path d="M70 180 h60 l-6 24 h-48z" fill="#1d1830"/>
+</svg>

@@ -1,0 +1,723 @@
+/* Styles for the landing page and the sign-in page.
+   Colors and fonts come from the variables at the top of src/styles.css. */
+
+/* ---------- Shared pieces ---------- */
+
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 16px;
+}
+
+.section.narrow {
+  max-width: 760px;
+}
+
+.centered {
+  text-align: center;
+}
+
+.landing h2,
+.landing h3,
+.signin h1,
+.signin h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin: 0;
+}
+
+.landing h2 {
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.15;
+}
+
+.lead {
+  margin: 12px auto 48px;
+  max-width: 560px;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.card {
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: var(--shadow-card);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Big rounded buttons. Links and buttons look the same. */
+.big-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 28px;
+  border: none;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.25);
+}
+
+.big-button:active {
+  transform: scale(0.97);
+}
+
+.big-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+}
+
+.big-button.accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.big-button.soft {
+  background: var(--sand);
+  box-shadow: none;
+}
+
+.big-button.white {
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(74, 59, 51, 0.12);
+}
+
+.big-button.dark {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+/* ---------- Landing: hero ---------- */
+
+.landing {
+  background: var(--cream);
+}
+
+.hero {
+  background: linear-gradient(to bottom, var(--dusk-1) 0%, var(--dusk-2) 35%, var(--dusk-3) 65%, var(--dusk-4) 85%, var(--horizon) 100%);
+  color: var(--cream);
+}
+
+.hero-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--cream);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.hero-nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-nav-links > a:not(.pill-button) {
+  color: var(--cream);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 12px 14px;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 246, 233, 0.14);
+  border: 1px solid rgba(255, 246, 233, 0.35);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.glow-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(242, 193, 78, 0.35);
+}
+
+.hero h1 {
+  margin: 0;
+  max-width: 900px;
+  font-family: var(--font-display);
+  font-size: clamp(42px, 6.4vw, 80px);
+  line-height: 1.04;
+  font-weight: 700;
+  text-shadow: 0 2px 18px rgba(30, 20, 50, 0.35);
+}
+
+.hero-text > p {
+  margin: 0;
+  max-width: 640px;
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.55;
+  color: #fff1e0;
+  text-shadow: 0 1px 10px rgba(30, 20, 50, 0.4);
+}
+
+.hero-walk {
+  color: var(--cream);
+  font-weight: 700;
+  padding: 8px 12px;
+  text-shadow: 0 1px 8px rgba(30, 20, 50, 0.4);
+}
+
+.hero-street {
+  display: block;
+  width: 100%;
+  margin-top: -40px;
+}
+
+/* Phones: the menu keeps only the language and sign-in buttons (the page scrolls to the rest),
+   and the street is shown bigger, cropped to the middle houses, so it isn't a thin strip. */
+@media (max-width: 640px) {
+  .hero {
+    overflow: hidden;
+  }
+
+  .hero-nav-links > a:not(.pill-button) {
+    display: none;
+  }
+
+  .hero-street {
+    width: 190%;
+    margin-left: -45%;
+    margin-top: -20px;
+  }
+}
+
+/* ---------- Landing: steps and occasions ---------- */
+
+/* The step cards float up over the road at the bottom of the hero. */
+.steps-section {
+  position: relative;
+  z-index: 1;
+  margin-top: -56px;
+  padding-top: 0;
+}
+
+.steps {
+  list-style: none;
+  margin: 0 0 64px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.step {
+  flex: 1 1 300px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.step h3 {
+  font-size: 26px;
+}
+
+.step p,
+.frame p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.step-number {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.occasions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.occasion {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.occasion-valentine { background: #fde0dc; color: #8a2f22; }
+.occasion-mother { background: #fdeacb; color: #7a4a10; }
+.occasion-baby { background: #dbe9f6; color: #24496b; }
+.occasion-grandparents { background: #dfeedd; color: #2f5a2c; }
+.occasion-memory { background: #e9e2f1; color: #4a3a66; }
+
+/* ---------- Landing: what's inside ---------- */
+
+.inside-section {
+  position: relative;
+  background: linear-gradient(to bottom, #f0d9bd, #e6c6a3);
+}
+
+.string-lights {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+}
+
+.inside-section .section {
+  padding-top: 112px;
+}
+
+.frames {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px;
+}
+
+/* A photo frame: thick white border, paper inside, a deep shadow on the wall behind it. */
+.frame {
+  flex: 1 1 240px;
+  max-width: 280px;
+  box-sizing: border-box;
+  padding: 24px 22px;
+  border: 10px solid #fff;
+  border-radius: 6px;
+  background: var(--cream);
+  box-shadow: 0 2px 4px rgba(74, 59, 51, 0.1), 0 20px 36px rgba(90, 60, 40, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.frame h3 {
+  font-size: 22px;
+}
+
+/* ---------- Landing: the promise ---------- */
+
+.promise-section {
+  background: linear-gradient(to bottom, var(--dusk-1), #3b2f55);
+  color: var(--cream);
+}
+
+.promise {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 48px;
+}
+
+.promise > img {
+  flex: none;
+  margin: 0 auto;
+}
+
+.promise-text {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.promise-text > p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #e9e1f3;
+}
+
+.promise-text ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.promise-text li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.promise-text li svg {
+  flex: none;
+  color: var(--gold);
+}
+
+/* ---------- Landing: prices as gift tags ---------- */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 32px;
+}
+
+.tag {
+  flex: 1 1 280px;
+  max-width: 340px;
+  position: relative;
+  padding-top: 28px;
+}
+
+.tag-string {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 60px;
+  margin-left: -30px;
+}
+
+.tag-card {
+  position: relative;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 40px 30px 30px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tag.featured .tag-card {
+  background: #fffaf2;
+  box-shadow: 0 0 0 3px var(--accent), 0 20px 44px rgba(74, 59, 51, 0.2);
+}
+
+.tag-hole {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: var(--cream);
+  box-shadow: inset 0 1px 3px rgba(74, 59, 51, 0.35);
+}
+
+.tag-ribbon {
+  position: absolute;
+  top: -14px;
+  right: 20px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(74, 59, 51, 0.25);
+}
+
+.tag-card h3 {
+  font-size: 24px;
+}
+
+.tag-price {
+  margin: 0;
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tag-text {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ---------- Landing: ordering, gift card, footer ---------- */
+
+.order-section {
+  background: linear-gradient(to bottom, var(--sand), #f7ecdc);
+}
+
+.order-section .lead {
+  margin-bottom: 24px;
+}
+
+.gift-card {
+  padding: 44px 36px;
+  background: linear-gradient(135deg, #fff, #fff1dd);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.gift-card > div {
+  flex: 1 1 420px;
+}
+
+.gift-card h2 {
+  font-size: 32px;
+}
+
+.gift-card p {
+  margin: 8px 0 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.landing-footer {
+  border-top: 1px solid #ecdcc6;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.landing-footer .section {
+  padding-top: 28px;
+  padding-bottom: 40px;
+}
+
+/* ---------- Sign-in page ---------- */
+
+.signin {
+  position: relative;
+  min-height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  /* The sky behind the house picture; the picture itself is see-through above the hills. */
+  background: linear-gradient(to bottom, var(--dusk-1) 0, var(--dusk-2) 160px, var(--dusk-3) 300px, var(--dusk-4) 400px, var(--cream) 400px);
+}
+
+/* On a computer, the dusk sky fills the sides too, and the page sits in the middle like a phone. */
+@media (min-width: 481px) {
+  body:has(.signin) {
+    background: linear-gradient(to bottom, var(--dusk-1), var(--dusk-2) 40%, var(--dusk-3));
+  }
+}
+
+.signin-sky {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 400px;
+  overflow: hidden;
+}
+
+.signin-sky img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  object-position: bottom;
+}
+
+.signin-top {
+  position: relative;
+  padding: max(14px, env(safe-area-inset-top)) 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.signin-welcome {
+  position: relative;
+  padding: 14px 20px 0;
+  color: var(--cream);
+}
+
+.signin-welcome h1 {
+  font-size: 34px;
+  line-height: 1.1;
+  text-shadow: 0 2px 12px rgba(30, 20, 50, 0.4);
+}
+
+.signin-welcome p {
+  margin: 6px 0 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: #fff1e0;
+  text-shadow: 0 1px 8px rgba(30, 20, 50, 0.4);
+}
+
+/* The cream sheet that slides over the sky */
+.sheet {
+  position: relative;
+  background: var(--cream);
+  border-radius: 30px 30px 0 0;
+  box-shadow: 0 -12px 36px rgba(30, 20, 50, 0.28);
+}
+
+.signin-sheet {
+  flex-grow: 1;
+  margin-top: 230px; /* leaves the lit house visible above the sheet */
+  padding: 22px 16px max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.signin-step {
+  padding: 18px 18px 20px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.signin-step h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 21px;
+}
+
+.step-badge {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--sand);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.signin .small {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.big-button.google {
+  background: #fff;
+  border: 2px solid #ecdcc6;
+  font-size: 17px;
+  box-shadow: 0 4px 12px rgba(74, 59, 51, 0.08);
+}
+
+.google-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sand);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.code-input {
+  min-height: 58px;
+  box-sizing: border-box;
+  padding: 0 18px;
+  border: 2px solid #d9c3a5;
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.code-input::placeholder {
+  color: #b9a48c;
+}
+
+.code-input:disabled {
+  opacity: 0.55;
+}
+
+.error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #fde0dc;
+  color: #8a2f22;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.text-button {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}

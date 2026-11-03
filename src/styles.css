@@ -1,14 +1,25 @@
-/* Colors used across the UI. Change them here and they update everywhere. */
+/* Colors and fonts used across the site. Change them here and they update everywhere. */
 :root {
-  --sky-top: #7b6fa8;
-  --sky-middle: #f4a58a;
-  --sky-horizon: #f6cfae;
+  /* The dusk sky, from the top of the screen down to the horizon */
+  --dusk-1: #2e2850;
+  --dusk-2: #6b4f8c;
+  --dusk-3: #c97a86;
+  --dusk-4: #f1a98a;
+  --horizon: #f6cfae;
+
   --cream: #fff6e9;
-  --ink: #4a3b33;
-  --ink-soft: #7a6558;
-  --shadow: 0 4px 14px rgba(74, 59, 51, 0.18);
   --sand: #f3e6d2;
-  --accent: #e2735f;
+  --ink: #4a3b33;
+  --ink-soft: #6e5a4e; /* dark enough to read on cream and sand */
+  --accent: #bf4c39; /* white text on it stays readable */
+  --gold: #f2c14e;
+
+  --shadow: 0 6px 18px rgba(30, 20, 50, 0.28);
+  --shadow-card: 0 1px 2px rgba(74, 59, 51, 0.06), 0 18px 40px rgba(60, 40, 60, 0.16);
+
+  /* Fraunces has no Georgian letters, so Georgian text falls through to Noto Serif Georgian. */
+  --font-display: 'Fraunces', 'Noto Serif Georgian', Georgia, serif;
+  --font-body: 'Nunito', 'Noto Sans Georgian', sans-serif;
 }
 
 * {
@@ -23,19 +34,77 @@ body,
 }
 
 body {
-  font-family: 'Nunito', 'Noto Sans Georgian', sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
-  background: var(--sky-horizon);
-  overscroll-behavior: none;
+  background: var(--cream);
   -webkit-tap-highlight-color: transparent;
 }
 
-/* The whole screen is the town; the sky is a CSS gradient behind the 3D canvas. */
+/* Round buttons used everywhere. Works on <button> and on <a>. */
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 56px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.pill-button:active {
+  transform: scale(0.96);
+}
+
+.pill-button.accent {
+  background: var(--accent);
+  color: #fff;
+}
+
+.pill-button.soft {
+  background: var(--sand);
+  box-shadow: none;
+}
+
+/* See-through buttons that sit on the dusk sky */
+.pill-button.outline,
+.pill-button.glass {
+  background: rgba(255, 246, 233, 0.1);
+  border: 2px solid rgba(255, 246, 233, 0.6);
+  color: var(--cream);
+  box-shadow: none;
+}
+
+.pill-button.glass {
+  border-color: transparent;
+}
+
+/* ---------- The 3D town ---------- */
+
+/* The whole screen is the town; the sky is a CSS gradient behind the 3D canvas.
+   The bottom color must match HORIZON_COLOR in src/scene/Town.jsx, where the fog fades into it. */
 .app {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-middle) 38%, var(--sky-horizon) 60%);
+  overscroll-behavior: none;
+  background: linear-gradient(
+    to bottom,
+    var(--dusk-1) 0%,
+    var(--dusk-2) 22%,
+    var(--dusk-3) 40%,
+    var(--dusk-4) 52%,
+    var(--horizon) 62%
+  );
 }
 
 .top-bar {
@@ -57,36 +126,22 @@ body {
 
 .top-bar h1 {
   margin: 0;
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(30, 20, 50, 0.4);
+}
+
+.top-bar h1 a {
   color: var(--cream);
-  text-shadow: 0 2px 8px rgba(74, 59, 51, 0.35);
+  text-decoration: none;
 }
 
 .top-bar p {
   margin: 2px 0 0;
   font-size: 0.95rem;
-  color: var(--cream);
-  text-shadow: 0 1px 6px rgba(74, 59, 51, 0.35);
-}
-
-.pill-button {
-  min-width: 56px;
-  min-height: 48px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 999px;
-  background: var(--cream);
-  color: var(--ink);
-  font: inherit;
-  font-weight: 700;
-  font-size: 1rem;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-}
-
-.pill-button:active {
-  transform: scale(0.96);
+  color: #fff1e0;
+  text-shadow: 0 1px 8px rgba(30, 20, 50, 0.4);
 }
 
 .hint {
@@ -96,20 +151,23 @@ body {
   bottom: max(20px, env(safe-area-inset-bottom));
   width: fit-content;
   margin: 0 auto;
-  padding: 10px 18px;
+  padding: 12px 18px;
   max-width: calc(100% - 32px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   border-radius: 999px;
-  background: rgba(255, 246, 233, 0.9);
+  background: rgba(255, 246, 233, 0.92);
   color: var(--ink-soft);
   font-size: 0.95rem;
+  font-weight: 600;
   text-align: center;
   box-shadow: var(--shadow);
   pointer-events: none;
 }
 
-.pill-button.accent {
-  background: var(--accent);
-  color: #fff;
+.hint svg {
+  flex: none;
 }
 
 /* Floating "Your house — tap to decorate" button above your house.
@@ -126,27 +184,40 @@ body {
 }
 
 .house-label-bubble {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 10px 18px;
-  border-radius: 18px;
+  padding: 12px 18px;
+  border-radius: 20px;
   background: var(--cream);
   color: var(--ink);
   white-space: nowrap;
-  box-shadow: var(--shadow);
+  box-shadow: 0 10px 28px rgba(30, 20, 50, 0.32);
   animation: bob 2.4s ease-in-out infinite;
+}
+
+/* The little tail pointing down at the house */
+.house-label-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  margin-left: -11px;
+  border: 11px solid transparent;
+  border-bottom: none;
+  border-top-color: var(--cream);
 }
 
 .house-label strong {
   font-size: 1.05rem;
+  font-weight: 800;
 }
 
 .house-label-bubble span {
   font-size: 0.85rem;
-  color: var(--accent);
-  font-weight: 700;
+  color: var(--ink-soft);
 }
 
 @keyframes bob {
@@ -155,7 +226,14 @@ body {
   }
 }
 
-/* Decorating panel that slides up from the bottom */
+@media (prefers-reduced-motion: reduce) {
+  .house-label-bubble {
+    animation: none;
+  }
+}
+
+/* ---------- Decorating panel that slides up from the bottom ---------- */
+
 .customizer {
   position: absolute;
   left: 0;
@@ -163,14 +241,14 @@ body {
   bottom: 0;
   z-index: 20;
   max-width: 640px;
-  max-height: 48%;
+  max-height: 52%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 14px 16px max(16px, env(safe-area-inset-bottom));
-  border-radius: 24px 24px 0 0;
+  padding: 10px 16px max(16px, env(safe-area-inset-bottom));
+  border-radius: 30px 30px 0 0;
   background: var(--cream);
-  box-shadow: 0 -6px 24px rgba(74, 59, 51, 0.2);
+  box-shadow: 0 -12px 36px rgba(30, 20, 50, 0.3);
   animation: slide-up 0.35s ease-out;
 }
 
@@ -180,9 +258,13 @@ body {
   }
 }
 
-.customizer .pill-button:not(.accent) {
-  background: var(--sand);
-  box-shadow: none;
+.sheet-handle {
+  flex: none;
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 6px;
+  border-radius: 999px;
+  background: #d9c3a5;
 }
 
 /* The header and tab row keep their full height; only the options below them shrink and scroll.
@@ -192,86 +274,129 @@ body {
   flex: none;
 }
 
+/* Title and Done button share one row; on very narrow screens the button drops below. */
 .customizer-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
+}
+
+.customizer-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.customizer .pill-button {
+  min-height: 46px;
+  padding: 0 12px;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .tabs {
   display: flex;
   gap: 8px;
-  padding: 12px 0 4px;
+  padding: 12px 0 6px;
   overflow-x: auto;
   scrollbar-width: none;
 }
 
 .tab {
   flex: none;
-  min-height: 48px;
-  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 68px;
+  min-height: 64px;
+  padding: 6px 10px;
   border: none;
-  border-radius: 999px;
-  background: var(--sand);
+  border-radius: 18px;
+  background: #fff;
   color: var(--ink);
   font: inherit;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 0 1px 2px rgba(74, 59, 51, 0.06), 0 4px 12px rgba(74, 59, 51, 0.08);
   cursor: pointer;
 }
 
 .tab[aria-selected='true'] {
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(74, 59, 51, 0.22);
 }
 
 .tab-panel {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding-bottom: 4px;
 }
 
 .control h3 {
-  margin: 12px 0 8px;
-  font-size: 0.95rem;
+  margin: 14px 0 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
   color: var(--ink-soft);
 }
 
 .options {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  padding: 3px; /* room for the ring around the chosen swatch */
 }
 
 .swatch {
   width: 56px;
   height: 56px;
-  border: 3px solid rgba(74, 59, 51, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #fff;
   border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(74, 59, 51, 0.18);
   cursor: pointer;
 }
 
-/* The chosen option gets a dark ring */
+/* The chosen color gets a ring in the accent color and a check mark. */
 .swatch[aria-pressed='true'] {
-  border-color: var(--ink);
-  box-shadow: inset 0 0 0 3px var(--cream);
+  border-color: var(--cream);
+  box-shadow: 0 0 0 3px var(--accent), 0 6px 14px rgba(74, 59, 51, 0.25);
+}
+
+/* A soft shadow keeps the white check mark visible on light colors too */
+.swatch svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
 }
 
 .choice {
-  min-width: 88px;
-  min-height: 56px;
+  min-width: 92px;
+  min-height: 60px;
   padding: 0 18px;
   border: 3px solid transparent;
-  border-radius: 16px;
-  background: var(--sand);
+  border-radius: 18px;
+  background: #fff;
   color: var(--ink);
   font: inherit;
-  font-weight: 700;
+  font-weight: 800;
+  box-shadow: 0 1px 2px rgba(74, 59, 51, 0.06), 0 4px 12px rgba(74, 59, 51, 0.08);
   cursor: pointer;
 }
 
 .choice[aria-pressed='true'] {
-  border-color: var(--ink);
-  background: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(74, 59, 51, 0.16);
 }
 
 .swatch:active,
@@ -299,6 +424,10 @@ body {
     margin: 0;
     border-radius: 24px;
     animation-name: slide-in;
+  }
+
+  .sheet-handle {
+    display: none;
   }
 
   .tabs {

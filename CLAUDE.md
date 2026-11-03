@@ -23,6 +23,9 @@ small files, clear names, short comments that explain *why*. Explain changes in 
   Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
 - **Accounts**: only keepers sign in. Visitors need no account and can light a lantern anonymously.
 - **Easy enough for grandparents**: tap-to-move camera, no avatar, no joystick, big buttons.
+- **The outside of a house is designed once**: it can be changed freely until it's submitted;
+  after that the server refuses design changes, and a redesign is a paid extra (manual for now:
+  admin unlocks it after payment). Photos, letters and lanterns are not affected.
 - **Time capsule**: locked even for the keeper; the server refuses to reveal contents before the date.
 - **QR URLs are printed on physical objects — the URL format must never change.**
   Format: `https://cozytown.ge/h/<code>`.
@@ -61,6 +64,14 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   Applied by a Node `pg` script over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`,
   user `postgres.<ref>`. Test first inside a transaction that rolls back.
 - Admin: after the founder's first Google sign-in, add their user id to `public.admins` in the SQL editor.
+
+## How the site is organised
+- Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (Google sign-in + gift-code claim),
+  `/town` demo street and `/h/<code>` a house (both `src/TownApp.jsx`). A tiny router in `src/router.jsx`.
+- The town and the sign-in page are lazy-loaded, so the landing page doesn't download three.js or
+  the Supabase client. Keep it that way: the landing page must stay light for budget phones.
+- Illustrations are SVG files in `public/art/`; small icons are in `src/ui/icons.jsx`.
+- The approved design lives on the Claude Design canvas "Cozy Town Design".
 
 ## How the 3D code works (read before changing src/scene)
 - Run `npm run dev` (Vite 6 — Node is 22.11, too old for Vite 7). `?debug` shows FPS and exposes `window.__gl`.

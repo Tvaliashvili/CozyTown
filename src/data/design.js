@@ -1,5 +1,3 @@
-import { TABS } from './options.js'
-
 // A house design is a plain object. In Phase 2 this exact shape gets saved to the database.
 export const DEFAULT_DESIGN = {
   wallColor: '#f6e7d0',
@@ -29,7 +27,7 @@ export const NEIGHBOURS = {
     windowStyle: 'round', windowColor: '#a9774f', garden: 'vegetables', fence: true, mailboxColor: '#5f8a5a', lanterns: 0,
   },
   5: {
-    wallColor: '#d9c8e8', roofStyle: 'flat', roofColor: '#3f3f4f', doorStyle: 'square', doorColor: '#f2c14e',
+    wallColor: '#a8d8d2', roofStyle: 'flat', roofColor: '#3f3f4f', doorStyle: 'square', doorColor: '#f2c14e',
     windowStyle: 'square', windowColor: '#4a3b33', garden: 'flowers', fence: false, mailboxColor: '#fff6e9', lanterns: 2,
   },
   7: {
@@ -55,19 +53,4 @@ export function saveDesign(design) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(design))
   } catch {}
-}
-
-function pick(list) {
-  return list[Math.floor(Math.random() * list.length)]
-}
-
-// "Surprise me": a random choice for every option in every tab.
-export function randomDesign() {
-  const design = {}
-  for (const tab of TABS) {
-    for (const control of tab.controls) {
-      design[control.field] = pick(control.options)
-    }
-  }
-  return design
 }

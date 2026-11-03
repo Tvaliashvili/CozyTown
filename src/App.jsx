@@ -1,62 +1,33 @@
-import { useEffect, useRef, useState } from 'react'
-import Town from './scene/Town.jsx'
-import LanguageToggle from './ui/LanguageToggle.jsx'
-import Customizer from './ui/Customizer.jsx'
-import { loadDesign, saveDesign } from './data/design.js'
-import { useI18n } from './i18n/i18n.jsx'
+import { lazy, Suspense } from 'react'
+import Landing from './pages/Landing.jsx'
+import { usePath } from './router.jsx'
 
-// The loading screen lives in index.html so it shows before any JavaScript arrives.
-function hideLoadingScreen() {
-  const screen = document.getElementById('boot')
-  if (!screen) return
-  screen.classList.add('hidden')
-  setTimeout(() => screen.remove(), 600)
-}
+// The 3D town (three.js) and the sign-in page (the database client) are big,
+// so each is only downloaded when someone opens it.
+// The landing page stays small and fast, even on budget phones.
+const TownApp = lazy(() => import('./TownApp.jsx'))
+const SignIn = lazy(() => import('./pages/SignIn.jsx'))
 
 export default function App() {
-  const { t } = useI18n()
-  const [design, setDesign] = useState(loadDesign)
-  const [editing, setEditing] = useState(false)
-  // The 3D scene moves this label every frame so it floats above your house.
-  const labelRef = useRef(null)
+  const path = usePath()
 
-  // Every change is saved straight away, so nothing is lost on reload.
-  useEffect(() => {
-    saveDesign(design)
-  }, [design])
+  if (path === '/signin') {
+    return (
+      <Suspense fallback={null}>
+        <SignIn />
+      </Suspense>
+    )
+  }
 
-  return (
-    <div className={editing ? 'app editing' : 'app'}>
-      <Town
-        myDesign={design}
-        editing={editing}
-        onSelectMine={() => setEditing(true)}
-        labelRef={labelRef}
-        onReady={hideLoadingScreen}
-      />
+  // /town is the demo street. /h/<code> is someone's house — that address is printed
+  // on QR cards and keychains, so it must never change.
+  if (path === '/town' || path.startsWith('/h/')) {
+    return (
+      <Suspense fallback={<div className="app" />}>
+        <TownApp />
+      </Suspense>
+    )
+  }
 
-      {!editing && (
-        <button ref={labelRef} className="house-label" onClick={() => setEditing(true)}>
-          <span className="house-label-bubble">
-            <strong>{t('yourHouse')}</strong>
-            <span>{t('tapToDecorate')}</span>
-          </span>
-        </button>
-      )}
-
-      <header className="top-bar">
-        <div>
-          <h1>{t('appName')}</h1>
-          <p>{t('tagline')}</p>
-        </div>
-        <LanguageToggle />
-      </header>
-
-      {editing ? (
-        <Customizer design={design} onChange={setDesign} onClose={() => setEditing(false)} />
-      ) : (
-        <p className="hint">{t('dragHint')}</p>
-      )}
-    </div>
-  )
+  return <Landing />
 }
