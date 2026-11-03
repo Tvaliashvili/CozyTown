@@ -14,6 +14,7 @@ const OCCASIONS = [
   { id: 'mother', picture: PICTURES.flower },
   { id: 'baby', picture: PICTURES.star },
   { id: 'grandparents', picture: PICTURES.home },
+  { id: 'pet', picture: PICTURES.paw },
   { id: 'memory', picture: PICTURES.candle },
 ]
 // Tilted a little each, like real frames hung by hand.

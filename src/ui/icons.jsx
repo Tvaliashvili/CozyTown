@@ -144,6 +144,15 @@ export const PICTURES = {
       <path d="M4 20 L4 10 L12 4 L20 10 L20 20 Z" fill="#5f8a5a" /><rect x="10" y="13" width="4" height="7" fill="#fff0b8" />
     </svg>
   ),
+  paw: (
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <ellipse cx="6" cy="10" rx="2.1" ry="2.6" fill="#b06a3b" />
+      <ellipse cx="10" cy="5.6" rx="2.1" ry="2.7" fill="#b06a3b" />
+      <ellipse cx="14" cy="5.6" rx="2.1" ry="2.7" fill="#b06a3b" />
+      <ellipse cx="18" cy="10" rx="2.1" ry="2.6" fill="#b06a3b" />
+      <path d="M12 11c-3 0-6 4.6-6 7.2 0 1.9 1.6 2.6 3.2 2.1 1-.3 1.9-.7 2.8-.7s1.8.4 2.8.7c1.6.5 3.2-.2 3.2-2.1 0-2.6-3-7.2-6-7.2z" fill="#b06a3b" />
+    </svg>
+  ),
   candle: (
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
       <rect x="9" y="9" width="6" height="12" rx="1.5" fill="#f6e7d0" />

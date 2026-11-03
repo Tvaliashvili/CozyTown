@@ -1,6 +1,6 @@
 export default {
   appName: 'მყუდრო ქალაქი',
-  tagline: 'პატარა სახლი საყვარელი ადამიანისთვის',
+  tagline: 'პატარა სახლი მათთვის, ვინც გიყვართ',
   dragHint: 'გაასრიალეთ თითი ქუჩის დასათვალიერებლად',
   switchLanguage: 'EN',
 
@@ -72,6 +72,7 @@ export default {
   'for.mother': 'დედის დღე',
   'for.baby': 'ახალშობილი',
   'for.grandparents': 'ბებია და ბაბუა',
+  'for.pet': 'ოთხფეხა მეგობარი',
   'for.memory': 'ნათელ ხსოვნას',
 
   'inside.title': 'რა არის სახლში',

@@ -1,6 +1,6 @@
 export default {
   appName: 'Cozy Town',
-  tagline: 'A little house for someone you love',
+  tagline: 'A little house for the ones you love',
   dragHint: 'Slide your finger to look along the street',
   switchLanguage: 'ქართ',
 
@@ -70,6 +70,7 @@ export default {
   'for.mother': "Mother's Day",
   'for.baby': 'A new baby',
   'for.grandparents': 'Grandparents',
+  'for.pet': 'A beloved pet',
   'for.memory': 'In loving memory',
 
   'inside.title': "What's inside a house",
