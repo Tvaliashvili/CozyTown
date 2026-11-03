@@ -136,8 +136,9 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
       *(Built Nov 2026; still needs a real budget-Android test.)*
 - [ ] **Phase 2 — Real houses (wk 5–7)**: keeper login, gift-code claim, save houses, one cozy
       interior room with photo frames and mailbox letters, private link, QR, printable PDF card, lanterns.
-- [ ] **Phase 3 — Capsule & sharing (wk 8–9)**: server-locked time capsule, co-decorator invites,
-      export zip, Georgian/English, admin page for manual orders. *(Admin page built Nov 2026.)*
+- [x] **Phase 3 — Capsule & sharing (wk 8–9)**: server-locked time capsule, co-decorator invites,
+      export zip, Georgian/English, admin page for manual orders. *(Built Nov 2026; Georgian texts
+      are DRAFT until the founder reviews them.)*
 - [ ] **Phase 4 — Pilot & polish (wk 10–11)**: 10–20 friends-and-family houses, grandparent
       usability fixes, performance, terms and privacy pages.
 - [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.
