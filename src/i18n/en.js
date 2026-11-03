@@ -51,7 +51,7 @@ export default {
   signIn: 'Sign in',
 
   'hero.badge': 'Launching in Tbilisi · February 2027',
-  'hero.text': 'Choose a house on our street, fill it with photos and letters, and hand them the key — on a card or a wooden keychain.',
+  'hero.text': 'Choose a house on our street, write them a letter, and hand them the key — on a card or a wooden keychain.',
   'hero.give': 'Give a house',
   'hero.gotGift': 'I got a house as a gift',
   'hero.walk': 'Take a walk down the street',
