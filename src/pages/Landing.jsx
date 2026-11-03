@@ -5,9 +5,9 @@ import { ChatIcon, DownloadIcon, GiftIcon, HouseIcon, KeyIcon, LockIcon, Logo, P
 import './pages.css'
 
 const STEPS = [
-  { id: 1, picture: PICTURES.decorate },
+  { id: 1, picture: PICTURES.home },
   { id: 2, picture: PICTURES.key },
-  { id: 3, picture: PICTURES.door },
+  { id: 3, picture: PICTURES.decorate },
 ]
 const OCCASIONS = [
   { id: 'valentine', picture: PICTURES.heart },

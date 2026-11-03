@@ -57,12 +57,12 @@ export default {
   'hero.walk': 'Take a walk down the street',
 
   'how.step': 'Step',
-  'how.1.title': 'Choose and decorate',
-  'how.1.text': 'Pick the roof, colors, door, garden and lanterns. Hang photos on the walls and leave a letter waiting in the mailbox.',
+  'how.1.title': 'Choose a house',
+  'how.1.text': "Pick a plot on our street and tell us who it's for. Write them a letter, and it will be waiting in the mailbox.",
   'how.2.title': 'Give them the key',
   'how.2.text': 'A printed card or an engraved wooden keychain with a QR code. They scan it, and the door opens.',
   'how.3.title': 'Make it theirs',
-  'how.3.text': 'They become the keeper, add their own memories, and friends who visit can light a lantern at the door.',
+  'how.3.text': 'They become the keeper: they choose the roof, colors and garden, hang their own photos, and friends who visit can light a lantern at the door.',
 
   'for.title': 'A home for every kind of love',
   'for.text': 'No app to install, nothing to learn. If you can open a photo, you can open a house.',
