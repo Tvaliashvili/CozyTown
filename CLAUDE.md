@@ -57,6 +57,22 @@ Consequences of "no email yet":
 Budget is near zero: stay on free tiers. Supabase free has no automatic backups, so we run our own
 nightly backup (database + storage) from the start. Move to Supabase Pro once paying customers arrive.
 
+**Hosting limits and costs** (rough, Nov 2026 — check current pricing pages):
+- Photos live in **Supabase Storage**, not Cloudflare. Cloudflare Pages only serves the site and has
+  no traffic limit on free. (The "10 GB free" is Cloudflare R2, which we don't use yet.)
+- Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~250 KB after shrinking, so a
+  5-photo house is ~1.25 MB → ~800 full houses of storage, but only ~4,000 room visits/month,
+  because a room downloads all 5 full-size photos even though the frames are small.
+  **Downloads run out before storage.**
+- Supabase Pro ≈ $25/month (~68 ₾) ≈ two house sales a month.
+- Each house pays once but costs every month: costs grow with *total* houses, income only with
+  *new* sales. That's why monthly income matters (see "Ways to earn"). Until it exists, set aside
+  a small part of every sale (e.g. 5 ₾) as a hosting fund.
+- Cheap fixes, in order: (1) small preview photos (~30 KB) in the frames, full photo only when
+  opened — cuts downloads ~5–8× (worth doing before launch); (2) later, move photos to Cloudflare
+  R2 (10 GB free, no download fees) — needs a small server function for uploads, since secret keys
+  can't be in the browser.
+
 ## Infrastructure
 - Code: https://github.com/Tvaliashvili/CozyTown (branch `main`).
 - Supabase project `cozytown`, ref `ynkupominvvioqpwihfv`, region eu-central-1 (Frankfurt), free plan.
