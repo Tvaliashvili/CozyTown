@@ -4,6 +4,7 @@ import { useSession } from '../lib/useSession.js'
 import { Link } from '../router.jsx'
 import { hideLoadingScreen } from '../ui/loadingScreen.js'
 import { BackIcon } from '../ui/icons.jsx'
+import BackupStatus from './BackupStatus.jsx'
 import HouseList from './HouseList.jsx'
 import NewOrder from './NewOrder.jsx'
 import './admin.css'
@@ -67,6 +68,7 @@ export default function AdminPage() {
   } else {
     content = (
       <>
+        <BackupStatus />
         <NewOrder streets={streets} houses={houses} onCreated={reload} />
         <HouseList streets={streets} houses={houses} onChanged={reload} />
       </>

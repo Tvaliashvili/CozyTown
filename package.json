@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backup": "node scripts/backup/backup.js",
+    "backup:check": "node scripts/backup/restore.js check",
+    "backup:extract": "node scripts/backup/restore.js extract",
+    "backup:restore": "node scripts/backup/restore.js restore"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -20,6 +24,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
+    "age-encryption": "^0.3.1",
+    "aws4fetch": "^1.0.20",
+    "pg": "^8.23.1",
     "vite": "^6.4.5"
   }
 }

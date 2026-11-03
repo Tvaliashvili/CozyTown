@@ -17,7 +17,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
-| Q1 | 🔴 | Backups | **There is no backup.** Supabase free has no automatic backups, and CLAUDE.md promises our own nightly backup of the database *and* photo files from the start. If the database were lost today, every house, letter and photo would be gone. | A nightly GitHub Action: `pg_dump` of the database plus a copy of both storage buckets, saved somewhere free and private (e.g. Cloudflare R2, 10 GB free). **Needs the founder:** where to keep backups. Must be done before the pilot (Phase 4). |
+| Q1 | 🔴 | Backups | **Built, not running yet.** The nightly encrypted backup to Cloudflare R2 is written and tested (see `docs/BACKUPS.md`), but it can't run until R2 is switched on and the six GitHub secrets are added. Until then there is still no backup. | **Founder:** the one-time setup in `docs/BACKUPS.md`, and two safe copies of `BACKUP_PRIVATE_KEY`. Then Claude runs the first real backup and `npm run backup:check`, and moves Q1 to Fixed. |
 | Q4 | 🟠 | Testing | **The tests aren't in the project.** About 100 database tests and 6 browser tests exist, but only in Claude's temporary folders, so they can't be re-run later to catch something breaking. | Move them into `tests/` with `npm run test:db` and `npm run test:browser`. |
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
@@ -25,6 +25,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Q8 | 🟢 | Capsule | If the keeper presses "Download everything" after the capsule opens but *before* looking inside, the zip counts as looking, so the "Your time capsule has opened!" notice disappears. | Let the export read the capsule without marking it seen. |
 | Q9 | 🟢 | Accessibility | Letters, Time capsule and Family helpers pages don't move screen-reader focus to their title when they open (the share sheet does). | Focus the title on open, like `ShareSheet.jsx`. |
 | Q10 | 🟢 | Sign-in | The invite note says "Sign in or create an account in step 1" even to someone already signed in. | Show a shorter note when signed in. |
+| Q16 | 🟢 | Backups | Every backup is a full copy of all photos, and 42 are kept. R2's free 10 GB fills up at about 200 MB per backup (~1,000 photos). The script fails loudly at 8 GB. | Before that: copy each photo to R2 only once (photos never change), and keep only the database nightly. |
 
 ### Questions for the founder (product choices made without asking)
 - **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. OK, or only their own?
@@ -64,6 +65,7 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Download everything | — | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
 | Back button (Q3) | — | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
+| Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. **Not yet run:** upload to R2, GitHub's nightly run, sealed capsule photos (none exist yet) |
 | Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | — |
 
 ## Phone checklist (for the founder, on real phones)
@@ -96,3 +98,16 @@ Write what went wrong under a new review entry below.
 - **Speed:** landing 89 KB gzip; 3D town, sign-in, admin and export each download only when needed.
   Export code is 8.6 KB gzip and loads only on the button press.
 - **Found:** Q1 no backups (🔴), Q3–Q10 above; fixed Q2 and Q15.
+
+### 2026-11-03 · Nightly backups (Q1, start of Phase 4)
+- **Built:** `scripts/backup/` (backup, check, unpack, restore), `.github/workflows/nightly-backup.yml`,
+  migration `20261105000000_backup_runs` (applied), "Last backup" line on `/admin`, `docs/BACKUPS.md`.
+- **Choices:** plain Node instead of `pg_dump` (nothing extra to install, same on GitHub and this computer);
+  each table is saved as JSON made inside the database, so no value changes on the way. The backup is
+  encrypted with `age` (public key in the repo, private key only with the founder). Restore loads all tables
+  in one transaction with triggers off, and refuses a project that already has houses.
+- **Security:** the repo is public, so the job prints only counts and sizes. It runs only on its schedule
+  or by hand, never for pull requests, so forks never get the secrets. The Supabase secret key is used only
+  by these scripts, never in `src/`.
+- **Tested:** see the "Backups" row above. Waiting for the founder's R2 setup to test the real upload.
+- **Found:** Q16 (full copies will outgrow 10 GB one day).

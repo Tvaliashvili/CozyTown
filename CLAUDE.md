@@ -73,6 +73,12 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   `VITE_SUPABASE_*` values as build variables. Manual deploy: `npm run build` then `npx wrangler deploy`
   with `CLOUDFLARE_API_TOKEN` from `.env.local`.
 - Admin: after the founder first signs up, add their user id to `public.admins` in the SQL editor.
+- **Backups**: a nightly GitHub Action (`.github/workflows/nightly-backup.yml`, 05:00 Tbilisi) runs
+  `scripts/backup/backup.js`: all tables (incl. `auth.users`) as JSON + every photo + migrations, zipped,
+  encrypted with `age` (public key in `scripts/backup/public-key.txt`, private key `BACKUP_PRIVATE_KEY` only in
+  `.env.local` and the founder's safe copies), sent to the private R2 bucket `cozytown-backups`. `/admin`
+  shows the last one from `public.backup_runs`. Check: `npm run backup:check`. Restore: `docs/BACKUPS.md`.
+  New tables in `public` are included automatically. The repo is public: backup logs must never print names or words.
 
 ## How the site is organised
 - Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (email + password sign-in + gift-code claim),

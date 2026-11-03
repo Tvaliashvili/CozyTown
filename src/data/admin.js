@@ -63,3 +63,14 @@ export async function unlockDesign(code) {
   const { error } = await supabase.rpc('admin_unlock_design', { house_code: code })
   if (error) throw error
 }
+
+// The newest line from the nightly backup's diary (public.backup_runs), or null if there's none yet.
+export async function loadLastBackup() {
+  const { data, error } = await supabase
+    .from('backup_runs')
+    .select('finished_at, size_bytes, file_count, missing_files')
+    .order('finished_at', { ascending: false })
+    .limit(1)
+  if (error) throw error
+  return data[0] ?? null
+}
