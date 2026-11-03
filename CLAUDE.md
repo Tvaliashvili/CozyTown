@@ -1,0 +1,89 @@
+# Cozy Town (working name)
+
+A 3D cozy town on the web where people buy a little house for someone they love, then fill it
+with photos, letters and a time capsule. Sold as a gift, often with a physical QR keychain or card.
+Launching in Tbilisi, Georgia first.
+
+## Who you're working with
+The founder knows HTML and CSS and a little JavaScript, and works on this full time.
+Claude writes most of the code. Keep code readable for a beginner: plain JavaScript (no TypeScript),
+small files, clear names, short comments that explain *why*. Explain changes in plain words.
+
+## Product decisions (settled — don't re-litigate)
+- **Ownership**: the company owns the platform; customers get a license to a house and own their
+  content. The person who controls a house is its **keeper**. Buyer gets a gift code → recipient
+  claims it and becomes keeper → keeper can invite co-decorators.
+- **Promise**: "Your memories are always yours. Download everything any time. If we ever close,
+  we give at least 6 months' notice." Never promise "forever".
+- **Export**: zip of all photos + letters + a simple offline HTML page of the house.
+- **Privacy**: houses are private by default, opened only by an unguessable link / QR.
+  Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
+- **Accounts**: only keepers sign in. Visitors need no account and can light a lantern anonymously.
+- **Easy enough for grandparents**: tap-to-move camera, no avatar, no joystick, big buttons.
+- **Time capsule**: locked even for the keeper; the server refuses to reveal contents before the date.
+- **QR URLs are printed on physical objects — the URL format must never change.**
+  Format: `https://<domain>/h/<code>`.
+- **Languages**: Georgian and English from day one (Noto Sans Georgian or a BPG font).
+- **Performance**: must run smoothly on budget Android phones. Low-poly, few draw calls,
+  compress photos on the device before upload.
+
+## Tech stack
+| Layer | Choice |
+|---|---|
+| Frontend | Vite + React, plain JavaScript |
+| 3D | React Three Fiber + drei |
+| 3D art | Houses built in code from simple parametric parts; CC0 props from Kenney / Quaternius |
+| Backend | Supabase free tier: Postgres, Auth, Storage, row-level security |
+| Hosting | Cloudflare Pages (free) |
+| Email | **None for now.** The founder will set up private email hosting later and plug its SMTP into Supabase |
+| Payments | **Manual for MVP** (bank transfer, orders via Instagram/Facebook/form, admin page creates houses). Stripe doesn't serve Georgia; later use Bank of Georgia or TBC e-commerce gateway |
+
+Consequences of "no email yet":
+- Keeper login is **Google sign-in only** until custom SMTP exists (Supabase's default mailer
+  won't send to regular users). Add email login links once SMTP is set up.
+- Notifications ("someone lit a lantern", "your capsule opened") are **in-app** for now:
+  shown when the keeper next opens their house.
+
+Budget is near zero: stay on free tiers. Supabase free has no automatic backups, so we run our own
+nightly backup (database + storage) from the start. Move to Supabase Pro once paying customers arrive.
+
+## How the 3D code works (read before changing src/scene)
+- Run `npm run dev` (Vite 6 — Node is 22.11, too old for Vite 7). `?debug` shows FPS and exposes `window.__gl`.
+- **The canvas only redraws on demand** (`frameloop="demand"` in `Town.jsx`). Anything that animates
+  must call `invalidate()` each frame it changes, or it will freeze.
+- **Shadows don't update automatically** (`shadowMap.autoUpdate = false`). `ShadowRefresher` in
+  `Town.jsx` re-renders them when the house design changes; anything else that moves a shadow-casting
+  object must set `gl.shadowMap.needsUpdate = true`.
+- Materials are shared per color via `getMaterial()` in `materials.js` — never create materials inline.
+- Don't use drei's `<Html>`: it crashes under React 19 StrictMode. Use `ScreenAnchor.jsx` to pin a
+  normal DOM element (rendered in `App.jsx`) to a 3D point.
+- Budget at last check: ~120 draw calls, ~2.4k triangles in phone street view.
+- House geometry is built from parts in `src/scene/parts/`, sized by `parts/dimensions.js`.
+  Options live in `src/data/options.js`; translations in `src/i18n/`.
+
+## MVP plan (target: selling by ~Jan 25, 2027; Valentine's Feb 14; Georgian Mother's Day Mar 3)
+- [ ] **Phase 0 — Setup & validation (wk 1)**: name, domain, Instagram, founder builds landing page
+      + waitlist, 15–20 customer conversations; project scaffold, GitHub, Supabase project.
+- [x] **Phase 1 — 3D prototype (wk 2–4)**: one street (~8 plots), tap-to-move camera,
+      customizer (roof, colors, door, windows, garden, mailbox, lanterns). Test on a cheap Android.
+      *(Built Nov 2026; still needs a real budget-Android test.)*
+- [ ] **Phase 2 — Real houses (wk 5–7)**: Google login, gift-code claim, save houses, one cozy
+      interior room with photo frames and mailbox letters, private link, QR, printable PDF card, lanterns.
+- [ ] **Phase 3 — Capsule & sharing (wk 8–9)**: server-locked time capsule, co-decorator invites,
+      export zip, Georgian/English, admin page for manual orders.
+- [ ] **Phase 4 — Pilot & polish (wk 10–11)**: 10–20 friends-and-family houses, grandparent
+      usability fixes, performance, terms and privacy pages.
+- [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.
+
+**Out of MVP on purpose**: live multiplayer, avatars, voice/video, public browsable interiors,
+decorations shop, subscriptions, online payments, email notifications.
+
+**After launch**: Georgian bank payment gateway, email (custom SMTP), voice notes, public visitable
+houses, seasonal decorations, subscription, legacy keeper for memorial/baby houses.
+
+## Pricing hypothesis (test, not decided)
+Digital house ~39 ₾ · with printed card ~49 ₾ · with engraved wooden keychain ~69–79 ₾.
+
+## Founder owns
+Landing page and CSS styling, Georgian copy and translations, choosing colors/props for the look,
+phone and grandparent testing, print/engraving shops, Instagram, handling first orders.
