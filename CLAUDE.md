@@ -1,4 +1,4 @@
-# Cozy Town (working name)
+# Cozy Town · მყუდრო ქალაქი
 
 A 3D cozy town on the web where people buy a little house for someone they love, then fill it
 with photos, letters and a time capsule. Sold as a gift, often with a physical QR keychain or card.
@@ -10,6 +10,9 @@ Claude writes most of the code. Keep code readable for a beginner: plain JavaScr
 small files, clear names, short comments that explain *why*. Explain changes in plain words.
 
 ## Product decisions (settled — don't re-litigate)
+- **Name**: Cozy Town (English) / მყუდრო ქალაქი (Georgian). **Domain**: `cozytown.ge`
+  (cozytown.com is taken — listed for ~$12k, not worth it). Keep the domain on auto-renew:
+  every printed QR depends on it.
 - **Ownership**: the company owns the platform; customers get a license to a house and own their
   content. The person who controls a house is its **keeper**. Buyer gets a gift code → recipient
   claims it and becomes keeper → keeper can invite co-decorators.
@@ -22,7 +25,7 @@ small files, clear names, short comments that explain *why*. Explain changes in 
 - **Easy enough for grandparents**: tap-to-move camera, no avatar, no joystick, big buttons.
 - **Time capsule**: locked even for the keeper; the server refuses to reveal contents before the date.
 - **QR URLs are printed on physical objects — the URL format must never change.**
-  Format: `https://<domain>/h/<code>`.
+  Format: `https://cozytown.ge/h/<code>`.
 - **Languages**: Georgian and English from day one (Noto Sans Georgian or a BPG font).
 - **Performance**: must run smoothly on budget Android phones. Low-poly, few draw calls,
   compress photos on the device before upload.
@@ -46,6 +49,14 @@ Consequences of "no email yet":
 
 Budget is near zero: stay on free tiers. Supabase free has no automatic backups, so we run our own
 nightly backup (database + storage) from the start. Move to Supabase Pro once paying customers arrive.
+
+## Infrastructure
+- Code: https://github.com/Tvaliashvili/CozyTown (branch `main`).
+- Supabase project `cozytown`, ref `ynkupominvvioqpwihfv`, region eu-central-1 (Frankfurt), free plan.
+  The org "Unicraft" also holds another project — its free plan allows only 2 active projects.
+- Secrets live in `.env.local` (git-ignored): DB password, plus `VITE_SUPABASE_URL` / `VITE_SUPABASE_KEY`
+  (the public publishable key, safe in the browser; data access is controlled by database rules).
+  Never commit secrets or put the service/secret key in frontend code.
 
 ## How the 3D code works (read before changing src/scene)
 - Run `npm run dev` (Vite 6 — Node is 22.11, too old for Vite 7). `?debug` shows FPS and exposes `window.__gl`.
