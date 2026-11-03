@@ -184,6 +184,7 @@ export default function SignIn() {
                 </button>
               </div>
               {accountError && <p className="error" role="alert">{t(accountError)}</p>}
+              {mode === 'signUp' && <AgreeLine />}
               <button type="submit" className="big-button accent" disabled={session === undefined || busy}>
                 {busy ? t('signin.working') : mode === 'signUp' ? t('signin.createAccount') : t('signin.logIn')}
               </button>
@@ -236,4 +237,16 @@ export default function SignIn() {
       </main>
     </div>
   )
+}
+
+// "By creating an account, you agree to our terms of use and privacy notice", with both as links.
+// The sentence is one text with {terms} and {privacy} in it, because Georgian word order differs.
+function AgreeLine() {
+  const { t } = useI18n()
+  const links = {
+    terms: <Link key="terms" to="/terms">{t('signin.agreeTerms')}</Link>,
+    privacy: <Link key="privacy" to="/privacy">{t('signin.agreePrivacy')}</Link>,
+  }
+  const parts = t('signin.agree').split(/\{(terms|privacy)\}/)
+  return <p className="small signin-agree">{parts.map((part) => links[part] ?? part)}</p>
 }

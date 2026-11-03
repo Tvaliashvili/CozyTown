@@ -130,6 +130,15 @@ export default {
   'signin.newHere': 'New here? Create an account',
   'signin.forgot': "Forgot your password? Write to us and we'll help you get back in.",
   'signin.keeperHint': 'Already a keeper? Your house shows up here once you sign in.',
+  'signin.agree': 'By creating an account, you agree to our {terms} and {privacy}.',
+  'signin.agreeTerms': 'terms of use',
+  'signin.agreePrivacy': 'privacy notice',
+
+  // ---------- Terms and Privacy pages (the texts themselves are in src/legal/) ----------
+  'legal.terms': 'Terms of use',
+  'legal.privacy': 'Privacy',
+  'legal.updated': 'Last updated: {date}',
+  'legal.draft': 'Draft: this text is not final yet, and some business details are still missing.',
   'signin.signedInAs': 'Signed in as',
   'signin.openHouse': 'Open',
   'signin.signOut': 'Sign out',

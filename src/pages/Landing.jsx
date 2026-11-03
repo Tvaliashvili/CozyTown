@@ -182,6 +182,11 @@ export default function Landing() {
       <footer className="landing-footer">
         <div className="section">
           <span>© 2027 Cozy Town · მყუდრო ქალაქი · Tbilisi</span>
+          <span className="landing-footer-links">
+            <Link to="/terms">{t('legal.terms')}</Link>
+            {' · '}
+            <Link to="/privacy">{t('legal.privacy')}</Link>
+          </span>
         </div>
       </footer>
     </div>

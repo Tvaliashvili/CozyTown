@@ -132,6 +132,16 @@ export default {
   'signin.newHere': 'პირველად ხართ? შექმენით ანგარიში',
   'signin.forgot': 'დაგავიწყდათ პაროლი? მოგვწერეთ და დაგეხმარებით.',
   'signin.keeperHint': 'უკვე მეპატრონე ხართ? შესვლის შემდეგ თქვენი სახლი აქ გამოჩნდება.',
+  // DRAFT: agreement line and Terms/Privacy page labels
+  'signin.agree': 'ანგარიშის შექმნით ეთანხმებით ჩვენს {terms} და {privacy}.',
+  'signin.agreeTerms': 'გამოყენების წესებს',
+  'signin.agreePrivacy': 'კონფიდენციალურობის პოლიტიკას',
+
+  // ---------- Terms and Privacy pages (the texts themselves are in src/legal/) - DRAFT ----------
+  'legal.terms': 'გამოყენების წესები',
+  'legal.privacy': 'კონფიდენციალურობა',
+  'legal.updated': 'ბოლო განახლება: {date}',
+  'legal.draft': 'სამუშაო ვერსია: ეს ტექსტი ჯერ საბოლოო არ არის და ბიზნესის ზოგიერთი მონაცემი ჯერ არ არის შევსებული.',
   'signin.signedInAs': 'შესული ხართ როგორც',
   'signin.openHouse': 'გახსნა:',
   'signin.signOut': 'გასვლა',

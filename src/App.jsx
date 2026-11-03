@@ -9,6 +9,7 @@ const TownApp = lazy(() => import('./TownApp.jsx'))
 const SignIn = lazy(() => import('./pages/SignIn.jsx'))
 const CardPage = lazy(() => import('./card/CardPage.jsx'))
 const AdminPage = lazy(() => import('./admin/AdminPage.jsx'))
+const LegalPage = lazy(() => import('./legal/LegalPage.jsx'))
 
 export default function App() {
   const path = usePath()
@@ -17,6 +18,14 @@ export default function App() {
     return (
       <Suspense fallback={null}>
         <AdminPage />
+      </Suspense>
+    )
+  }
+
+  if (path === '/terms' || path === '/privacy') {
+    return (
+      <Suspense fallback={null}>
+        <LegalPage which={path.slice(1)} />
       </Suspense>
     )
   }

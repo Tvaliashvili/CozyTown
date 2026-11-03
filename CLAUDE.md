@@ -105,6 +105,9 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   phone with `fflate` (`zipSync`; the worker version stalled) and is lazy-loaded on the button press.
   It holds photos/, letters/, capsule/ (only once open), lanterns.txt and an offline index.html with a
   flat SVG of the house (`src/export/houseDrawing.js`). All people's words are HTML-escaped in that page.
+- `/terms` and `/privacy` (`src/legal/`): plain reading pages, lazy-loaded, linked from the landing footer and
+  the "Create my account" form. Texts in `terms.js` / `privacy.js`, business details in `company.js`
+  (`isDraft` shows a draft notice). When a feature changes what we keep or who sees it, update `privacy.js`.
 - `/h/<code>/card` is the printable bank-card-size card (`src/card/`), for the keeper or an admin.
   While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
   a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the

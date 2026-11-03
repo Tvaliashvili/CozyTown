@@ -488,6 +488,10 @@
 .landing-footer .section {
   padding-top: 28px;
   padding-bottom: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
 }
 
 /* ---------- Sign-in page ---------- */
@@ -802,4 +806,79 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.45;
+}
+
+/* ---------- Terms and Privacy (/terms, /privacy) ---------- */
+
+.legal {
+  min-height: 100%;
+  background: var(--cream);
+}
+
+.legal-top {
+  padding: max(14px, env(safe-area-inset-top)) 16px 28px;
+  background: linear-gradient(to bottom, var(--dusk-1), var(--dusk-2));
+  color: var(--cream);
+}
+
+.legal-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.legal-top h1 {
+  max-width: 680px;
+  margin: 18px auto 0;
+  /* "კონფიდენციალურობა" is one long word: shrink it on small phones instead of cutting it off. */
+  font-size: clamp(24px, 7vw, 34px);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+/* Long reading: a narrow column and generous line height, easy on older eyes. */
+.legal-body {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 20px 56px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+.legal-body h2 {
+  margin: 32px 0 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.legal-body p {
+  margin: 0 0 12px;
+}
+
+.legal-draft {
+  padding: 12px 16px;
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+  background: #fdebc8;
+}
+
+.legal-updated {
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.legal-body .legal-other {
+  margin-top: 40px;
+  font-weight: 700;
+}
+
+.legal-other a,
+.landing-footer a,
+.signin-agree a {
+  color: var(--accent);
 }

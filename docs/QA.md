@@ -68,7 +68,8 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
 | Back button (Q3) | - | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
 | Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted) |
-| Security sweep | all 11 tables have row security on; visitors can read only `streets` and call only 7 functions | - |
+| Security sweep | `security.test.js`: all 12 tables have row security on; visitors can read only `streets` and call only the 7 listed functions; every security-definer function pins `search_path` | - |
+| Terms & Privacy | - | both pages in English and Georgian at 360 px: titles, sections, no sideways scroll, no long dashes; footer and sign-in links work |
 
 ## Phone checklist (for the founder, on real phones)
 
@@ -83,6 +84,7 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 7. Download everything. Does the zip save? Open `index.html` from it in airplane mode.
 8. Light a lantern as a visitor (signed out). Does the keeper see it?
 9. Print the card at home (fold-over A4). Does the QR open the house?
+10. Read the Terms and Privacy pages (links at the bottom of the landing page). Is anything untrue or unclear?
 
 Write what went wrong under a new review entry below.
 
@@ -113,3 +115,17 @@ Write what went wrong under a new review entry below.
   by these scripts, never in `src/`.
 - **Tested:** see the "Backups" row above. Founder made the R2 key and Supabase secret key; Claude made the bucket and set the GitHub secrets with `gh`. First GitHub run passed.
 - **Found:** Q16 (full copies will outgrow 10 GB one day).
+
+### 2026-11-03 · Tests in the project, small fixes, Terms and Privacy
+- **Built:** `tests/` (Q4), fixes for Q8, Q9, Q10, `npm run migrate`, and `/terms` + `/privacy`
+  (`src/legal/`, lazy-loaded; linked from the landing footer and the "Create my account" form).
+- **Database:** migration `20261106000000_export_keeps_capsule_news` (applied): `open_capsule()` got an optional
+  `mark_seen`. The site that was live before kept working, because the old call still matches.
+- **Terms and Privacy are DRAFTS.** Each sentence was checked against how the site really works (e.g. photo files
+  have public random addresses, backups run on GitHub and are kept up to a year, photos lose their location
+  data when shrunk). Still needed from the founder: business name, ID number, address, contact
+  (`src/legal/company.js`), a decision on the refund rule and the age limit (proposals in `terms.js`), the Georgian
+  review, and ideally a lawyer before the first paid order.
+- **Tests:** `npm test` all green: 175 database checks, 100 browser checks. Landing page still 89 KB gzip.
+- **Noticed:** in headless Chrome, Georgian dates show in English ("November 3, 2026") because that Chrome has no
+  Georgian date data. Real phones should be fine; check on the phone test (Q5).
