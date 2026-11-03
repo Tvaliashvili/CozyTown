@@ -25,6 +25,8 @@ export async function loadHouse(code) {
     design: cleanDesign(house.design),
     claimed: house.claimed,
     isKeeper: house.is_keeper,
+    // Invited by the keeper to help: may hang photos, write letters and fill the time capsule.
+    isHelper: house.is_helper,
     designFinal: house.design_final,
     // Only the number. Who lit them and what they wrote is for the keeper's eyes only.
     lanternCount: house.lantern_count,

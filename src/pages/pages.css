@@ -792,3 +792,14 @@
 .signin-sheet > .text-button {
   align-self: center;
 }
+
+/* "You've been invited to help": shown when someone opens a keeper's invite link */
+.signin-invited {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #e3f0de;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}

@@ -7,7 +7,8 @@ import { BackIcon, PenIcon, TrashIcon } from '../ui/icons.jsx'
 // The mailbox: a full-screen page over the room with the house's letters. Keeper only.
 // letters lives in Room (it also shows how many there are); onChange gives it the new list.
 // Three views: the list, one letter open for reading, and writing a new one.
-export default function Letters({ code, letters, failed, onRetry, onChange, onClose }) {
+// onlyOwn: the person is a helper, so the database only gives them the letters they wrote.
+export default function Letters({ code, letters, failed, onRetry, onChange, onClose, onlyOwn = false }) {
   const { t } = useI18n()
   const [reading, setReading] = useState(null)
   const [writing, setWriting] = useState(false)
@@ -54,7 +55,8 @@ export default function Letters({ code, letters, failed, onRetry, onChange, onCl
           <PenIcon />
           {t('letters.write')}
         </button>
-        {letters.length === 0 && <p className="letters-empty">{t('letters.empty')}</p>}
+        {onlyOwn && <p className="letters-empty">{t('letters.onlyOwn')}</p>}
+        {letters.length === 0 && !onlyOwn && <p className="letters-empty">{t('letters.empty')}</p>}
         {letters.map((letter) => (
           <button key={letter.id} type="button" className="letter-item" onClick={() => setReading(letter)}>
             <strong>{letter.from_name ? `${t('letters.from')} ${letter.from_name}` : t('letters.aLetter')}</strong>

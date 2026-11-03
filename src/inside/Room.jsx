@@ -4,33 +4,38 @@ import AddPhoto from './AddPhoto.jsx'
 import PhotoViewer from './PhotoViewer.jsx'
 import Letters from './Letters.jsx'
 import Capsule, { countInside } from './Capsule.jsx'
+import Helpers from './Helpers.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
 import { FRAMES } from './frames.js'
 import { loadLetters, loadPhotos } from '../data/inside.js'
 import { loadCapsule } from '../data/capsule.js'
 import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
-import { AddPhotoIcon, BackIcon, LetterIcon, LockIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, BackIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
 // The room inside a house (/h/<code>/inside). It covers the street, which stays loaded underneath.
-//   Keeper  → hangs photos in the frames, reads and writes letters, shares the house link.
+//   Keeper  → hangs photos in the frames, reads and writes letters, fills the time capsule,
+//             shares the house link, invites helpers.
+//   Helper  → the same, except inviting others; they only see the letters they wrote themselves.
 //   Visitor → looks at the photos. Letters are private, so visitors don't see them at all.
 // onCapsuleSeen: called when the keeper opens a time capsule whose day has come,
 // so the street stops saying "your time capsule has opened".
-export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) {
+export default function Room({ code, title, isKeeper, isHelper, onLeave, onCapsuleSeen }) {
   const { t, lang } = useI18n()
+  const canDecorate = isKeeper || isHelper
   const [photos, setPhotos] = useState(null) // null = still loading
   const [photosFailed, setPhotosFailed] = useState(false)
-  const [letters, setLetters] = useState(null) // keeper only; null = still loading
+  const [letters, setLetters] = useState(null) // keeper and helpers; null = still loading
   const [lettersFailed, setLettersFailed] = useState(false)
   const [adding, setAdding] = useState(null) // { file, slot } while "Hang this photo?" is open
   const [viewing, setViewing] = useState(null) // the photo opened full screen
   const [lettersOpen, setLettersOpen] = useState(false)
-  // Keeper only: the time capsule chest. undefined = still loading, null = no chest yet.
+  // Keeper and helpers: the time capsule chest. undefined = still loading, null = no chest yet.
   const [capsule, setCapsule] = useState(undefined)
   const [capsuleFailed, setCapsuleFailed] = useState(false)
   const [capsuleOpen, setCapsuleOpen] = useState(false)
+  const [helpersOpen, setHelpersOpen] = useState(false) // keeper only
 
   // One hidden file picker for every frame; slotToFill remembers which frame asked for it.
   const fileInput = useRef(null)
@@ -39,7 +44,7 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
   function loadEverything() {
     setPhotosFailed(false)
     loadPhotos(code).then(setPhotos, () => setPhotosFailed(true))
-    if (isKeeper) {
+    if (canDecorate) {
       setLettersFailed(false)
       loadLetters(code).then(setLetters, () => setLettersFailed(true))
       loadChest()
@@ -61,14 +66,14 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
   }
 
   // What the time capsule card says under its title.
-  let capsuleText = t('capsule.cardNew')
+  let capsuleText = isKeeper ? t('capsule.cardNew') : t('capsule.cardNoDate')
   if (capsuleFailed) capsuleText = t('capsule.cardFailed')
   else if (capsule?.isOpen) capsuleText = t('capsule.cardOpen')
   else if (capsule) {
     capsuleText = `${t('capsule.cardLocked').replace('{date}', formatDay(capsule.opensOn, lang))} · ${countInside(t, capsule.itemCount)}`
   }
 
-  useEffect(loadEverything, [code, isKeeper])
+  useEffect(loadEverything, [code, canDecorate])
 
   // { slot: photo } so each frame can find its photo.
   const photoInFrame = {}
@@ -99,7 +104,7 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
 
   const counts = []
   if (photos) counts.push(countText(t, photos.length, 'room.photos'))
-  if (isKeeper && letters) counts.push(countText(t, letters.length, 'room.letters'))
+  if (canDecorate && letters) counts.push(countText(t, letters.length, 'room.letters'))
 
   return (
     <div className="room">
@@ -132,7 +137,7 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
                 )
               }
               // Visitors don't see empty frames; there's nothing for them to do with one.
-              if (!isKeeper) return null
+              if (!canDecorate) return null
               return (
                 <button
                   key={slot}
@@ -172,10 +177,10 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
             <h1 id="room-title">{title}</h1>
             {counts.length > 0 && <p>{counts.join(' · ')}</p>}
           </div>
-          {isKeeper && <ShareButton code={code} title={title} />}
+          {canDecorate && <ShareButton code={code} title={title} />}
         </div>
 
-        {isKeeper ? (
+        {canDecorate ? (
           <>
             <button
               type="button"
@@ -205,6 +210,17 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
                 </span>
               </button>
             )}
+
+            {isKeeper && (
+              <button type="button" className="room-card" onClick={() => setHelpersOpen(true)}>
+                <PeopleIcon />
+                <span>
+                  <strong>{t('helpers.title')}</strong>
+                  <span>{t('helpers.cardText')}</span>
+                </span>
+              </button>
+            )}
+            {isHelper && <p className="room-note">{t('helpers.youHelp')}</p>}
           </>
         ) : (
           photos?.length > 0 && <p className="room-note">{t('room.visitorNote')}</p>
@@ -219,7 +235,7 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
       {viewing && (
         <PhotoViewer
           photo={viewing}
-          canTakeDown={isKeeper}
+          canTakeDown={canDecorate}
           onTakenDown={onTakenDown}
           onClose={() => setViewing(null)}
         />
@@ -232,8 +248,10 @@ export default function Room({ code, title, isKeeper, onLeave, onCapsuleSeen }) 
           onRetry={loadEverything}
           onChange={setLetters}
           onClose={() => setLettersOpen(false)}
+          onlyOwn={!isKeeper}
         />
       )}
+      {helpersOpen && <Helpers code={code} onClose={() => setHelpersOpen(false)} />}
       {capsuleOpen && (
         <Capsule
           code={code}

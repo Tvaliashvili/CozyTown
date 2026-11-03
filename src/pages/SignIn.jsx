@@ -12,6 +12,9 @@ import './pages.css'
 function claimErrorKey(message) {
   if (message.includes('No house')) return 'signin.error.notFound'
   if (message.includes('already claimed')) return 'signin.error.claimed'
+  if (message.includes('already used')) return 'signin.error.inviteUsed'
+  if (message.includes('expired')) return 'signin.error.inviteExpired'
+  if (message.includes('already the keeper')) return 'signin.error.ownHouse'
   return 'signin.error.generic'
 }
 
@@ -37,22 +40,19 @@ export default function SignIn() {
   const [busy, setBusy] = useState(false)
   const [accountError, setAccountError] = useState(null)
   const [houses, setHouses] = useState([])
-  const [giftCode, setGiftCode] = useState('')
+  // A keeper's invite link (/signin?code=...) brings the helper's code along, already filled in.
+  const [codeFromLink] = useState(() => new URLSearchParams(window.location.search).get('code') ?? '')
+  const [giftCode, setGiftCode] = useState(codeFromLink)
   const [opening, setOpening] = useState(false)
   const [errorKey, setErrorKey] = useState(null)
 
-  // Keepers who already have a house get a button to open it straight away.
+  // Keepers (and helpers) who already have a house get a button to open it straight away.
   useEffect(() => {
     if (!session) {
       setHouses([])
       return
     }
-    supabase
-      .from('houses')
-      .select('code, title')
-      .eq('keeper_id', session.user.id) // admins can see every house, so only show their own
-      .order('claimed_at')
-      .then(({ data }) => setHouses(data ?? []))
+    supabase.rpc('my_houses').then(({ data }) => setHouses(data ?? []))
   }, [session])
 
   // Admins also get a link to the admin page. Only they see it, so it's in English only.
@@ -106,7 +106,7 @@ export default function SignIn() {
   const signedIn = Boolean(session)
   // The gift code is entered only once. Keepers who already have a house just tap "Open" in step 1,
   // so for them the code box stays tucked away behind a small link (for a second gift).
-  const [wantsAnotherGift, setWantsAnotherGift] = useState(false)
+  const [wantsAnotherGift, setWantsAnotherGift] = useState(Boolean(codeFromLink))
   const showGiftForm = !signedIn || houses.length === 0 || wantsAnotherGift
 
   return (
@@ -134,7 +134,7 @@ export default function SignIn() {
               </p>
               {houses.map((house) => (
                 <Link key={house.code} to={`/h/${house.code}`} className="big-button accent">
-                  {t('signin.openHouse')} {house.title || t('yourHouse')}
+                  {t('signin.openHouse')} {house.title || (house.is_keeper ? t('yourHouse') : t('house.aCozyHouse'))}
                 </Link>
               ))}
               {isAdmin && (
@@ -203,7 +203,8 @@ export default function SignIn() {
         )}
 
         {showGiftForm && <form className="card signin-step" onSubmit={claimGift}>
-          <h2><span className="step-badge">2</span>{t('signin.step2')}</h2>
+          <h2><span className="step-badge">2</span>{codeFromLink ? t('signin.step2Invite') : t('signin.step2')}</h2>
+          {codeFromLink && <p className="signin-invited">{t('signin.invited')}</p>}
           {/* The box below stays locked until step 1 is done, so say so right at the top. */}
           {!signedIn && (
             <p className="signin-locked">
@@ -211,7 +212,7 @@ export default function SignIn() {
               {t('signin.signInFirst')}
             </p>
           )}
-          <label htmlFor="gift-code" className="small">{t('signin.codeHint')}</label>
+          <label htmlFor="gift-code" className="small">{codeFromLink ? t('signin.inviteCodeHint') : t('signin.codeHint')}</label>
           <input
             id="gift-code"
             className="code-input"
@@ -227,7 +228,7 @@ export default function SignIn() {
           {errorKey && <p className="error" role="alert">{t(errorKey)}</p>}
           <button type="submit" className="big-button accent" disabled={!signedIn || !giftCode.trim() || opening}>
             <KeyIcon />
-            {opening ? t('signin.opening') : t('signin.open')}
+            {opening ? t('signin.opening') : codeFromLink ? t('signin.join') : t('signin.open')}
           </button>
         </form>}
 

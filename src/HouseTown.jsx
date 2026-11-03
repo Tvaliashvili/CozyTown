@@ -275,7 +275,7 @@ export default function HouseTown({ code, inside }) {
         plot={house.plot}
         design={house.design}
         lanterns={house.lanternCount}
-        showAccount={house.isKeeper}
+        showAccount={house.isKeeper || house.isHelper}
         onShare={house.isKeeper ? () => setShareOpen(true) : undefined}
         focusHouse={lanternOpen || lanternListOpen || shareOpen}
         neighbours={house.neighbours}
@@ -293,6 +293,7 @@ export default function HouseTown({ code, inside }) {
           code={code}
           title={name}
           isKeeper={house.isKeeper}
+          isHelper={house.isHelper}
           onLeave={goOutside}
           onCapsuleSeen={() => setHouse((current) => ({ ...current, capsuleNews: false }))}
         />

@@ -55,6 +55,9 @@ export const TrashIcon = () => <Line><path d="M4 7h16" /><path d="M10 11v6M14 11
 export const ShareIcon = () => (
   <Line size={18}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" /></Line>
 )
+export const PeopleIcon = () => (
+  <Line size={28}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0" /><circle cx="17" cy="9" r="2.5" /><path d="M16.5 14.2a5 5 0 0 1 5 4.8" /></Line>
+)
 export const DoorIcon = () => <Line><path d="M6 21V9a6 6 0 0 1 12 0v12" /><path d="M4 21h16" /><circle cx="14.5" cy="14" r="1" /></Line>
 export const EyeIcon = () => <Line><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></Line>
 export const EyeOffIcon = () => (

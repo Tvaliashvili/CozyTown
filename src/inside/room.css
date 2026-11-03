@@ -531,3 +531,69 @@
   color: var(--ink-soft);
   text-decoration: underline;
 }
+
+/* ---------- Family helpers (Helpers.jsx) ---------- */
+
+.helpers-heading {
+  margin: 12px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+.invite-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #fffdf8;
+  box-shadow: 0 1px 2px rgba(74, 59, 51, 0.06), 0 12px 28px rgba(74, 59, 51, 0.12);
+}
+
+.invite-box p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.invite-link {
+  font-size: 15px;
+}
+
+.invite-code {
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.helper-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.helper-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 10px 6px 10px 16px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.helper-row .link-button {
+  margin: 0;
+}
+
+.helper-row .letters-confirm {
+  flex-basis: 100%;
+  padding: 0 10px 6px 0;
+}
+
+.helper-email {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}

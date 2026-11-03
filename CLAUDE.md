@@ -21,7 +21,7 @@ small files, clear names, short comments that explain *why*. Explain changes in 
 - **Export**: zip of all photos + letters + a simple offline HTML page of the house.
 - **Privacy**: houses are private by default, opened only by an unguessable link / QR.
   Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
-- **Accounts**: only keepers sign in. Visitors need no account and can light a lantern anonymously.
+- **Accounts**: only keepers (and the helpers they invite) sign in. Visitors need no account and can light a lantern anonymously.
 - **Easy enough for grandparents**: tap-to-move camera, no avatar, no joystick, big buttons.
 - **The outside of a house is designed once, by the keeper** (the recipient, after claiming the gift;
   the admin can set a starting design from the buyer's order). It can be changed freely until it's
@@ -89,6 +89,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   photo) can be added until then. Nobody reads the tables directly; `get_capsule`, `add_to_capsule` and
   `open_capsule` check the date. Capsule photos sit in the private `capsule` bucket, downloadable only once
   open. `get_house().capsule_news` tells the keeper on the street when it has opened.
+- **Helpers** (co-decorators, `src/inside/Helpers.jsx`, `src/data/helpers.js`): the keeper makes a one-time
+  invite code (14 days) and sends `/signin?code=<code>`. The sign-in code box takes gift codes (→ keeper)
+  and invite codes (→ helper) through the same `claim_house()`. Helpers hang photos, write letters and fill
+  the capsule, but read only their own letters, can't change the outside or the capsule's day, and don't
+  see lanterns. `can_edit_house()` = keeper or helper; `is_house_keeper()` = keeper only.
 - `/h/<code>/card` is the printable bank-card-size card (`src/card/`), for the keeper or an admin.
   While the house is unclaimed it carries the gift code. Prints as a print-shop PDF (3 mm bleed) or
   a fold-over A4 sheet. QR codes always use `houseUrl()` from `src/data/links.js` (never the
