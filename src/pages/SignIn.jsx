@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase.js'
 import { useSession } from '../lib/useSession.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
-import { BackIcon, KeyIcon } from '../ui/icons.jsx'
+import { BackIcon, KeyIcon, LockIcon } from '../ui/icons.jsx'
 import './pages.css'
 
 // Turns the database's error into a friendly message.
@@ -105,6 +105,13 @@ export default function SignIn() {
 
         <form className="card signin-step" onSubmit={claimGift}>
           <h2><span className="step-badge">2</span>{t('signin.step2')}</h2>
+          {/* The box below stays locked until step 1 is done, so say so right at the top. */}
+          {!signedIn && (
+            <p className="signin-locked">
+              <LockIcon />
+              {t('signin.signInFirst')}
+            </p>
+          )}
           <label htmlFor="gift-code" className="small">{t('signin.codeHint')}</label>
           <input
             id="gift-code"
@@ -122,9 +129,7 @@ export default function SignIn() {
           <button type="submit" className="big-button accent" disabled={!signedIn || !giftCode.trim() || opening}>
             <KeyIcon />
             {opening ? t('signin.opening') : t('signin.open')}
-          </button>
-          {!signedIn && <p className="small">{t('signin.signInFirst')}</p>}
-        </form>
+          </button>        </form>
 
         <p className="small centered">{t('signin.visitHint')}</p>
       </main>

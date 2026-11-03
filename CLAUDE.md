@@ -72,6 +72,11 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   `/town` demo street saved in the browser (`src/TownApp.jsx`) and `/h/<code>` a real house from the
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
+- `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture
+  frames (`frames.js`; the database allows slots 0–4), plus letters. It covers the street, which stays
+  loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
+  Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
+  Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`).
 - Designs from the database always go through `cleanDesign()` (`src/data/design.js`), which drops
   any value the customizer doesn't offer.
 - The town and the sign-in page are lazy-loaded, so the landing page doesn't download three.js or

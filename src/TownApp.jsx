@@ -6,8 +6,9 @@ import { useI18n } from './i18n/i18n.jsx'
 
 // houseCode set: someone's real house from the database (/h/<code>).
 // houseCode null: the demo street (/town), where anyone can try decorating.
-export default function TownApp({ houseCode }) {
-  return houseCode === null ? <DemoTown /> : <HouseTown code={houseCode} />
+// inside: show the room inside the house (/h/<code>/inside) instead of the street.
+export default function TownApp({ houseCode, inside }) {
+  return houseCode === null ? <DemoTown /> : <HouseTown code={houseCode} inside={inside} />
 }
 
 // The demo house is saved in this browser only, so trying it out needs no account.

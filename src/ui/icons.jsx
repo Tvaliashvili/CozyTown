@@ -44,6 +44,19 @@ export const LockIcon = () => <Line size={26}><rect x="4" y="10" width="16" heig
 export const HouseIcon = () => <Line size={26}><path d="M3 11 L12 4 L21 11" /><path d="M5 10v10h14V10" /><rect x="10" y="14" width="4" height="6" /></Line>
 export const DownloadIcon = () => <Line size={26}><path d="M12 3v12" /><path d="M7 10l5 5 5-5" /><path d="M4 21h16" /></Line>
 
+// Inside the house
+export const AddPhotoIcon = () => (
+  <Line><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="2" /><path d="M21 16l-5-5-9 8" /><path d="M19 3v4M17 5h4" /></Line>
+)
+export const PlusIcon = () => <Line size={32}><path d="M12 5v14M5 12h14" /></Line>
+export const LetterIcon = () => <Line size={28}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></Line>
+export const PenIcon = () => <Line><path d="M4 20l4-1 11-11-3-3L5 16z" /><path d="M14 6l3 3" /></Line>
+export const TrashIcon = () => <Line><path d="M4 7h16" /><path d="M10 11v6M14 11v6" /><path d="M6 7l1 13h10l1-13" /><path d="M9 7V4h6v3" /></Line>
+export const ShareIcon = () => (
+  <Line size={18}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" /></Line>
+)
+export const DoorIcon = () => <Line><path d="M6 21V9a6 6 0 0 1 12 0v12" /><path d="M4 21h16" /><circle cx="14.5" cy="14" r="1" /></Line>
+
 // One icon per customizer tab (ids from src/data/options.js).
 export const TAB_ICONS = {
   walls: () => <Line size={24}><rect x="3" y="5" width="18" height="14" rx="1" /><path d="M3 10h18M3 15h18M9 5v5M15 10v5M9 15v4" /></Line>,

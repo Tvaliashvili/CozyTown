@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react'
 // A tiny router: the address bar decides which page shows.
 // We only have a handful of pages, so no router library is needed.
 
-export function navigate(path) {
-  window.history.pushState(null, '', path)
+// replace: swap the current history entry instead of adding one, so Back skips it.
+// state: remembered with the entry (read it back with window.history.state).
+export function navigate(path, { replace = false, state = null } = {}) {
+  if (replace) window.history.replaceState(state, '', path)
+  else window.history.pushState(state, '', path)
   window.dispatchEvent(new PopStateEvent('popstate'))
   window.scrollTo(0, 0)
 }

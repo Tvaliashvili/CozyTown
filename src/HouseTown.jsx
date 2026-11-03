@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import StreetView from './StreetView.jsx'
 import FinishDialog from './ui/FinishDialog.jsx'
+import Room from './inside/Room.jsx'
 import { loadHouse, saveHouseDesign, submitHouseDesign } from './data/houses.js'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
-import { Link } from './router.jsx'
-import { GiftIcon, HouseIcon } from './ui/icons.jsx'
+import { Link, navigate } from './router.jsx'
+import { DoorIcon, GiftIcon, HouseIcon } from './ui/icons.jsx'
 
 // Wait this long after the last tap before saving, so a burst of taps becomes one save.
 const SAVE_DELAY_MS = 700
@@ -14,9 +15,10 @@ const FINISHED_MESSAGE_MS = 6000
 
 // A real house at /h/<code>, loaded from the database.
 //   Keeper, design not final yet → can decorate, every change is saved, then "Make it final".
-//   Keeper, design final         → looks at it (the inside of the house comes next).
+//   Keeper, design final         → looks at it.
 //   Anyone else                  → looks at it. If nobody has claimed it yet, they're offered the gift-code page.
-export default function HouseTown({ code }) {
+// Once claimed, everyone can step inside (/h/<code>/inside, the "inside" prop) to see the room.
+export default function HouseTown({ code, inside }) {
   const { t } = useI18n()
   // 'loading' | 'missing' | 'failed' | 'ready'
   const [status, setStatus] = useState('loading')
@@ -88,6 +90,17 @@ export default function HouseTown({ code }) {
     setTimeout(() => setJustFinished(false), FINISHED_MESSAGE_MS)
   }
 
+  function goInside() {
+    navigate(`/h/${code}/inside`, { state: { fromStreet: true } })
+  }
+
+  function goOutside() {
+    // Came in from the street? Then step back, so the phone's own Back button stays in step.
+    // Opened the room straight from a link? Then swap it for the street.
+    if (window.history.state?.fromStreet) window.history.back()
+    else navigate(`/h/${code}`, { replace: true })
+  }
+
   if (status === 'missing') {
     return <HouseMessage title={t('house.missing.title')} text={t('house.missing.text')} />
   }
@@ -105,7 +118,9 @@ export default function HouseTown({ code }) {
 
   const canEdit = house.isKeeper && !house.designFinal
   const name = house.title || (house.isKeeper ? t('yourHouse') : t('house.aCozyHouse'))
-  const label = canEdit ? { title: t('yourHouse'), text: t('tapToDecorate') } : { title: name }
+  let label = { title: name }
+  if (canEdit) label = { title: t('yourHouse'), text: t('tapToDecorate') }
+  else if (house.claimed) label = { title: name, text: t('room.tapToEnter') }
 
   let bottom = null // null = the usual "slide your finger" hint
   if (justFinished) {
@@ -122,6 +137,13 @@ export default function HouseTown({ code }) {
         {t('house.claimIt')}
       </Link>
     )
+  } else {
+    bottom = (
+      <button type="button" className="big-button accent enter-call" onClick={goInside}>
+        <DoorIcon />
+        {t('room.enter')}
+      </button>
+    )
   }
 
   return (
@@ -137,7 +159,9 @@ export default function HouseTown({ code }) {
         onFinish={() => setConfirming(true)}
         saveFailed={saveFailed}
         onDoneEditing={saveNow}
+        onEnter={house.claimed ? goInside : undefined}
       />
+      {inside && <Room code={code} title={name} isKeeper={house.isKeeper} onLeave={goOutside} />}
       {confirming && <FinishDialog onConfirm={finish} onCancel={() => setConfirming(false)} />}
     </>
   )

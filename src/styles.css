@@ -618,8 +618,9 @@ body {
   padding: 16px;
 }
 
-/* "Got this house as a gift?" button, where the hint usually sits */
-.gift-call {
+/* "Got this house as a gift?" and "Go inside" buttons, where the hint usually sits */
+.gift-call,
+.enter-call {
   position: absolute;
   left: 16px;
   right: 16px;

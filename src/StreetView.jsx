@@ -13,6 +13,7 @@ import { SlideIcon } from './ui/icons.jsx'
 // label: { title, text } shown in the bubble above the house (text is optional).
 // bottom: replaces the "slide your finger" hint at the bottom, e.g. with a button.
 // onFinish, saveFailed, onDoneEditing: passed on to the decorating panel (real houses only).
+// onEnter: when you can't decorate, tapping the house (or its label) calls this to step inside.
 export default function StreetView({
   plot,
   design,
@@ -24,6 +25,7 @@ export default function StreetView({
   onFinish,
   saveFailed,
   onDoneEditing,
+  onEnter,
 }) {
   const { t } = useI18n()
   const [editing, setEditing] = useState(false)
@@ -32,6 +34,9 @@ export default function StreetView({
 
   // If the design gets locked while the panel is open, the panel simply disappears.
   const showPanel = editing && canEdit
+
+  // What tapping the house does: open the decorating panel, step inside, or nothing.
+  const onTapHouse = canEdit ? () => setEditing(true) : onEnter
 
   function closePanel() {
     setEditing(false)
@@ -45,14 +50,14 @@ export default function StreetView({
         myDesign={design}
         neighbours={neighbours}
         editing={showPanel}
-        onSelectMine={canEdit ? () => setEditing(true) : undefined}
+        onSelectMine={onTapHouse}
         labelRef={labelRef}
         onReady={hideLoadingScreen}
       />
 
       {!showPanel &&
-        (canEdit ? (
-          <button ref={labelRef} className="house-label" onClick={() => setEditing(true)}>
+        (onTapHouse ? (
+          <button ref={labelRef} className="house-label" onClick={onTapHouse}>
             <LabelBubble label={label} />
           </button>
         ) : (
