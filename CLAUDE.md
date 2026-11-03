@@ -57,6 +57,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 - Secrets live in `.env.local` (git-ignored): DB password, plus `VITE_SUPABASE_URL` / `VITE_SUPABASE_KEY`
   (the public publishable key, safe in the browser; data access is controlled by database rules).
   Never commit secrets or put the service/secret key in frontend code.
+- Database changes live in `supabase/migrations/` (one SQL file per change, never edit an applied one).
+  Applied by a Node `pg` script over the session pooler `aws-1-eu-central-1.pooler.supabase.com:5432`,
+  user `postgres.<ref>`. Test first inside a transaction that rolls back.
+- Admin: after the founder's first Google sign-in, add their user id to `public.admins` in the SQL editor.
 
 ## How the 3D code works (read before changing src/scene)
 - Run `npm run dev` (Vite 6 — Node is 22.11, too old for Vite 7). `?debug` shows FPS and exposes `window.__gl`.
