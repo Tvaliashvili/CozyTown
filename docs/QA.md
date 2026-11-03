@@ -19,8 +19,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 |---|---|---|---|---|
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
 | Q6 | 🟢 | Speed | The landing page download is 89 KB (compressed). About 15 KB of that is every translation for every page (346 texts × 2 languages), and it grows with each feature. | Later: load the house/room texts only with the town. Not urgent yet. |
-| Q7 | 🟢 | Storage | Photo **files can be left behind** with nothing pointing to them: when a house is deleted (rows go, files stay), or when a capsule photo uploads but sealing it fails. They cost storage space, nothing else. | A cleanup step in the nightly backup script (Q1): delete files whose house or photo row no longer exists. |
-| Q16 | 🟢 | Backups | Every backup is a full copy of all photos, and 42 are kept. R2's free 10 GB fills up at about 200 MB per backup (~1,000 photos). The script fails loudly at 8 GB. | Before that: copy each photo to R2 only once (photos never change), and keep only the database nightly. |
 
 ### Questions for the founder (product choices made without asking)
 - **Q11** Helpers can take down *any* photo on the wall, including ones the keeper hung. OK, or only their own?
@@ -40,11 +38,13 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 
 | ID | Date | What | Commit |
 |---|---|---|---|
-| Q17 | 2026-11-03 | 🟢 A link tapped in the very first instant after a page loaded changed the address but not the page (the router started listening a moment late). Found by the new legal-pages test. `usePath` now catches up once when it starts listening. | *(this commit)* |
-| Q8 | 2026-11-03 | 🟢 "Download everything" counted as looking inside an opened capsule, so the street notice vanished unseen. `open_capsule()` got a `mark_seen` switch (migration `20261106000000`, applied); the zip passes false. | *(this commit)* |
-| Q9 | 2026-11-03 | 🟢 Letters, Time capsule and Family helpers now move screen-reader focus to their title when they open (Letters and the capsule also when they change view). | *(this commit)* |
-| Q10 | 2026-11-03 | 🟢 The invite note told already signed-in people to sign in. Now it just says to tap the button. Georgian text is DRAFT. | *(this commit)* |
-| Q4 | 2026-11-03 | 🟠 The tests lived only in Claude's temporary folders. Now they are in `tests/`: `npm run test:db` (9 files, 173 checks, all rolled back) and `npm run test:browser` (7 files, 72 checks, throwaway accounts removed). See `tests/README.md`. | *(this commit)* |
+| Q16 | 2026-11-03 | 🟢 Every backup was a full copy of all photos (42 kept), so R2's free 10 GB would have filled at ~1,000 photos. Now each photo is copied to R2 **once**, encrypted on its own, and the nightly zip holds only the database (25 KB instead of 277 KB today). A copy is deleted once no kept backup lists it. Room now for ~40,000 photos. `/admin` shows how much of the 10 GB is used. | *(this commit)* |
+| Q7 | 2026-11-03 | 🟢 Photo files with nothing pointing to them (deleted house, failed capsule upload) were left behind for ever. The nightly backup now deletes them from Supabase, if they are over a week old and already copied into the backups. If more than half of all files look left over, it deletes nothing and fails. | *(this commit)* |
+| Q17 | 2026-11-03 | 🟢 A link tapped in the very first instant after a page loaded changed the address but not the page (the router started listening a moment late). Found by the new legal-pages test. `usePath` now catches up once when it starts listening. | 6e7b365 |
+| Q8 | 2026-11-03 | 🟢 "Download everything" counted as looking inside an opened capsule, so the street notice vanished unseen. `open_capsule()` got a `mark_seen` switch (migration `20261106000000`, applied); the zip passes false. | 36833e5 |
+| Q9 | 2026-11-03 | 🟢 Letters, Time capsule and Family helpers now move screen-reader focus to their title when they open (Letters and the capsule also when they change view). | 36833e5 |
+| Q10 | 2026-11-03 | 🟢 The invite note told already signed-in people to sign in. Now it just says to tap the button. Georgian text is DRAFT. | 36833e5 |
+| Q4 | 2026-11-03 | 🟠 The tests lived only in Claude's temporary folders. Now they are in `tests/`: `npm run test:db` (9 files, 173 checks, all rolled back) and `npm run test:browser` (7 files, 72 checks, throwaway accounts removed). See `tests/README.md`. | a9aeb0c |
 | Q1 | 2026-11-03 | 🔴 There was no backup. Now every night (05:00 Tbilisi) GitHub saves the database, login accounts and every photo, encrypted, to Cloudflare R2: 30 nightly + 12 monthly. `/admin` turns red if backups stop. First real run on GitHub passed and `npm run backup:check` opened it. See `docs/BACKUPS.md`. | 12efae9 |
 | Q3 | 2026-11-03 | 🟠 The phone's Back button left the whole room (or the house) instead of closing the page on top. Now every page or sheet that opens over the screen (letters, a letter, capsule, helpers, a photo, the decorating panel, lantern and share sheets, "make it final") adds a history step, so Back closes just that. `src/lib/useBackState.js`. | *(this commit)* |
 | Q2 | 2026-11-03 | 🔴 On small phones (360×640) the keeper's room panel covered the whole wall: photos shrank to a speck. The panel now takes at most ~56% of the screen and scrolls. | *(this review)* |
@@ -68,7 +68,7 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Download everything | - | zip contents, locked vs open capsule, offline page with no internet, `<script>` in a letter stays text |
 | Georgian layout | 346 texts in both languages, none missing, none left in English | capsule, helpers, room at 360 px wide |
 | Back button (Q3) | - | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
-| Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted) |
+| Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted). **Once-only photo copies (Q16) and tidy-up (Q7), 2026-11-03:** a folder backup opened, extracted photos were byte-identical to the live ones, one changed byte in a photo copy was caught; the old-style backup still opens; two real runs on R2 with a planted, backdated left-over file: run 1 copied 4 photos and deleted the planted file only, run 2 copied 0 and removed the planted copy no backup needed; `backup:check` then opened all 3 photos. Not rehearsed: a full restore from a new-style backup into an empty project |
 | Security sweep | `security.test.js`: all 12 tables have row security on; visitors can read only `streets` and call only the 7 listed functions; every security-definer function pins `search_path` | - |
 | Terms & Privacy | - | both pages in English and Georgian at 360 px: titles, sections, no sideways scroll, no long dashes; footer and sign-in links work |
 
@@ -131,3 +131,15 @@ Write what went wrong under a new review entry below.
 - **Found and fixed:** Q17 (router missed a very early tap).
 - **Noticed:** in headless Chrome, Georgian dates show in English ("November 3, 2026") because that Chrome has no
   Georgian date data. Real phones should be fine; check on the phone test (Q5).
+
+### 2026-11-03 · Backups copy each photo once (Q16), left-over files cleaned up (Q7)
+- **Built:** `scripts/backup/`: photos go to `photos/` in R2 once each (named by a sha256 of bucket + name, because
+  the name alone opens a public photo), each backup gets a list in `lists/`, and a copy goes when no list names it.
+  `restore.js` reads old backups (photos inside the zip) and new ones. Then the run deletes Supabase files that no
+  `photos` or `capsule_items` row points to, once over 7 days old and copied. `backup_runs.size_bytes` now means
+  everything R2 holds (the migration comment still says "the backup file").
+- **Checked against `/privacy`:** "gone from the safety copies at the latest after a year" still holds: a photo copy
+  lives while a nightly (30 days) or monthly (12 months) backup lists it.
+- **Tests:** see the Backups row above. `npm run test:db -- backups` 7 passed. No database or website changes apart
+  from the `/admin` backup line.
+- **Watch:** the first nightly run on GitHub with the new code (tomorrow 05:00). If `/admin` is red, check Actions.

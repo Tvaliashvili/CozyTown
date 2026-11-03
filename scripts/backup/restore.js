@@ -14,29 +14,51 @@ import path from 'node:path'
 import { unzipSync, strFromU8 } from 'fflate'
 import { Decrypter } from 'age-encryption'
 import {
-  connectToDatabase, connectToR2, connectToStorage, formatSize, loadTable, need, readSettings, sha256,
+  PHOTO_COPIES, connectToDatabase, connectToFolder, connectToR2, connectToStorage, formatSize, loadTable, need,
+  readSettings, sha256,
 } from './shared.js'
 
 const [mode, source = 'newest', folder] = process.argv.slice(2)
 const settings = readSettings()
 
 // ---------- Open the backup ----------
+// Photo copies sit next to the backup: in R2, or for a file on this computer, in the
+// photos/ folder beside it (made by `npm run backup -- --to-folder`) if there is one.
 let sealed
+let store
 if (source === 'newest') {
-  const r2 = connectToR2(settings)
-  const backups = await r2.list('nightly/')
+  store = connectToR2(settings)
+  const backups = await store.list('nightly/')
   if (backups.length === 0) throw new Error('There are no backups in R2 yet.')
   const newest = backups.at(-1)
   console.log(`Downloading ${newest.key} (${formatSize(newest.size)})…`)
-  sealed = await r2.get(newest.key)
+  sealed = await store.get(newest.key)
 } else {
   sealed = new Uint8Array(fs.readFileSync(source))
+  const besideIt = path.dirname(source)
+  store = fs.existsSync(path.join(besideIt, PHOTO_COPIES)) ? connectToFolder(besideIt) : null
 }
 
 const decrypter = new Decrypter()
 decrypter.addIdentity(need(settings, 'BACKUP_PRIVATE_KEY'))
 const entries = unzipSync(await decrypter.decrypt(sealed))
 const manifest = JSON.parse(strFromU8(entries['manifest.json']))
+
+// Every photo in the backup, one at a time, as [bucket, name, bytes].
+// The first backups (until 2026-11-03) hold their photos inside the zip; later ones point at photo copies.
+async function* photos() {
+  for (const [name, bytes] of Object.entries(entries)) {
+    if (!name.startsWith('files/')) continue
+    const [, bucket, ...rest] = name.split('/')
+    yield [bucket, rest.join('/'), bytes]
+  }
+  for (const [file, copy] of Object.entries(manifest.photos ?? {})) {
+    store ??= connectToR2(settings)
+    const [bucket, ...rest] = file.split('/')
+    // Decrypting also checks the copy: age refuses a file with even one changed byte.
+    yield [bucket, rest.join('/'), await decrypter.decrypt(await store.get(copy))]
+  }
+}
 
 // ---------- Check it ----------
 // Every file must be there and match the fingerprint taken when the backup was made.
@@ -51,16 +73,33 @@ if (damaged.length > 0) {
   console.error(`DAMAGED: ${damaged.length} files don't match their fingerprint.`)
   process.exit(1)
 }
+
+// Photo copies are separate files, so each one is fetched and opened too.
+const photoCopies = Object.keys(manifest.photos ?? {}).length
+if (photoCopies > 0) {
+  let opened = 0
+  try {
+    for await (const _photo of photos()) opened += 1
+  } catch (error) {
+    console.error(`DAMAGED: a photo copy is missing or won't open (${error.message}).`)
+    process.exit(1)
+  }
+  console.log(`All ${opened} photos open.`)
+}
 console.log(`All ${Object.keys(manifest.sha256).length} files are complete and undamaged.`)
 
 // ---------- Unpack it ----------
 if (mode === 'extract') {
   if (!folder) throw new Error('Say which folder to unpack into, e.g. npm run backup:extract -- newest my-folder')
-  for (const [name, bytes] of Object.entries(entries)) {
+  function save(name, bytes) {
     const target = path.join(folder, name)
     fs.mkdirSync(path.dirname(target), { recursive: true })
     fs.writeFileSync(target, bytes)
   }
+  for (const [name, bytes] of Object.entries(entries)) {
+    if (!name.startsWith('files/')) save(name, bytes)
+  }
+  for await (const [bucket, name, bytes] of photos()) save(`files/${bucket}/${name}`, bytes)
   console.log(`Unpacked into ${folder}. It holds private letters and photos: delete it when you're done.`)
 }
 
@@ -90,12 +129,8 @@ if (mode === 'restore') {
       .map((file) => [`${file.bucket_id}/${file.name}`, file.metadata?.mimetype]),
   )
   let uploaded = 0
-  for (const [name, bytes] of Object.entries(entries)) {
-    if (!name.startsWith('files/')) continue
-    const [, bucket, ...rest] = name.split('/')
-    const { error } = await storage.from(bucket).upload(rest.join('/'), bytes, {
-      contentType: types[`${bucket}/${rest.join('/')}`],
-    })
+  for await (const [bucket, name, bytes] of photos()) {
+    const { error } = await storage.from(bucket).upload(name, bytes, { contentType: types[`${bucket}/${name}`] })
     if (error) throw new Error(`Couldn't upload a photo to ${bucket}: ${error.message}`)
     uploaded += 1
   }

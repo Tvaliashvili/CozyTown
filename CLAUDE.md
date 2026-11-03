@@ -75,11 +75,12 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   with `CLOUDFLARE_API_TOKEN` from `.env.local`.
 - Admin: after the founder first signs up, add their user id to `public.admins` in the SQL editor.
 - **Backups**: a nightly GitHub Action (`.github/workflows/nightly-backup.yml`, 05:00 Tbilisi) runs
-  `scripts/backup/backup.js`: all tables (incl. `auth.users`) as JSON + every photo + migrations, zipped,
-  encrypted with `age` (public key in `scripts/backup/public-key.txt`, private key `BACKUP_PRIVATE_KEY` only in
+  `scripts/backup/backup.js`: all tables (incl. `auth.users`) as JSON + migrations, zipped, plus each photo
+  copied once (`photos/` in R2, kept while any backup lists it), all encrypted with `age` (public key in `scripts/backup/public-key.txt`, private key `BACKUP_PRIVATE_KEY` only in
   `.env.local` and the founder's safe copies), sent to the private R2 bucket `cozytown-backups`. `/admin`
   shows the last one from `public.backup_runs`. Check: `npm run backup:check`. Restore: `docs/BACKUPS.md`.
   New tables in `public` are included automatically. The repo is public: backup logs must never print names or words.
+  The same run deletes photo files on the site that no `photos` / `capsule_items` row points to (after 7 days, Q7).
 
 ## How the site is organised
 - Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (email + password sign-in + gift-code claim),

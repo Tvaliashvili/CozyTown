@@ -9,13 +9,28 @@ At **05:00 Tbilisi time** GitHub runs `scripts/backup/backup.js` (set up in
 
 1. copies **every table** in the database, including the login accounts (so keepers' passwords still work
    after a restore),
-2. downloads **every photo**, including sealed time-capsule photos,
-3. adds the **migrations** (the SQL that builds the tables), so one backup is enough to rebuild everything,
-4. zips it all and **encrypts** it. Only the private key (`BACKUP_PRIVATE_KEY`, see below) can open it,
-5. uploads it to the private Cloudflare R2 bucket `cozytown-backups`,
-6. keeps the last **30 nights** and the first backup of each month for **12 months**, deleting older ones,
-7. writes one line in `public.backup_runs`, which the **admin page** shows at the top:
-   green "Last backup: …", or **red** if no backup has finished for 30 hours.
+2. adds the **migrations** (the SQL that builds the tables), so one backup is enough to rebuild everything,
+3. zips that and **encrypts** it. Only the private key (`BACKUP_PRIVATE_KEY`, see below) can open it,
+4. uploads it to the private Cloudflare R2 bucket `cozytown-backups`,
+5. copies **every new photo** (including sealed time-capsule photos) into the same bucket, each one
+   encrypted on its own. Photos never change, so each is copied **only once**, not every night,
+6. keeps the last **30 nights** and the first backup of each month for **12 months**, deleting older ones.
+   A photo copy is deleted once no kept backup needs it, so a photo deleted on the site disappears from
+   the backups within a year at most (as `/privacy` promises),
+7. **tidies up the site**: photo files nothing points to any more (a deleted house, a failed upload) are
+   deleted from Supabase, a week after they were uploaded and only once they are safely in the backups.
+   If suddenly more than half of all files look left over, it deletes nothing and fails instead,
+8. writes one line in `public.backup_runs`, which the **admin page** shows at the top:
+   green "Last backup: …" with how much of R2's free 10 GB is used, or **red** if no backup has finished
+   for 30 hours.
+
+What is in the R2 bucket:
+
+| Folder | What |
+|---|---|
+| `nightly/`, `monthly/` | one encrypted zip per backup: database, migrations, and which photo copy is which photo |
+| `photos/` | one encrypted copy per photo, named by a fingerprint of the photo's name (the name itself works as a link, so it isn't used) |
+| `lists/` | for each backup, which photo copies it needs (fingerprints only) |
 
 If a run fails, GitHub sends an email to the account that last pushed a change to the workflow file.
 A red line on `/admin` means the same thing.
@@ -66,8 +81,8 @@ It's one line starting with `AGE-SECRET-KEY-1`.
 npm run backup:check
 ```
 
-This downloads the newest backup, opens it with the private key, and checks every file against the
-fingerprint taken when it was made. It prints how many rows and photos are inside. If it says
+This downloads the newest backup and all its photo copies, opens them with the private key, and checks
+every file against the fingerprint taken when it was made. It prints how many rows and photos are inside. If it says
 "All … files are complete and undamaged", all is well.
 
 ## If the worst happens
@@ -97,10 +112,13 @@ the backup.
 
 ## Limits to know about
 
-- Each backup is a full copy. With 30 + 12 copies, R2's 10 GB fills up once one backup is about 200 MB
-  (roughly 1,000 photos). The script fails loudly past 8 GB. Before then, switch to copying each photo
-  only once (photos never change), or move to a paid plan.
+- R2's free plan holds 10 GB. Each photo is kept once (~200 KB), so that is roughly **40,000 photos**.
+  The script fails loudly past 8 GB, and `/admin` shows how much is used.
+- The first backups (until 2026-11-03) still hold their photos inside the zip. `check`, `extract` and
+  `restore` read both kinds. The last of them (`monthly/2026-11`) goes in November 2027.
+- `npm run backup -- --to-folder backups` puts the zip in `backups/` and the photo copies in `backups/photos/`.
+  Keep them together: `backup:check -- backups/cozytown-<date>.zip.age` looks for the photos beside it.
 - GitHub pauses scheduled jobs in a public repo after **60 days with no new commits**. The red line on
   `/admin` will show it; pressing "Enable workflow" on the Actions tab turns it back on.
-- The whole backup is built in memory, which is fine up to about 1 GB.
+- The database part of a backup is built in memory, which is fine up to about 1 GB.
 - Signed-in sessions aren't kept: after a restore, everyone signs in again (same email and password).

@@ -28,8 +28,9 @@ export default function BackupStatus() {
     const when = new Date(backup.finished_at).toLocaleString('en-GB', {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tbilisi',
     })
+    // size_bytes is everything kept in R2 (all backups and photo copies), which must stay under the free 10 GB.
     const size = (backup.size_bytes / 1024 / 1024).toFixed(1)
-    text = `Last backup: ${when} · ${backup.file_count} photos · ${size} MB.`
+    text = `Last backup: ${when} · ${backup.file_count} photos · backups take ${size} MB of the free 10 GB.`
     if (backup.missing_files > 0) text += ` ${backup.missing_files} photos were missing from it.`
     else if (late) text += ' Backups may have stopped.'
   }

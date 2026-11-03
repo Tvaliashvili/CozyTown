@@ -2,6 +2,7 @@
 // How it all fits together, and what to do in an emergency: docs/BACKUPS.md.
 
 import fs from 'node:fs'
+import path from 'node:path'
 import { createHash } from 'node:crypto'
 import pg from 'pg'
 import { AwsClient } from 'aws4fetch'
@@ -107,6 +108,46 @@ export function connectToR2(settings) {
       return found.sort((a, b) => a.key.localeCompare(b.key))
     },
   }
+}
+
+// The same put/get/remove/list as connectToR2, but in a folder on this computer
+// (backup.js --to-folder). `list` only takes folder names, like 'photos/'.
+export function connectToFolder(folder) {
+  return {
+    async put(key, bytes) {
+      fs.mkdirSync(path.dirname(path.join(folder, key)), { recursive: true })
+      fs.writeFileSync(path.join(folder, key), bytes)
+    },
+    async get(key) {
+      return new Uint8Array(fs.readFileSync(path.join(folder, key)))
+    },
+    async remove(key) {
+      fs.rmSync(path.join(folder, key), { force: true })
+    },
+    async list(prefix) {
+      const inside = path.join(folder, prefix)
+      if (!fs.existsSync(inside)) return []
+      return fs.readdirSync(inside).sort().map((name) => ({
+        key: prefix + name,
+        size: fs.statSync(path.join(inside, name)).size,
+      }))
+    },
+  }
+}
+
+// Each photo is copied to the backups only once (photos never change: every upload gets a new
+// random name). Its copy is named after a fingerprint of the photo's name, not the name itself:
+// names in the public bucket work as links, and the R2 key alone must never open a photo.
+export const PHOTO_COPIES = 'photos/'
+
+export function photoCopyName(bucket, name) {
+  return `${PHOTO_COPIES}${sha256(`${bucket}/${name}`)}.age`
+}
+
+// Next to each backup in R2, a plain list of the photo copies it needs (fingerprints only, no names),
+// e.g. lists/nightly/2026-11-05.zip.age.txt. A copy no list mentions any more can go.
+export function listOf(backupKey) {
+  return `lists/${backupKey}.txt`
 }
 
 export function sha256(bytes) {
