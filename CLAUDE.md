@@ -118,6 +118,22 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
       usability fixes, performance, terms and privacy pages.
 - [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.
 
+**Living street (planned polish, after the must-haves for selling: admin page, backup, export)**:
+the street is completely still today and feels a bit lonely. Add small, calm signs of what's
+happening in each house:
+- *Tied to the house*: mailbox flag up for a new letter; lit lanterns glow; gift box with a ribbon
+  on the doorstep on capsule-opening day; a big gift bow on unclaimed houses; balloons on a
+  birthday/anniversary (if the keeper adds the date); a warm window light after a recent visit.
+  Memorial houses get only quiet signs (e.g. a small candle in the window).
+- *Ambient*: a cat asleep on a doorstep, birds on a roof, day/night following Tbilisi time,
+  seasons (snow, autumn leaves), chimney smoke, a bicycle by a fence.
+- **Never** police, ambulance, coroner or anything alarming: some houses are memorials or for babies.
+- **Static first**: the canvas only redraws on demand, so things that move all the time (walking
+  people, driving cars) cost battery and FPS on budget phones. Start with still signs; add gentle,
+  slow animation later only if needed.
+- **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
+- First step: mailbox flag, gift bow on unclaimed houses, capsule gift box.
+
 **Out of MVP on purpose**: live multiplayer, avatars, voice/video, public browsable interiors,
 decorations shop, subscriptions, online payments, email notifications.
 
