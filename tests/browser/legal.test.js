@@ -13,7 +13,7 @@ export default async function run({ check, openPage, clickText, base }) {
         sections: document.querySelectorAll('.legal-body h2').length,
         sideways: document.documentElement.scrollWidth > window.innerWidth,
         georgian: /[ა-ჿ]/.test(document.querySelector('.legal-body').textContent),
-        longDash: /[–—]/.test(document.body.textContent),
+        longDash: /[20132014]/.test(document.body.textContent),
       }))
       check(`${lang} /${which}: has a title and sections`, shown.title.length > 0 && shown.sections >= 8, JSON.stringify(shown))
       check(`${lang} /${which}: written in the chosen language`, shown.georgian === (lang === 'ka'))
