@@ -185,6 +185,13 @@ body {
   box-shadow: none;
 }
 
+/* The header and tab row keep their full height; only the options below them shrink and scroll.
+   Without "flex: none" a short phone screen squashes the tab row and cuts the buttons in half. */
+.customizer-header,
+.tabs {
+  flex: none;
+}
+
 .customizer-header {
   display: flex;
   justify-content: space-between;
@@ -218,6 +225,8 @@ body {
 }
 
 .tab-panel {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 

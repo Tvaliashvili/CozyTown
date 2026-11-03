@@ -12,6 +12,13 @@ const STREET_LOOK_HEIGHT = 1.2
 const SIDE_PANEL_MIN_SCREEN = 900
 const SIDE_PANEL_SPACE = 432
 
+// Swiping: the street moves a bit further than the finger, so a long street needs fewer swipes.
+const DRAG_SPEED = 1.5
+// A quick flick keeps gliding after the finger lifts: flick speed × this many milliseconds.
+const FLICK_GLIDE_MS = 250
+// If the finger rested this long before lifting, it was a slow drag, not a flick: no glide.
+const FLICK_MAX_PAUSE_MS = 80
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
 }
@@ -40,18 +47,33 @@ export default function CameraRig({ focusX = null }) {
   useEffect(() => {
     const el = gl.domElement
     let lastX = null
+    let lastTime = 0
+    let velocity = 0 // street units per millisecond, smoothed over the last few moves
 
     function onDown(e) {
       lastX = e.clientX
+      lastTime = e.timeStamp
+      velocity = 0
     }
     function onMove(e) {
       if (lastX === null || focused.current) return
-      const dx = e.clientX - lastX
+      const move = -(e.clientX - lastX) * unitsPerPixel.current * DRAG_SPEED
+      const ms = Math.max(1, e.timeStamp - lastTime)
+      // Blend with the previous speed so one jittery touch event doesn't decide the flick.
+      velocity = 0.7 * (move / ms) + 0.3 * velocity
       lastX = e.clientX
-      targetX.current = clamp(targetX.current - dx * unitsPerPixel.current, STREET_START, STREET_END)
+      lastTime = e.timeStamp
+      targetX.current = clamp(targetX.current + move, STREET_START, STREET_END)
       invalidate()
     }
-    function onUp() {
+    function onUp(e) {
+      if (lastX === null) return
+      const flicked = e.timeStamp - lastTime < FLICK_MAX_PAUSE_MS
+      if (flicked && !focused.current) {
+        // The camera already eases towards targetX, so pushing the target further makes a soft glide.
+        targetX.current = clamp(targetX.current + velocity * FLICK_GLIDE_MS, STREET_START, STREET_END)
+        invalidate()
+      }
       lastX = null
     }
 
