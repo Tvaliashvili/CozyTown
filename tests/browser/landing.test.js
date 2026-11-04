@@ -28,6 +28,9 @@ export default async function run({ check, openPage, clickText, waitForText, bas
       heavy.length === 0, heavy.join(', '))
     const onLanding = await keysOnScreen(page)
     check(`${lang} landing: no text keys on screen`, onLanding.length === 0, onLanding.join(', '))
+    const pictures = await page.$$eval('.step > svg', (all) => all.map((each) => each.getBoundingClientRect().width))
+    check(`${lang} landing: the three step pictures are the same size`,
+      pictures.length === 3 && new Set(pictures).size === 1, pictures.join(', '))
 
     await clickText(page, 'a', lang === 'en' ? 'Sign in' : 'შესვლა')
     await page.waitForSelector('form', { timeout: 30000 })

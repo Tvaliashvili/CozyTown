@@ -102,6 +102,17 @@ export const TAB_ICONS = {
 
 // Colourful little pictures for the landing page.
 export const PICTURES = {
+  // Step 1 on the landing page. The same size as the other steps' pictures, so their labels line up.
+  // PICTURES.home further down is the tiny version, for the small occasion pills.
+  chooseHouse: (
+    <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
+      <rect x="14" y="30" width="36" height="26" rx="2" fill="#f6e7d0" stroke="#a9774f" strokeWidth="2" />
+      <path d="M8 32 L32 10 L56 32 Z" fill="#c2553f" stroke="#973f2f" strokeWidth="2" strokeLinejoin="round" />
+      <rect x="19" y="36" width="9" height="9" rx="1.5" fill="#ffe08a" stroke="#a9774f" strokeWidth="1.5" />
+      <path d="M35 56 V42 a4.5 4.5 0 0 1 9 0 V56 Z" fill="#3f6e8c" />
+      <circle cx="41" cy="48" r="1.2" fill="#f2c14e" />
+    </svg>
+  ),
   decorate: (
     <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
       <rect x="30" y="8" width="10" height="30" rx="3" fill="#a9774f" transform="rotate(35 35 23)" />
