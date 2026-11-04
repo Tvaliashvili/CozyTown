@@ -33,6 +33,11 @@ None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
   yes/no, and house ids are never shown to anyone outside the house. The storage rules need them to be callable.
 - The admin page is English only (only the founder uses it).
 - Gift codes stay in the database after claiming; `claim_house()` refuses a used one for anyone else.
+- **Town map (founder asked for my call, 2026-11-04):** First Street is in the Old Town (it is where the town began). `/map` stays
+  reachable to anyone who types it (nobody does without a link; locking it would stop signed-out testing). The map shows no
+  free-plot counts, only "All plots are taken" (while the town is small, counts only say how empty it is; they return with the
+  buying flow). A house in the Garden Quarter is recognisable as a memorial house: inherent, the buyer chooses it, so the privacy
+  page says so and the admin forms remind the founder to check with the family. Georgian names stay for the founder to review.
 
 ---
 
@@ -229,4 +234,14 @@ Asked for by the founder, ahead of the "~50+ houses" plan, to be prepared. Nothi
 - **Founder:** Georgian DRAFT: the `map.*` texts in `src/i18n/ka-app.js`, the privacy sentence, and the names in the migration
   (ძველი ქალაქი, მდინარისპირა, თოვლიანი გორები). Tell me any changes; the names are in the database, so they change with a small migration.
 - **Speed:** the map page is under 6 KB of code and style plus the drawing, and downloads no 3D. The landing page is untouched (its test still passes).
+
+### 2026-11-04 · Town map: the open choices settled
+The founder asked for my opinion on the four choices above and to apply it. Decisions are under "Accepted".
+- **Changed:** the neighbourhood sheet names its streets without "7 of 8 plots free"; a full street still says "All plots are taken".
+  `map.plotsFree` removed from both languages. Privacy page: one new paragraph (EN + KA draft) that a house in the Garden Quarter is
+  recognisable as a memorial house on the map. Admin: picking a Garden Quarter street in "New order" or "Move" shows a reminder to
+  check with the family (`GardenQuarterNote` in `src/admin/NewOrder.jsx`).
+- **Tests:** the map browser test now adds its street to the Garden Quarter: checks the reminder appears, the moved house became
+  quiet, and the sheet shows no numbers.
+- **Founder:** the new Georgian privacy paragraph is DRAFT.
 

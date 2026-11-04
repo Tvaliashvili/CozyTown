@@ -339,7 +339,6 @@ export default {
   'map.intro': 'შეეხეთ უბანს დასათვალიერებლად.',
   'map.opensLater': 'მოგვიანებით',
   'map.notOpenYet': 'აქ ჯერ არავინ ცხოვრობს. გაიხსნება, როცა წინა ქუჩები შეივსება.',
-  'map.plotsFree': '{total}-დან {free} ნაკვეთი თავისუფალია',
   'map.streetFull': 'ყველა ნაკვეთი დაკავებულია',
   'map.close': 'დახურვა',
   'map.backToMap': 'რუკაზე დაბრუნება',

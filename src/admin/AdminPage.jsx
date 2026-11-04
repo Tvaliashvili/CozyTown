@@ -70,11 +70,17 @@ export default function AdminPage() {
       </div>
     )
   } else {
+    // Streets in the Garden Quarter, where every house is a memorial house and anyone looking at the map
+    // can tell. Found by the neighbourhood's name: neighbourhoods only ever come from migrations, and
+    // get_town_map() says nothing about quietness on purpose.
+    const quietStreets = new Set(
+      town.filter((hood) => hood.slug === 'garden-quarter').flatMap((hood) => hood.streets.map((street) => street.slug)),
+    )
     content = (
       <>
         <BackupStatus />
-        <NewOrder streets={streets} houses={houses} onCreated={reload} />
-        <HouseList streets={streets} houses={houses} onChanged={reload} />
+        <NewOrder streets={streets} houses={houses} quietStreets={quietStreets} onCreated={reload} />
+        <HouseList streets={streets} houses={houses} quietStreets={quietStreets} onChanged={reload} />
         <TownStreets town={town} onChanged={reload} />
       </>
     )

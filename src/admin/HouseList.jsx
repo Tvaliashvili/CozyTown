@@ -6,7 +6,7 @@ import { Link } from '../router.jsx'
 import MoveHouse from './MoveHouse.jsx'
 
 // Every house, newest first, with what the admin can do for it.
-export default function HouseList({ streets, houses, onChanged }) {
+export default function HouseList({ streets, houses, quietStreets, onChanged }) {
   const [search, setSearch] = useState('')
 
   // Finds a house by its code, name, buyer, contact or keeper's email.
@@ -28,14 +28,14 @@ export default function HouseList({ streets, houses, onChanged }) {
       {shown.length === 0 && <p>No houses found.</p>}
       <ul className="admin-houses">
         {shown.map((house) => (
-          <HouseRow key={house.code} house={house} streets={streets} houses={houses} onChanged={onChanged} />
+          <HouseRow key={house.code} house={house} streets={streets} houses={houses} quietStreets={quietStreets} onChanged={onChanged} />
         ))}
       </ul>
     </section>
   )
 }
 
-function HouseRow({ house, streets, houses, onChanged }) {
+function HouseRow({ house, streets, houses, quietStreets, onChanged }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [writing, setWriting] = useState(false)
@@ -138,6 +138,7 @@ function HouseRow({ house, streets, houses, onChanged }) {
           house={house}
           streets={streets}
           houses={houses}
+          quietStreets={quietStreets}
           busy={busy}
           onMove={(change) => run(async () => {
             await change()

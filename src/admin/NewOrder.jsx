@@ -19,7 +19,8 @@ const EMPTY_ORDER = {
 }
 
 // The "New order" form: one filled-in form makes one house, ready to print a card for.
-export default function NewOrder({ streets, houses, onCreated }) {
+// quietStreets: the streets of the Garden Quarter (see AdminPage), where a house is a memorial house for all to see.
+export default function NewOrder({ streets, houses, quietStreets, onCreated }) {
   const [street, setStreet] = useState(streets[0]?.slug ?? '')
   const [order, setOrder] = useState(EMPTY_ORDER)
   // The outside starts as the default house unless the buyer asked for something.
@@ -102,6 +103,7 @@ export default function NewOrder({ streets, houses, onCreated }) {
               </select>
             </label>
           )}
+          {quietStreets.has(street) && <GardenQuarterNote />}
 
           <fieldset className="admin-field">
             <legend className="field-label">Plot on {chosenStreet?.name_en}, counted from the left</legend>
@@ -167,6 +169,16 @@ export default function NewOrder({ streets, houses, onCreated }) {
         </form>
       )}
     </section>
+  )
+}
+
+// Shown when a Garden Quarter street is picked, here and in MoveHouse. Something to say to the family before it's done.
+export function GardenQuarterNote() {
+  return (
+    <p className="admin-note" role="note">
+      Garden Quarter: the house becomes quiet, and anyone looking at the town map can tell it is a memorial house.
+      Check that the family wants this.
+    </p>
   )
 }
 

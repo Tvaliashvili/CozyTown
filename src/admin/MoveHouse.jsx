@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { moveHouse } from '../data/admin.js'
+import { GardenQuarterNote } from './NewOrder.jsx'
 
 // Moves a house to a free plot, for example to the Garden Quarter when its person has passed away.
 // Links have no street in them, so printed QR codes keep working.
-export default function MoveHouse({ house, streets, houses, onMove, busy }) {
+// quietStreets: the streets of the Garden Quarter (see AdminPage).
+export default function MoveHouse({ house, streets, houses, quietStreets, onMove, busy }) {
   const [street, setStreet] = useState(house.street_slug)
   const [plot, setPlot] = useState(null)
 
@@ -34,6 +36,7 @@ export default function MoveHouse({ house, streets, houses, onMove, busy }) {
           ))}
         </select>
       </label>
+      {quietStreets.has(street) && <GardenQuarterNote />}
       <fieldset className="admin-field">
         <legend className="field-label">Plot, counted from the left</legend>
         <div className="admin-plots">

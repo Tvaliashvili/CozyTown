@@ -45,7 +45,8 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   // Into a street
   await clickText(page, '.map-place', 'Old Town')
   await page.waitForSelector('.map-street')
-  check('the street shows its free plots', /\d of 8 plots free|All plots are taken/.test(await text(page, '.map-street')))
+  const sheetText = await text(page, '.map-sheet')
+  check('the sheet names the street without plot numbers', sheetText.includes('First Street') && !/\d of \d/.test(sheetText), sheetText)
   await page.click('.map-street')
   await page.waitForSelector('canvas', { timeout: 60000 })
   await waitForText(page, '.top-bar-title', 'First Street')
@@ -95,7 +96,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
     const admin = await openPage(founder)
     await admin.goto(`${base}/admin`, { waitUntil: 'networkidle0' })
     await admin.waitForSelector('.admin-town')
-    await clickText(admin, '.admin-town button', 'Add a street to Riverside')
+    await clickText(admin, '.admin-town button', 'Add a street to The Garden Quarter')
     await admin.waitForSelector('.admin-town form')
     const boxes = await admin.$$('.admin-town form input')
     await boxes[0].type(streetName)
@@ -117,9 +118,10 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
 
     await page.goto(`${base}/map`)
     await page.waitForSelector('.map-place')
-    await clickText(page, '.map-place', 'Riverside')
+    await clickText(page, '.map-place', 'The Garden Quarter')
     await waitForText(page, '.map-sheet', streetName)
-    check('it appears on the map', (await text(page, '.map-sheet')).includes('8 of 8 plots free'))
+    const sheet = await text(page, '.map-sheet')
+    check('it appears on the map, with no plot numbers', sheet.includes(streetName) && !/\d of \d|plots/.test(sheet), sheet)
 
     // Move the house there; its link stays the same.
     const row = await admin.evaluateHandle((code) =>
@@ -129,6 +131,8 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
     const select = await row.$('select')
     await select.select(slug)
     await admin.waitForFunction((each) => !each.querySelector('.admin-plots .choice:disabled'), {}, row)
+    check('picking a Garden Quarter street reminds the admin to check with the family',
+      Boolean(await row.$('.admin-note')))
     await row.evaluate((each) => each.querySelectorAll('.admin-plots .choice')[2].click())
     await wait(100)
     await row.evaluate((each) => [...each.querySelectorAll('button')].find((b) => b.textContent === 'Move the house').click())
@@ -138,6 +142,8 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
     const { rows: [moved] } = await db.query(
       'select h.plot, s.slug from public.houses h join public.streets s on s.id = h.street_id where h.id = $1', [house.id])
     check('the admin moves a house to the new street', moved.slug === slug && moved.plot === 2, JSON.stringify(moved))
+    const { rows: [{ quiet }] } = await db.query('select quiet from public.houses where id = $1', [house.id])
+    check('in the Garden Quarter it became quiet', quiet === true)
 
     await page.goto(`${base}/h/${house.code}`)
     await page.waitForSelector('canvas', { timeout: 60000 })

@@ -336,7 +336,6 @@ export default {
   'map.intro': 'Tap a neighbourhood to look around.',
   'map.opensLater': 'Opens later',
   'map.notOpenYet': 'Nobody lives here yet. It opens once the streets before it have filled up.',
-  'map.plotsFree': '{free} of {total} plots free',
   'map.streetFull': 'All plots are taken',
   'map.close': 'Close',
   'map.backToMap': 'Back to the map',

@@ -218,6 +218,8 @@ founder decided: start small, then expand)**:
   town never looks empty or abandoned.
 - **Still to do when it goes live**: a link to it, choosing a plot when buying, and making neighbourhoods look
   different in 3D (balconies, snow, evening light). Every street looks the same for now.
+- Settled (Nov 2026): First Street is in the Old Town; `/map` stays reachable to anyone who types it; the map
+  shows **no free-plot counts** (while the town is small they only say how empty it is), only "All plots are taken".
 - The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.
 - **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
   for exploring and for choosing a plot when buying; grandparents never have to navigate it.

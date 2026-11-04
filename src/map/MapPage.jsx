@@ -93,22 +93,17 @@ function HoodSheet({ hood, onClose }) {
         {streets.length === 0 && <p className="map-sheet-later">{t('map.notOpenYet')}</p>}
         {streets.length > 0 && (
           <ul className="map-streets">
-            {streets.map((street) => {
-              const free = street.plotCount - street.takenPlots
-              return (
-                <li key={street.slug}>
-                  {/* state: remembered so the street's back button can step back here (see StreetVisit). */}
-                  <Link to={`/map/${street.slug}`} state={{ fromMap: true }} className="map-street">
-                    <strong>{lang === 'ka' ? street.nameKa : street.nameEn}</strong>
-                    <span>
-                      {free > 0
-                        ? t('map.plotsFree').replace('{free}', free).replace('{total}', street.plotCount)
-                        : t('map.streetFull')}
-                    </span>
-                  </Link>
-                </li>
-              )
-            })}
+            {streets.map((street) => (
+              <li key={street.slug}>
+                {/* state: remembered so the street's back button can step back here (see StreetVisit). */}
+                <Link to={`/map/${street.slug}`} state={{ fromMap: true }} className="map-street">
+                  <strong>{lang === 'ka' ? street.nameKa : street.nameEn}</strong>
+                  {/* No "7 of 8 plots free": while the town is small that only says how empty it is.
+                      A full street is a good sign, so that one is said. */}
+                  {street.takenPlots >= street.plotCount && <span>{t('map.streetFull')}</span>}
+                </Link>
+              </li>
+            ))}
           </ul>
         )}
 

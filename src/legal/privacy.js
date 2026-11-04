@@ -44,6 +44,7 @@ function en(c) {
         paragraphs: [
           'Please share photos of other people, especially children, only if you are allowed to and they or their parents would be happy with it. Think about who has the link.',
           'For a house in memory of someone, the same rules apply: only the people you give the link to can open it. If you tell us a house is a memorial, we mark it so it never shows a gift bow or a gift box. Visitors are not told about this mark.',
+          'The town has a quiet neighbourhood for memorial houses, the Garden Quarter. A house there can be recognised as a memorial house by anyone looking at the town map, because that is what the quarter is for. The buyer chooses whether a house goes there.',
           'The keeper can take any photo down at any time.',
         ],
       },
@@ -129,6 +130,7 @@ function ka(c) {
         paragraphs: [
           'სხვა ადამიანების, განსაკუთრებით ბავშვების, ფოტოები გააზიარეთ მხოლოდ მაშინ, თუ ამის უფლება გაქვთ და ისინი ან მათი მშობლები ამას სიამოვნებით მიიღებენ. დაფიქრდით, ვის აქვს ბმული.',
           'ვინმეს მოსაგონარ სახლზეც იგივე წესები მოქმედებს: მისი გახსნა მხოლოდ მათ შეუძლიათ, ვისაც ბმულს მისცემთ. თუ გვეტყვით, რომ სახლი მოსაგონარია, მას მოვნიშნავთ, რომ მასზე საჩუქრის ბაფთა და საჩუქრის ყუთი არასდროს გამოჩნდეს. სტუმრები ამ ნიშნის შესახებ ვერ გაიგებენ.',
+          'ქალაქს მოსაგონარი სახლებისთვის მშვიდი უბანი აქვს, ბაღების უბანი. იქ მდგარი სახლი ქალაქის რუკაზე ყველასთვის ამოსაცნობია როგორც მოსაგონარი სახლი, რადგან ეს უბანი სწორედ ამისთვისაა. მყიდველი თავად წყვეტს, იქ იდგეს თუ არა სახლი.',
           'მეპატრონეს ნებისმიერი ფოტოს ჩამოხსნა ნებისმიერ დროს შეუძლია.',
         ],
       },
