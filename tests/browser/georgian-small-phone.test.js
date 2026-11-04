@@ -24,6 +24,10 @@ export default async function run({ check, newUser, newHouse, openPage, base }) 
   await page.waitForSelector('.invite-box')
   check('the helpers page in Georgian has no sideways scroll', !(await sideways(page)))
 
+  // Done with this page. Each one keeps a software-drawn 3D street running underneath the room,
+  // and two at once can make the next page time out on a computer short of memory.
+  await page.close()
+
   const small = await openPage(keeper, { lang: 'ka', width: 360, height: 640 })
   await small.goto(`${base}/h/${house.code}/inside`)
   await small.waitForSelector('.room-export', { timeout: 60000 })

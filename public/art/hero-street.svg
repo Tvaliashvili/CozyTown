@@ -105,8 +105,8 @@
   <polygon points="910,233 938,219 938,331 910,345" fill="#7fb3ae"/>
   <rect x="760" y="233" width="150" height="112" fill="#a8d8d2"/>
   <rect x="760" y="233" width="150" height="8" fill="#1a1428" opacity="0.14"/>
-  <polygon points="920,221 948,207 948,221 920,235" fill="#2c2c3a"/>
-  <rect x="750" y="221" width="170" height="14" rx="2" fill="#3f3f4f"/>
+  <polygon points="920,221 948,207 948,221 920,235" fill="#1f626b"/>
+  <rect x="750" y="221" width="170" height="14" rx="2" fill="#2a7f8a"/>
   <rect x="776" y="254" width="38" height="38" fill="#ffcf6a" opacity="0.55" filter="url(#blur8)"/>
   <rect x="780" y="258" width="30" height="30" rx="4" fill="url(#win)" stroke="#3f6a66" stroke-width="2"/>
   <rect x="856" y="254" width="38" height="38" fill="#ffcf6a" opacity="0.55" filter="url(#blur8)"/>

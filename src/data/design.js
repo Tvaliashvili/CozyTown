@@ -43,7 +43,7 @@ export const NEIGHBOURS = {
     windowStyle: 'round', windowColor: '#a9774f', garden: 'vegetables', fence: true, mailboxColor: '#5f8a5a', lanterns: 0,
   },
   5: {
-    wallColor: '#a8d8d2', roofStyle: 'flat', roofColor: '#3f3f4f', doorStyle: 'square', doorColor: '#f2c14e',
+    wallColor: '#a8d8d2', roofStyle: 'flat', roofColor: '#2a7f8a', doorStyle: 'square', doorColor: '#f2c14e',
     windowStyle: 'square', windowColor: '#4a3b33', garden: 'flowers', fence: false, mailboxColor: '#fff6e9', lanterns: 2,
   },
   7: {

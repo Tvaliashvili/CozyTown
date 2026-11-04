@@ -14,6 +14,9 @@
     <linearGradient id="garden" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#5f8f66"/><stop offset="1" stop-color="#3f6650"/>
     </linearGradient>
+    <linearGradient id="fadeOut" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3f6650" stop-opacity="0"/><stop offset="1" stop-color="#3f6650"/>
+    </linearGradient>
     <radialGradient id="glow"><stop offset="0" stop-color="#ffd978" stop-opacity="0.9"/><stop offset="1" stop-color="#ffd978" stop-opacity="0"/></radialGradient>
 
     <!-- A house from above, at a tilt: a roof with two slopes, then a short front wall.
@@ -129,11 +132,13 @@
     <use href="#house" x="22" y="398" fill="#c8693f" color="#f6dfc0"/>
     <use href="#house" x="74" y="402" fill="#bf4c39" color="#e4c7a4"/>
     <use href="#house" x="126" y="396" fill="#a85a3f" color="#f3cfb0"/>
-    <!-- the tower -->
-    <ellipse cx="172" cy="318" rx="12" ry="4" fill="#2f2a3a" opacity="0.14"/>
-    <rect x="163" y="300" width="18" height="16" fill="#e8d5b7"/>
-    <circle cx="172" cy="300" r="10" fill="#a85a3f"/><circle cx="169" cy="297" r="4" fill="#fff" opacity="0.22"/>
-    <rect x="170" y="306" width="4" height="6" rx="2" fill="#ffd978"/>
+    <!-- the tower, above the square, where the neighbourhood's name doesn't cover it -->
+    <g transform="translate(-82 -50)">
+      <ellipse cx="172" cy="318" rx="12" ry="4" fill="#2f2a3a" opacity="0.14"/>
+      <rect x="163" y="300" width="18" height="16" fill="#e8d5b7"/>
+      <circle cx="172" cy="300" r="10" fill="#a85a3f"/><circle cx="169" cy="297" r="4" fill="#fff" opacity="0.22"/>
+      <rect x="170" y="306" width="4" height="6" rx="2" fill="#ffd978"/>
+    </g>
     <use href="#tree" x="38" y="238" color="#6aa84f"/>
     <use href="#tree" x="186" y="400" color="#7dbb5a"/>
     <use href="#tree" x="8" y="222" color="#7dbb5a"/>
@@ -180,4 +185,8 @@
     <use href="#lantern" x="300" y="520"/>
     <use href="#lantern" x="130" y="528"/>
   </g>
+
+  <!-- The river and road fade out at the bottom edge, into the page's own green (.map-page in map.css),
+       so tall phones don't show them stopping at a straight line. -->
+  <rect y="550" width="400" height="50" fill="url(#fadeOut)"/>
 </svg>
