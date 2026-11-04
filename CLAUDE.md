@@ -102,6 +102,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   `/town` demo street saved in the browser (`src/TownApp.jsx`) and `/h/<code>` a real house from the
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
+- `/map` is the town map, not linked from anywhere yet (`src/map/`, `src/data/map.js`): a flat drawing
+  (`public/art/town-map.svg`) with real buttons on top, placed by `src/map/places.js`. `/map/<street>` shows an open street,
+  outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
+  database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it.
 - `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture
   frames (`frames.js`; the database allows slots 0-4), plus letters. It covers the street, which stays
   loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
@@ -205,12 +209,15 @@ happening in each house. Still to add from this list:
   slow animation later only if needed.
 - **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
 
-**Town map and neighbourhoods (planned, founder decided Nov 2026: start small, then expand)**:
+**Town map and neighbourhoods (groundwork built Nov 2026 at the founder's request, not linked from anywhere yet;
+founder decided: start small, then expand)**:
 - Layers: town → neighbourhood → street (8 plots, already in the database) → house. Neighbourhoods
   are one new table on top of `streets`.
-- **Launch with the one street we have.** Build the map once there are several full streets (~50+ houses).
-  Then open **one street at a time**, the next only when the current one is nearly full, so the
+- **Launch with the one street we have.** Link the map once there are several full streets (~50+ houses).
+  Then open **one street at a time** (`/admin`), the next only when the current one is nearly full, so the
   town never looks empty or abandoned.
+- **Still to do when it goes live**: a link to it, choosing a plot when buying, and making neighbourhoods look
+  different in 3D (balconies, snow, evening light). Every street looks the same for now.
 - The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.
 - **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
   for exploring and for choosing a plot when buying; grandparents never have to navigate it.
@@ -225,9 +232,9 @@ inside Cozy Town, not a separate site:
 - Calm mood: evening light, gardens, candles; no balloons and no cheerful gift offers.
 - **Never call it a cemetery**: a peaceful garden, not a graveyard.
 - **The buyer chooses**: a family may want a memorial house on the same street as their other houses. Allow it.
-- A house can move there later (e.g. when its person passes away). Links are `/h/<code>` with no
-  street in them, so printed QR codes keep working after a move.
-- Arrives together with the map.
+- A house can move there later (e.g. when its person passes away; "Move" in the `/admin` house list). Links are
+  `/h/<code>` with no street in them, so printed QR codes keep working after a move.
+- Arrives together with the map. Every house in it gets `houses.quiet` automatically (a database trigger).
 
 **Market check (web search, Nov 2026, US results only)**: nothing found combining a *gift* of a cozy
 *place* with a printed QR, for *living* people, in Georgian. Pieces exist separately: memorial

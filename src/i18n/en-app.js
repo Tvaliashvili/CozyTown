@@ -330,4 +330,21 @@ export default {
   'export.someone': 'Someone',
   'export.capsuleNone': 'No time capsule yet.',
   'export.capsuleLocked': 'Still sealed. It opens on {date}. Download again after that day to keep what is inside.',
+
+  // ---------- The town map ----------
+  'map.title': 'The town',
+  'map.intro': 'Tap a neighbourhood to look around.',
+  'map.opensLater': 'Opens later',
+  'map.notOpenYet': 'Nobody lives here yet. It opens once the streets before it have filled up.',
+  'map.plotsFree': '{free} of {total} plots free',
+  'map.streetFull': 'All plots are taken',
+  'map.close': 'Close',
+  'map.backToMap': 'Back to the map',
+  'map.failed': "The map didn't load. Check your internet connection and try again.",
+  'map.streetClosed.title': 'This street isn’t open yet',
+  'map.streetClosed.text': 'The town map shows the streets you can visit.',
+  'map.about.old-town': 'Where the town began, with carved wooden balconies.',
+  'map.about.riverside': 'Little houses along the water.',
+  'map.about.snowy-hills': 'Warm windows among the snow.',
+  'map.about.garden-quarter': 'A calm place of gardens and candlelight.',
 }

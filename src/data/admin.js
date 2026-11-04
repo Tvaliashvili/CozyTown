@@ -11,9 +11,31 @@ export async function checkIsAdmin() {
 }
 
 export async function loadStreets() {
-  const { data, error } = await supabase.from('streets').select('slug, name_en, plot_count').order('created_at')
+  const { data, error } = await supabase.from('streets').select('slug, name_en, plot_count, is_open').order('created_at')
   if (error) throw error
   return data
+}
+
+// A new street starts closed: it isn't on the map until setStreetOpen().
+export async function addStreet(neighbourhood, englishName, georgianName) {
+  const { error } = await supabase.rpc('admin_add_street', {
+    neighbourhood,
+    english_name: englishName,
+    georgian_name: georgianName,
+  })
+  if (error) throw error
+}
+
+// Closing only hides the street from the map. Houses on it keep working through their links.
+export async function setStreetOpen(slug, open) {
+  const { error } = await supabase.rpc('admin_set_street_open', { street_slug: slug, make_open: open })
+  if (error) throw error
+}
+
+// To another free plot. Moving into a quiet neighbourhood makes the house quiet (no bow, no gift box).
+export async function moveHouse(code, street, plot) {
+  const { error } = await supabase.rpc('admin_move_house', { house_code: code, street_slug: street, plot_number: plot })
+  if (error) throw error
 }
 
 // Every house, newest first, with its order and keeper. See admin_list_houses() in supabase/migrations.

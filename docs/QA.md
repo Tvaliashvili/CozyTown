@@ -73,7 +73,8 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Back button (Q3) | - | 17 checks: decorating panel, letters → writing → list → room, capsule, helpers, on-screen Back, reload with a page open, share sheet → card → Back. Not yet run: photo viewer, lantern sheets |
 | Landing page stays light (Q6) | - | 9 checks (`landing.test.js`), en + ka: the landing page downloads no other-page texts, no town, no database client; no text key (like `signin.title`) on screen on the landing page, on sign-in reached from it, or on `/town` opened directly. Found the footer's Terms/Privacy texts had moved by mistake |
 | Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted). **Once-only photo copies (Q16) and tidy-up (Q7), 2026-11-03:** a folder backup opened, extracted photos were byte-identical to the live ones, one changed byte in a photo copy was caught; the old-style backup still opens; two real runs on R2 with a planted, backdated left-over file: run 1 copied 4 photos and deleted the planted file only, run 2 copied 0 and removed the planted copy no backup needed; `backup:check` then opened all 3 photos. Not rehearsed: a full restore from a new-style backup into an empty project |
-| Security sweep | `security.test.js`: all 12 tables have row security on; visitors can read only `streets` and call only the 7 listed functions; every security-definer function pins `search_path` | - |
+| Security sweep | `security.test.js`: all 13 tables have row security on; visitors can read only `streets` and call only the 8 listed functions; every security-definer function pins `search_path` | - |
+| Town map | 40+ (`map.test.js`): the map gives no house names or codes, only admins add, open, close and move, new streets start closed, a moved house keeps its link, keeper and letters, the Garden Quarter keeps every house quiet | 24 checks (`map.test.js`): no 3D downloaded on the map, tap to street and back, phone Back, nothing private sent to a visitor, Georgian at 320 px, closed and unknown streets, admin adds and opens a street and moves a house |
 | Terms & Privacy | - | both pages in English and Georgian at 360 px: titles, sections, no sideways scroll, no long dashes; footer and sign-in links work |
 
 ## Phone checklist (for the founder, on real phones)
@@ -201,4 +202,31 @@ From the founder's plans in CLAUDE.md (written from a phone session, merged as P
 - **Founder:** two new Georgian texts are DRAFT: `room.lettersNew` and the privacy page changes.
 - **Tests:** `npm run test:db` 218 passed; `npm run test:browser` 130 passed. Migrations `20261108000000_small_photos.sql` and
   `20261108100000_street_signs.sql` tested rolled back, then applied.
+
+### 2026-11-04 · Town map and neighbourhoods (groundwork, not linked yet)
+Asked for by the founder, ahead of the "~50+ houses" plan, to be prepared. Nothing links to it, so customers won't find it by accident.
+- **Built:** `/map`, a flat tappable drawing (`public/art/town-map.svg`, 9 KB), and `/map/<street>`, a street showing outsides only.
+  `/admin` got a "Town map" section (add a street, open or close it) and a "Move" button on each house.
+- **Database:** migration `20261109000000_town_map.sql`, tested rolled back, then applied. New table `neighbourhoods`;
+  streets got a neighbourhood and an open/closed switch. New streets start closed. First Street is open, in the Old Town.
+- **Privacy:** the map returns names and counts only, never a house's code, name or keeper. A browser test reads every
+  database answer the visitor receives to check this. New sentence on the privacy page (EN + KA draft), because a stranger
+  can now reach an open street without a link. Before this they could too, through the database, but no page offered it.
+- **Memorial houses:** a trigger makes every house in a quiet neighbourhood quiet, whichever way it arrives (order, move).
+  The mark can't be taken off inside the Garden Quarter. A house that moves out stays quiet until the admin changes it.
+- **Found while checking backups (🟠, older than this work, fixed):** a restore into a new project would have failed. The migrations
+  add First Street, then the backup adds it again: same name, so the whole restore rolled back. The new neighbourhoods would have
+  clashed the same way. `emptyPublicTables()` now clears our own tables first, with a test. Older backups need the migrations
+  stored inside them (`docs/BACKUPS.md`). **Still not rehearsed:** a full restore into a real empty project.
+- **Choices made without asking (say if you disagree):** First Street belongs to the Old Town. Anyone who types `/map` can open it
+  (only admins would be safer but you couldn't test it signed out). The sheet shows free plots ("7 of 8 plots free"). A house on
+  a closed street still opens by its link. A street's address comes from its English name.
+- **Knowingly left for later:** no link to the map; no choosing a plot when buying; every street looks the same in 3D, so the Old Town
+  text promises carved balconies that aren't drawn on the street yet (only on the map). A stranger browsing the Garden Quarter can
+  guess its houses are memorials: that's what the neighbourhood is, and the buyer chooses it, but it's worth telling buyers.
+- **Checked by eye:** the map in English and Georgian at 390 and 320 px and on a wide screen; the street reached from the map.
+  **Not tested:** any real phone (Q5); the memorial error message on the admin page by clicking it (the database side is tested).
+- **Founder:** Georgian DRAFT: the `map.*` texts in `src/i18n/ka-app.js`, the privacy sentence, and the names in the migration
+  (ძველი ქალაქი, მდინარისპირა, თოვლიანი გორები). Tell me any changes; the names are in the database, so they change with a small migration.
+- **Speed:** the map page is under 6 KB of code and style plus the drawing, and downloads no 3D. The landing page is untouched (its test still passes).
 

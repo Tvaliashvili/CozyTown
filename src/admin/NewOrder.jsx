@@ -97,7 +97,7 @@ export default function NewOrder({ streets, houses, onCreated }) {
                 }}
               >
                 {streets.map((each) => (
-                  <option key={each.slug} value={each.slug}>{each.name_en}</option>
+                  <option key={each.slug} value={each.slug}>{each.name_en}{each.is_open ? '' : ' (closed)'}</option>
                 ))}
               </select>
             </label>

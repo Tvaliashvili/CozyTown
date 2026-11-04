@@ -14,9 +14,29 @@ const SignIn = lazyPage(() => import('./pages/SignIn.jsx'))
 const CardPage = lazyPage(() => import('./card/CardPage.jsx'))
 const AdminPage = lazyPage(() => import('./admin/AdminPage.jsx'))
 const LegalPage = lazyPage(() => import('./legal/LegalPage.jsx'))
+const MapPage = lazyPage(() => import('./map/MapPage.jsx'))
+const StreetVisit = lazyPage(() => import('./map/StreetVisit.jsx'))
 
 export default function App() {
   const path = usePath()
+
+  // The town map. Nothing links here yet: it opens once there are several full streets.
+  // The map itself is a separate download from the 3D street it leads to, so it stays light.
+  if (path === '/map' || path === '/map/') {
+    return (
+      <Suspense fallback={null}>
+        <MapPage />
+      </Suspense>
+    )
+  }
+  if (path.startsWith('/map/')) {
+    const street = path.slice('/map/'.length).split('/')[0]
+    return (
+      <Suspense fallback={<div className="app" />}>
+        <StreetVisit key={street} slug={street} />
+      </Suspense>
+    )
+  }
 
   if (path === '/admin') {
     return (

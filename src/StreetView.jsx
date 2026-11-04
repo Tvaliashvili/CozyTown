@@ -20,6 +20,9 @@ import { BackIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
 // onShare: a "Share your house" button in the top bar calls this. For keepers.
 // focusHouse: a panel in "bottom" (like the lantern screen) covers part of the street, so the
 // camera comes close and frames the house in the space left over, like it does for decorating.
+// plot null: no house is singled out (walking down a street from the map), so no label either.
+// subtitle: replaces the tagline in the top bar, e.g. with the street's name.
+// backTo, backLabel, onBack: where the top bar's back button goes. The home page unless set.
 export default function StreetView({
   plot,
   design,
@@ -38,6 +41,10 @@ export default function StreetView({
   saveFailed,
   onDoneEditing,
   onEnter,
+  subtitle,
+  backTo = '/',
+  backLabel,
+  onBack,
 }) {
   const { t } = useI18n()
   // useBackState: the phone's Back button closes the decorating panel, instead of leaving the street.
@@ -79,7 +86,7 @@ export default function StreetView({
         onReady={hideLoadingScreen}
       />
 
-      {!covered &&
+      {!covered && label &&
         (onTapHouse ? (
           <button ref={labelRef} className="house-label" onClick={onTapHouse}>
             <LabelBubble label={label} />
@@ -92,14 +99,15 @@ export default function StreetView({
 
       <header className="top-bar">
         <div className="top-bar-title">
-          <Link to="/" className="pill-button" aria-label={t('street.home')}>
+          {/* onBack only when set: an empty onClick here would replace Link's own and reload the page. */}
+          <Link to={backTo} className="pill-button" aria-label={backLabel ?? t('street.home')} {...(onBack && { onClick: onBack })}>
             <BackIcon />
           </Link>
           <div>
             <h1>
               <Link to="/">{t('appName')}</Link>
             </h1>
-            <p>{t('tagline')}</p>
+            <p>{subtitle ?? t('tagline')}</p>
           </div>
         </div>
         <div className="top-bar-buttons">

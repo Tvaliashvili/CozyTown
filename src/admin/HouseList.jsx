@@ -3,6 +3,7 @@ import { addLetter, setHouseQuiet, setOrderPaid, unlockDesign } from '../data/ad
 import { groupGiftCode } from '../data/links.js'
 import { formatDate } from '../lib/formatDate.js'
 import { Link } from '../router.jsx'
+import MoveHouse from './MoveHouse.jsx'
 
 // Every house, newest first, with what the admin can do for it.
 export default function HouseList({ streets, houses, onChanged }) {
@@ -27,17 +28,18 @@ export default function HouseList({ streets, houses, onChanged }) {
       {shown.length === 0 && <p>No houses found.</p>}
       <ul className="admin-houses">
         {shown.map((house) => (
-          <HouseRow key={house.code} house={house} streets={streets} onChanged={onChanged} />
+          <HouseRow key={house.code} house={house} streets={streets} houses={houses} onChanged={onChanged} />
         ))}
       </ul>
     </section>
   )
 }
 
-function HouseRow({ house, streets, onChanged }) {
+function HouseRow({ house, streets, houses, onChanged }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [writing, setWriting] = useState(false)
+  const [moving, setMoving] = useState(false)
   const [letterFrom, setLetterFrom] = useState('')
   const [letterBody, setLetterBody] = useState('')
   const [letterSent, setLetterSent] = useState(false)
@@ -121,12 +123,28 @@ function HouseRow({ house, streets, onChanged }) {
         <button type="button" className="pill-button soft" disabled={busy} onClick={() => run(() => setHouseQuiet(house.code, !house.quiet))}>
           {house.quiet ? 'Not a memorial' : 'Memorial: quiet signs'}
         </button>
+        <button type="button" className="pill-button soft" onClick={() => setMoving(!moving)}>
+          Move
+        </button>
         {house.design_final && (
           <button type="button" className="pill-button soft" disabled={busy} onClick={unlock}>
             Unlock outside (15 ₾)
           </button>
         )}
       </div>
+
+      {moving && (
+        <MoveHouse
+          house={house}
+          streets={streets}
+          houses={houses}
+          busy={busy}
+          onMove={(change) => run(async () => {
+            await change()
+            setMoving(false)
+          })}
+        />
+      )}
 
       {letterSent && <p className="admin-ok" role="status">Letter put in the mailbox.</p>}
       {writing && (

@@ -169,6 +169,16 @@ export function formatSize(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
+// A restore runs after the migrations, and those add a few rows by themselves (the first street, the
+// neighbourhoods). The backup holds the same rows, so they would clash: empty our own tables first.
+// `auth.` and `storage.` tables are left alone. The same caller rule applies as for loadTable below:
+// with foreign-key checks off, nothing else gets deleted along with these rows.
+export async function emptyPublicTables(client, tables) {
+  for (const table of tables) {
+    if (table.startsWith('public.')) await client.query(`delete from ${table}`)
+  }
+}
+
 // Puts one table back from its backup (the JSON text made by backup.js), keeping every value as it was:
 // ids, dates, keepers. Columns the database works out by itself ("generated") are left for it to redo.
 // The caller must have run `set local session_replication_role = replica` first, which switches off

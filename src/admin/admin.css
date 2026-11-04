@@ -277,3 +277,27 @@
 .admin-backup a {
   color: inherit;
 }
+
+/* The town map section: neighbourhoods and their streets */
+.admin-town,
+.admin-streets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-town > li + li {
+  margin-top: 20px;
+}
+
+.admin-street {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 0;
+}
+
+.admin-street > :first-child {
+  flex: 1 1 180px;
+}

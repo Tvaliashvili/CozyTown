@@ -3,7 +3,7 @@
 // add its name to VISITOR_FUNCTIONS below. Run with: npm run test:db
 
 const VISITOR_FUNCTIONS = [
-  'can_edit_house', 'get_house', 'get_house_photos', 'get_street', 'house_of_path', 'is_admin', 'light_lantern',
+  'can_edit_house', 'get_house', 'get_house_photos', 'get_street', 'get_town_map', 'house_of_path', 'is_admin', 'light_lantern',
 ]
 
 export default async function run(db, { attempt, check }) {

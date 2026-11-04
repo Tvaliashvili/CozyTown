@@ -28,11 +28,12 @@ export function usePath() {
 
 // Works like <a href>, but switches page without reloading the whole site.
 // Ctrl/Cmd-click still opens a new tab, like a normal link.
-export function Link({ to, ...props }) {
+// state: remembered with the new history entry, like in navigate().
+export function Link({ to, state = null, ...props }) {
   function onClick(event) {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return
     event.preventDefault()
-    navigate(to)
+    navigate(to, { state })
   }
   return <a href={to} onClick={onClick} {...props} />
 }

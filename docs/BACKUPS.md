@@ -99,7 +99,8 @@ An older backup: download it from R2 in the Cloudflare dashboard, then
 
 **The Supabase project is gone or broken:**
 1. Make a new Supabase project (same region, eu-central-1).
-2. Run every file in `supabase/migrations/` on it, in order (the migrations are also inside the backup).
+2. Run every file in `supabase/migrations/` on it, in order. Restoring an **older** backup: use the migrations
+   inside that backup instead, because it won't fit newer tables, and run the newer ones after the restore.
 3. Set Authentication → "Confirm email" off, as before.
 4. In `.env.local`, change `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD`, `SUPABASE_SECRET_KEY`,
    `VITE_SUPABASE_URL` and `VITE_SUPABASE_KEY` to the new project's values.

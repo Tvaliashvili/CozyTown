@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600">
+  <!-- The town map. No words in here: the names are real buttons on top (src/map/places.js says where). -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b4f8c"/><stop offset="0.55" stop-color="#c97a86"/><stop offset="1" stop-color="#f6cfae"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9cf78"/><stop offset="1" stop-color="#86b462"/>
+    </linearGradient>
+    <linearGradient id="garden" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5f8f66"/><stop offset="1" stop-color="#3f6650"/>
+    </linearGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a7aa8"/><stop offset="1" stop-color="#a98fa8"/>
+    </linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#ffd978" stop-opacity="0.9"/><stop offset="1" stop-color="#ffd978" stop-opacity="0"/></radialGradient>
+    <radialGradient id="moonGlow"><stop offset="0" stop-color="#fff3cf" stop-opacity="0.9"/><stop offset="1" stop-color="#ffd9a0" stop-opacity="0"/></radialGradient>
+
+    <!-- A little house. Walls take "color", the roof takes "fill". -->
+    <g id="house">
+      <path d="M-3 14 L15 0 L33 14 Z"/>
+      <rect x="3" y="14" width="24" height="19" fill="currentColor"/>
+      <rect x="7" y="18" width="6" height="6" rx="1" fill="#ffd978"/>
+      <rect x="17" y="21" width="6" height="12" rx="1.5" fill="#8a5a3a"/>
+    </g>
+    <!-- Two floors with a carved wooden balcony: the Old Town's look. -->
+    <g id="balcony">
+      <path d="M-3 15 L16 0 L35 15 Z"/>
+      <rect x="2" y="15" width="28" height="33" fill="currentColor"/>
+      <rect x="7" y="19" width="6" height="7" rx="1" fill="#ffd978"/>
+      <rect x="19" y="19" width="6" height="7" rx="1" fill="#ffd978"/>
+      <rect x="-1" y="28" width="34" height="2.5" fill="#7a4a2c"/>
+      <path d="M1 30.5 v5 M5 30.5 v5 M9 30.5 v5 M13 30.5 v5 M17 30.5 v5 M21 30.5 v5 M25 30.5 v5 M29 30.5 v5" stroke="#7a4a2c" stroke-width="1.3"/>
+      <rect x="-1" y="35" width="34" height="1.8" fill="#7a4a2c"/>
+      <rect x="13" y="38" width="6" height="10" rx="1.5" fill="#6b4630"/>
+    </g>
+    <g id="tree">
+      <rect x="-1.5" y="10" width="3" height="9" fill="#7a5238"/>
+      <circle r="11" cy="4" fill="currentColor"/>
+      <circle r="6.5" cx="4" cy="-3" fill="currentColor" opacity="0.8"/>
+    </g>
+    <g id="pine">
+      <rect x="-1.5" y="14" width="3" height="6" fill="#5b4438"/>
+      <path d="M0 -6 L8 8 L4 8 L10 16 L-10 16 L-4 8 L-8 8 Z" fill="currentColor"/>
+      <path d="M0 -6 L3.5 0 L0 2 L-3.5 0 Z" fill="#fff6e9"/>
+    </g>
+    <g id="lantern">
+      <circle r="11" fill="url(#glow)"/>
+      <rect x="-0.7" y="1" width="1.4" height="9" fill="#2f3f36"/>
+      <circle r="2.4" fill="#ffe29a"/>
+    </g>
+  </defs>
+
+  <!-- Evening sky -->
+  <rect width="400" height="240" fill="url(#sky)"/>
+  <g fill="#fff6e9">
+    <circle cx="32" cy="24" r="1.6" opacity="0.8"/><circle cx="92" cy="50" r="1.2" opacity="0.7"/><circle cx="150" cy="18" r="1.7" opacity="0.9"/>
+    <circle cx="214" cy="42" r="1.2" opacity="0.6"/><circle cx="268" cy="16" r="1.5" opacity="0.8"/><circle cx="372" cy="70" r="1.3" opacity="0.7"/>
+    <path d="M238 74 l1.5 4.5 4.5 1.5 -4.5 1.5 -1.5 4.5 -1.5 -4.5 -4.5 -1.5 4.5 -1.5z" opacity="0.8"/>
+  </g>
+  <circle cx="330" cy="48" r="46" fill="url(#moonGlow)"/>
+  <circle cx="330" cy="48" r="17" fill="#fff1c9"/>
+  <circle cx="324" cy="44" r="3" fill="#f3dfae" opacity="0.7"/><circle cx="336" cy="54" r="2" fill="#f3dfae" opacity="0.7"/>
+
+  <!-- Snowy Hills -->
+  <path d="M-10 170 L58 76 L112 138 L176 56 L250 142 L312 88 L410 176 V220 H-10 Z" fill="url(#far)"/>
+  <path d="M58 76 L38 104 L50 98 L58 108 L68 98 L80 104 Z" fill="#fff6e9"/>
+  <path d="M176 56 L148 92 L164 84 L176 98 L190 84 L206 94 Z" fill="#fff6e9"/>
+  <path d="M312 88 L290 108 L304 104 L314 114 L324 104 L342 112 Z" fill="#fff6e9"/>
+  <path d="M-10 182 C60 130 130 132 210 158 C280 180 340 140 410 158 V240 H-10 Z" fill="#f4eef2"/>
+  <path d="M-10 196 C70 170 150 176 230 188 C300 198 350 182 410 186 V250 H-10 Z" fill="#fff6e9"/>
+  <use href="#pine" x="44" y="158" color="#4f7a68"/>
+  <use href="#pine" x="74" y="170" color="#5c8a72"/>
+  <use href="#pine" x="196" y="150" color="#4f7a68"/>
+  <use href="#pine" x="356" y="162" color="#5c8a72"/>
+  <use href="#pine" x="382" y="172" color="#4f7a68"/>
+  <use href="#house" x="104" y="150" fill="#fff6e9" color="#b98a7a"/>
+  <use href="#house" x="146" y="166" fill="#fff6e9" color="#d9a48a"/>
+  <use href="#house" x="222" y="162" fill="#fff6e9" color="#a98fa8"/>
+  <use href="#house" x="298" y="148" fill="#fff6e9" color="#c98f7c"/>
+
+  <!-- The land -->
+  <path d="M-10 228 C70 206 160 214 240 222 C300 228 350 214 410 218 V600 H-10 Z" fill="url(#ground)"/>
+
+  <!-- The Garden Quarter, lower and calmer -->
+  <path d="M-10 470 C60 440 130 452 200 456 C270 460 340 436 410 452 V600 H-10 Z" fill="url(#garden)"/>
+
+  <!-- The river comes down from the hills -->
+  <path d="M286 192 C276 236 330 256 318 300 C306 344 248 360 270 404 C284 432 350 436 420 428" fill="none" stroke="#6fa8bd" stroke-width="30" stroke-linecap="round"/>
+  <path d="M286 192 C276 236 330 256 318 300 C306 344 248 360 270 404 C284 432 350 436 420 428" fill="none" stroke="#9fd0dc" stroke-width="16" stroke-linecap="round"/>
+  <path d="M308 262 q7 -5 14 0 M292 350 q7 -5 14 0 M322 422 q7 -5 14 0" fill="none" stroke="#e8f6f8" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Paths between the neighbourhoods -->
+  <path d="M170 214 C150 246 150 268 166 296 C186 330 214 342 262 332 M166 296 C130 380 150 430 196 476 C210 492 206 520 190 560" fill="none" stroke="#f0e2c8" stroke-width="8" stroke-linecap="round"/>
+  <path d="M170 214 C150 246 150 268 166 296 C186 330 214 342 262 332 M166 296 C130 380 150 430 196 476 C210 492 206 520 190 560" fill="none" stroke="#dfcba6" stroke-width="1.5" stroke-dasharray="5 8" stroke-linecap="round"/>
+  <!-- A small bridge over the river -->
+  <path d="M254 326 q34 -18 68 -6" fill="none" stroke="#7a4a2c" stroke-width="12" stroke-linecap="round"/>
+  <path d="M254 326 q34 -18 68 -6" fill="none" stroke="#c49a6c" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Old Town: roofs close together, wooden balconies, a round stone tower -->
+  <g>
+    <use href="#tree" x="26" y="262" color="#6aa84f"/>
+    <rect x="96" y="266" width="20" height="46" fill="#e8d5b7"/>
+    <path d="M92 268 L106 240 L120 268 Z" fill="#a85a3f"/>
+    <rect x="103" y="274" width="6" height="11" rx="3" fill="#ffd978"/>
+    <use href="#balcony" x="30" y="268" fill="#bf4c39" color="#f6dfc0"/>
+    <use href="#balcony" x="66" y="278" fill="#a85a3f" color="#e9b89a"/>
+    <use href="#balcony" x="118" y="272" fill="#c8693f" color="#fff0d8"/>
+    <use href="#house" x="18" y="322" fill="#a85a3f" color="#fff0d8"/>
+    <use href="#balcony" x="52" y="332" fill="#bf4c39" color="#e4c7a4"/>
+    <use href="#house" x="92" y="340" fill="#c8693f" color="#f3cfb0"/>
+    <use href="#tree" x="20" y="372" color="#7dbb5a"/>
+    <use href="#tree" x="132" y="352" color="#6aa84f"/>
+  </g>
+
+  <!-- Riverside -->
+  <g>
+    <use href="#tree" x="374" y="266" color="#7dbb5a"/>
+    <use href="#house" x="340" y="288" fill="#5f7fa0" color="#fff0d8"/>
+    <use href="#house" x="352" y="334" fill="#bf4c39" color="#f6dfc0"/>
+    <use href="#house" x="196" y="346" fill="#5f7fa0" color="#f3e6d2"/>
+    <use href="#house" x="186" y="396" fill="#c8693f" color="#e9d9c0"/>
+    <use href="#tree" x="236" y="420" color="#6aa84f"/>
+    <use href="#tree" x="384" y="384" color="#6aa84f"/>
+    <!-- A little boat -->
+    <path d="M334 416 q16 12 32 0 l-4 8 h-24 z" fill="#7a4a2c"/>
+    <path d="M350 396 v20 M350 398 l10 13 h-10" fill="#fff6e9" stroke="#fff6e9" stroke-width="1.2"/>
+  </g>
+
+  <!-- The Garden Quarter: trees, flower beds and small lanterns, nothing else -->
+  <g>
+    <ellipse cx="86" cy="528" rx="44" ry="17" fill="#79a878"/>
+    <ellipse cx="312" cy="520" rx="52" ry="20" fill="#79a878"/>
+    <g fill="#f3d4dc"><circle cx="66" cy="526" r="2.6"/><circle cx="82" cy="532" r="2.6"/><circle cx="102" cy="524" r="2.6"/><circle cx="292" cy="516" r="2.6"/><circle cx="318" cy="526" r="2.6"/><circle cx="340" cy="514" r="2.6"/></g>
+    <g fill="#fff6e9"><circle cx="76" cy="520" r="2.2"/><circle cx="96" cy="534" r="2.2"/><circle cx="304" cy="526" r="2.2"/><circle cx="330" cy="522" r="2.2"/></g>
+    <use href="#tree" x="34" y="478" color="#3f7355"/>
+    <use href="#tree" x="104" y="470" color="#4b8460"/>
+    <use href="#tree" x="282" y="474" color="#3f7355"/>
+    <use href="#tree" x="362" y="480" color="#4b8460"/>
+    <use href="#tree" x="30" y="560" color="#3a6b50"/>
+    <use href="#tree" x="372" y="566" color="#3a6b50"/>
+    <use href="#tree" x="100" y="572" color="#44775a"/>
+    <use href="#tree" x="296" y="574" color="#44775a"/>
+    <use href="#house" x="128" y="530" fill="#6f5a6e" color="#eadfd0"/>
+    <use href="#house" x="238" y="536" fill="#6f5a6e" color="#dfd3c4"/>
+    <use href="#lantern" x="150" y="466"/>
+    <use href="#lantern" x="252" y="464"/>
+    <use href="#lantern" x="166" y="552"/>
+    <use href="#lantern" x="222" y="570"/>
+    <use href="#lantern" x="58" y="500"/>
+    <use href="#lantern" x="342" y="494"/>
+  </g>
+</svg>

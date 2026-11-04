@@ -14,8 +14,8 @@ import path from 'node:path'
 import { unzipSync, strFromU8 } from 'fflate'
 import { Decrypter } from 'age-encryption'
 import {
-  PHOTO_COPIES, connectToDatabase, connectToFolder, connectToR2, connectToStorage, formatSize, loadTable, need,
-  readSettings, sha256,
+  PHOTO_COPIES, connectToDatabase, connectToFolder, connectToR2, connectToStorage, emptyPublicTables, formatSize,
+  loadTable, need, readSettings, sha256,
 } from './shared.js'
 
 const [mode, source = 'newest', folder] = process.argv.slice(2)
@@ -114,6 +114,7 @@ if (mode === 'restore') {
   // All tables in one go: if anything fails, nothing is half-restored.
   await db.query('begin')
   await db.query('set local session_replication_role = replica')
+  await emptyPublicTables(db, Object.keys(manifest.tables))
   for (const table of Object.keys(manifest.tables)) {
     if (table === 'storage.objects') continue // these come back with the uploads below
     const count = await loadTable(db, table, strFromU8(entries[`database/${table}.json`]))

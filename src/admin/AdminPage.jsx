@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { checkIsAdmin, loadAllHouses, loadStreets } from '../data/admin.js'
+import { loadTownMap } from '../data/map.js'
 import { useSession } from '../lib/useSession.js'
 import { Link } from '../router.jsx'
 import { hideLoadingScreen } from '../ui/loadingScreen.js'
@@ -7,6 +8,7 @@ import { BackIcon } from '../ui/icons.jsx'
 import BackupStatus from './BackupStatus.jsx'
 import HouseList from './HouseList.jsx'
 import NewOrder from './NewOrder.jsx'
+import TownStreets from './TownStreets.jsx'
 import './admin.css'
 
 // /admin: where the founder turns manual orders (Instagram, Facebook, the form) into houses,
@@ -21,6 +23,7 @@ export default function AdminPage() {
   const [status, setStatus] = useState('loading')
   const [streets, setStreets] = useState([])
   const [houses, setHouses] = useState([])
+  const [town, setTown] = useState([])
 
   useEffect(hideLoadingScreen, [])
 
@@ -35,10 +38,11 @@ export default function AdminPage() {
 
   // Called again after every change, so the list always shows what the database has.
   function reload() {
-    return Promise.all([loadStreets(), loadAllHouses()])
-      .then(([foundStreets, foundHouses]) => {
+    return Promise.all([loadStreets(), loadAllHouses(), loadTownMap()])
+      .then(([foundStreets, foundHouses, foundTown]) => {
         setStreets(foundStreets)
         setHouses(foundHouses)
+        setTown(foundTown)
         setStatus('ready')
       })
       .catch(() => setStatus('failed'))
@@ -71,6 +75,7 @@ export default function AdminPage() {
         <BackupStatus />
         <NewOrder streets={streets} houses={houses} onCreated={reload} />
         <HouseList streets={streets} houses={houses} onChanged={reload} />
+        <TownStreets town={town} onChanged={reload} />
       </>
     )
   }
