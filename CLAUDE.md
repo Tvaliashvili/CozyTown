@@ -150,6 +150,38 @@ happening in each house:
 - **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
 - First step: mailbox flag, gift bow on unclaimed houses, capsule gift box.
 
+**Town map and neighbourhoods (planned, founder decided Nov 2026: start small, then expand)**:
+- Layers: town → neighbourhood → street (8 plots, already in the database) → house. Neighbourhoods
+  are one new table on top of `streets`.
+- **Launch with the one street we have.** Build the map once there are several full streets (~50+ houses).
+  Then open **one street at a time**, the next only when the current one is nearly full, so the
+  town never looks empty or abandoned.
+- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.
+- **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
+  for exploring and for choosing a plot when buying; grandparents never have to navigate it.
+- Neighbourhoods with character: an Old Town with carved wooden balconies (a Tbilisi touch),
+  Riverside, Snowy Hills, and the quiet Garden Quarter (below).
+- **Family streets**: a family buys neighbouring plots (grandma's house next to the grandchildren's),
+  a reason to buy more than one house.
+- Strangers browsing the map see outsides only; house names are already shown inside only.
+
+**Memorial houses get their own quiet neighbourhood**, "The Garden Quarter" (ბაღების უბანი),
+inside Cozy Town, not a separate site:
+- Calm mood: evening light, gardens, candles; no balloons and no cheerful gift offers.
+- **Never call it a cemetery** — a peaceful garden, not a graveyard.
+- **The buyer chooses**: a family may want a memorial house on the same street as their other houses. Allow it.
+- A house can move there later (e.g. when its person passes away). Links are `/h/<code>` with no
+  street in them, so printed QR codes keep working after a move.
+- Arrives together with the map.
+
+**Market check (web search, Nov 2026, US results only)**: nothing found combining a *gift* of a cozy
+*place* with a printed QR, for *living* people, in Georgian. Pieces exist separately: memorial
+sites (MuchLoved, Keeper, Mimorial — virtual candles and roses), QR memorial keychains (Memorygram
+~$69.99), browser 3D farewell rooms (farvel), time-capsule apps (FutureMe, Capsy), couples apps
+(Between, Paired). People already pay for keepsake QRs and virtual flowers. Some memorial sites have
+closed and left dead QR codes — our 6-months-notice + export promise is a selling point.
+Still to check: Georgian sellers on Instagram/Facebook. Real proof = customer conversations and Valentine's pre-orders.
+
 **Out of MVP on purpose**: live multiplayer, avatars, voice/video, public browsable interiors,
 decorations shop, subscriptions, online payments, email notifications.
 
