@@ -286,7 +286,8 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   only a front edge and a side, so the sky showed through where the roof should be. Top surface added, on the site and the canvas.
   The founder had said so from the start ("looks like sky is merged with it"); I treated it as a colour problem.
 - **Step pictures (founder):** step 1 used a 20 px icon meant for the occasion pills (since b9e3824), steps 2 and 3 use 64 px, so step 1 looked
-  tiny and its label sat higher. New 64 px `PICTURES.chooseHouse`, and a check that the three are the same size.
+  tiny and its label sat higher. New 64 px `PICTURES.chooseHouse`, and a check that the three are the same size. Step 2's picture was
+  redrawn too (founder): a ring with a stick on the tag read as a magnifying glass. Now a wooden tag on a ring, with a clean QR code.
 - **Regression from the map button, fixed:** on phones the title wrapped, the back button dropped out of line, and the tagline ran
   onto the hills, in both languages. Now the buttons stay level and the tagline is hidden up to 480 px wide.
 - **Tests after the paper map:** `npm run test:browser` 172 passed, 0 failed, with the old servers closed. `npm run test:db` 268 passed

@@ -122,12 +122,21 @@ export const PICTURES = {
   ),
   key: (
     <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">
-      <circle cx="18" cy="14" r="8" fill="none" stroke="#8a6a4a" strokeWidth="3" />
-      <path d="M24 19 L30 25" stroke="#8a6a4a" strokeWidth="3" strokeLinecap="round" />
-      <rect x="24" y="22" width="32" height="32" rx="7" fill="#d9b58c" stroke="#a9774f" strokeWidth="2" />
-      <rect x="30" y="28" width="7" height="7" fill="#4a3b33" /><rect x="43" y="28" width="7" height="7" fill="#4a3b33" />
-      <rect x="30" y="41" width="7" height="7" fill="#4a3b33" /><rect x="43" y="41" width="3" height="3" fill="#4a3b33" />
-      <rect x="47" y="45" width="3" height="3" fill="#4a3b33" /><rect x="43" y="45" width="3" height="3" fill="#bf4c39" />
+      {/* A wooden keychain tag hanging from its ring, with a QR code on it */}
+      <rect x="13" y="17" width="38" height="44" rx="8" fill="#d9b58c" stroke="#a9774f" strokeWidth="2" />
+      <circle cx="32" cy="23" r="3" fill="#ffffff" stroke="#a9774f" strokeWidth="1.5" />
+      <circle cx="32" cy="13" r="10" fill="none" stroke="#8a6a4a" strokeWidth="3" />
+      <rect x="20" y="30" width="24" height="24" rx="2" fill="#fff6e9" />
+      {/* The three corner squares that make a QR code look like one */}
+      <path d="M22 32 h7 v7 h-7 z M35 32 h7 v7 h-7 z M22 45 h7 v7 h-7 z" fill="none" stroke="#4a3b33" strokeWidth="2" />
+      <rect x="24.5" y="34.5" width="2" height="2" fill="#4a3b33" />
+      <rect x="37.5" y="34.5" width="2" height="2" fill="#4a3b33" />
+      <rect x="24.5" y="47.5" width="2" height="2" fill="#4a3b33" />
+      {/* The rest of the code */}
+      <rect x="34" y="44" width="3" height="3" fill="#4a3b33" />
+      <rect x="39" y="44" width="3" height="3" fill="#bf4c39" />
+      <rect x="34" y="49" width="3" height="3" fill="#bf4c39" />
+      <rect x="39" y="49" width="3" height="3" fill="#4a3b33" />
     </svg>
   ),
   door: (
