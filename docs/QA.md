@@ -90,6 +90,8 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 8. Light a lantern as a visitor (signed out). Does the keeper see it?
 9. Print the card at home (fold-over A4). Does the QR open the house?
 10. Read the Terms and Privacy pages (links at the bottom of the landing page). Is anything untrue or unclear?
+11. Street signs: open `/town` and slide along. Can you spot the bow on a roof, the raised mailbox flag and the gift box at a door, on a small screen? Do they feel calm, not busy?
+12. Photos on slow internet: go inside a house with photos. Do the frames look sharp? Tap one: it should appear at once and get sharper a moment later.
 
 Write what went wrong under a new review entry below.
 
@@ -173,4 +175,30 @@ Write what went wrong under a new review entry below.
   fails after photos uploaded, those files are cleaned up by the nightly run after 7 days (Q7).
 - **Founder:** new Georgian capsule texts are DRAFT, like the rest.
 - **Tests:** `npm run test:db` 176 passed; `npm run test:browser` 115 passed (capsule: 18 checks).
+
+### 2026-11-04 · Small photos in the frames, first signs on the street
+From the founder's plans in CLAUDE.md (written from a phone session, merged as PR #1).
+- **Small photos:** each new photo also gets a 480 px copy, which the frames show. The full photo downloads only when
+  tapped; meanwhile the viewer shows the small copy, so tapping isn't a blank wait on slow internet. Older photos have
+  no copy and show the full file, as before. No old photos were converted.
+- **Size:** the test picture (a 10 KB screenshot) is too simple to judge by. A busy made-up 1280 px picture came to 138 KB full
+  and 28 KB small. **Not measured on real phone photos or real traffic**, so the savings in CLAUDE.md are estimates.
+- **Backups:** the nightly tidy-up (Q7) would have deleted every small copy as "left over" after 7 days. It now counts both
+  files as in use, with a test. Run the migrations before this code reaches the nightly backup: done in that order.
+- **Signs:** bow on the roof (gift not claimed), mailbox flag up (a letter the keeper hasn't looked at), gift box at the door
+  (capsule day has come and the keeper hasn't looked inside). The old flag always stood upright; now it lies flat when no letter waits.
+- **Who sees them:** flag and box only with that house's link; on neighbours, only the bow. Privacy page updated (EN + KA draft).
+- **Memorial houses (product choice, please check):** there was no way to tell a memorial house apart, so its first
+  buyer would have got a cheerful bow. Added `houses.quiet`: a checkbox on the order form and a button in the house list.
+  A quiet house shows no bow and no gift box; its keeper still gets the capsule news in words. Visitors are never told.
+- **Choices made without asking (say if you disagree):** anyone with the link sees the flag and the box, not just the keeper.
+  The box stays until the keeper looks inside, however long that takes, not only on the day. The bow shows on neighbours.
+- **Found by the tests:** on an unclaimed house, a letter with no recorded writer didn't raise the flag. Fixed before applying.
+- **Speed:** phone street view on the demo with signs: 118 draw calls, 2.3k triangles, within budget. Signs don't move, so they add no redrawing.
+- **Checked by eye only (the canvas can't be read by tests):** bow on all 3 roof types, flag, gift box, in screenshots from a desktop browser.
+- **Not tested:** the memorial checkbox and button by clicking them on the page (the database side is tested); the gift box
+  leaving the street when the keeper opens the capsule; any of this on a real phone (Q5, steps 11-12 added to the checklist).
+- **Founder:** two new Georgian texts are DRAFT: `room.lettersNew` and the privacy page changes.
+- **Tests:** `npm run test:db` 218 passed; `npm run test:browser` 130 passed. Migrations `20261108000000_small_photos.sql` and
+  `20261108100000_street_signs.sql` tested rolled back, then applied.
 

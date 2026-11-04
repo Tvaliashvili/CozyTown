@@ -6,13 +6,19 @@ import Garden from './parts/Garden.jsx'
 import Fence from './parts/Fence.jsx'
 import Mailbox from './parts/Mailbox.jsx'
 import Lantern from './parts/Lantern.jsx'
+import GiftBow from './parts/GiftBow.jsx'
+import GiftBox from './parts/GiftBox.jsx'
 import { WALL_HEIGHT, FRONT_Z, GABLE_RISE } from './parts/dimensions.js'
 
 const WINDOW_XS = [-1.25, 1.25]
 const LANTERN_XS = [-0.65, 0.65]
 
 // Builds a whole house from a design object (see src/data/design.js).
-export default function House({ design }) {
+// signs: small calm signs of what's happening in the house. All optional, and all still, not moving:
+//   giftBow     a big bow on the roof: nobody has claimed this gift yet
+//   newLetter   the mailbox flag is up: a letter is waiting
+//   capsuleGift a gift box at the door: the time capsule's day has come
+export default function House({ design, signs }) {
   return (
     <group>
       <Walls color={design.wallColor} />
@@ -38,7 +44,9 @@ export default function House({ design }) {
 
       <Garden kind={design.garden} />
       {design.fence && <Fence />}
-      <Mailbox color={design.mailboxColor} />
+      <Mailbox color={design.mailboxColor} flagUp={signs?.newLetter} />
+      {signs?.giftBow && <GiftBow roofStyle={design.roofStyle} />}
+      {signs?.capsuleGift && <GiftBox />}
     </group>
   )
 }

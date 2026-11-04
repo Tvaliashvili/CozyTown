@@ -32,10 +32,10 @@ function en(c) {
         heading: 'Who can see what',
         paragraphs: [
           'A house is private. It opens only with its link or QR code, which is long and impossible to guess.',
-          'Anyone with the link can see the outside of the house, the photos on the walls with their captions, and how many lanterns are lit. They cannot see letters or the time capsule.',
+          'Anyone with the link can see the outside of the house, the photos on the walls with their captions, and how many lanterns are lit. The outside can show small signs: a raised mailbox flag when a new letter is waiting, and a gift box when the time capsule\'s day has come. They cannot read letters or see what is in the time capsule.',
           'Letters are for the keeper only. Helpers see only the letters they wrote themselves.',
           'The time capsule stays locked until its day, for everyone, including the keeper and us.',
-          'People walking down the street in the app see only the outside of houses, never what is inside.',
+          'People walking down the street in the app see only the outside of houses, never what is inside. The only sign they can see on other houses is a gift bow on a gift nobody has claimed yet.',
           'Each photo file has a long random address. Someone who has that exact address, for example because a visitor saved or forwarded the photo, can open it. Please keep that in mind with very private photos.',
         ],
       },
@@ -43,7 +43,7 @@ function en(c) {
         heading: 'Photos of children, and memorial houses',
         paragraphs: [
           'Please share photos of other people, especially children, only if you are allowed to and they or their parents would be happy with it. Think about who has the link.',
-          'For a house in memory of someone, the same rules apply: only the people you give the link to can open it.',
+          'For a house in memory of someone, the same rules apply: only the people you give the link to can open it. If you tell us a house is a memorial, we mark it so it never shows a gift bow or a gift box. Visitors are not told about this mark.',
           'The keeper can take any photo down at any time.',
         ],
       },
@@ -117,10 +117,10 @@ function ka(c) {
         heading: 'ვინ რას ხედავს',
         paragraphs: [
           'სახლი პირადია. ის მხოლოდ თავისი ბმულით ან QR კოდით იხსნება, რომელიც გრძელია და მისი გამოცნობა შეუძლებელია.',
-          'ვისაც ბმული აქვს, ხედავს სახლის გარე მხარეს, კედლებზე ჩამოკიდებულ ფოტოებს წარწერებით და რამდენი ფარანი ანთია. წერილებს და დროის კაფსულას ვერ ხედავს.',
+          'ვისაც ბმული აქვს, ხედავს სახლის გარე მხარეს, კედლებზე ჩამოკიდებულ ფოტოებს წარწერებით და რამდენი ფარანი ანთია. გარე მხარეს შეიძლება პატარა ნიშნები გამოჩნდეს: აწეული დროშა საფოსტო ყუთზე, როცა ახალი წერილი ელოდება, და საჩუქრის ყუთი, როცა დროის კაფსულის დღე დადგება. წერილების წაკითხვა და დროის კაფსულის შიგთავსის ნახვა არ შეუძლია.',
           'წერილები მხოლოდ მეპატრონისთვისაა. დამხმარეები მხოლოდ საკუთარ წერილებს ხედავენ.',
           'დროის კაფსულა დაკეტილია თავის დღემდე ყველასთვის, მათ შორის მეპატრონისთვის და ჩვენთვისაც.',
-          'ვინც აპლიკაციაში ქუჩას ათვალიერებს, მხოლოდ სახლების გარე მხარეს ხედავს და არასდროს იმას, რაც შიგნითაა.',
+          'ვინც აპლიკაციაში ქუჩას ათვალიერებს, მხოლოდ სახლების გარე მხარეს ხედავს და არასდროს იმას, რაც შიგნითაა. სხვა სახლებზე ერთადერთი ნიშანი, რაც მას შეუძლია დაინახოს, საჩუქრის ბაფთაა იმ საჩუქარზე, რომელიც ჯერ არავის მიუღია.',
           'თითოეულ ფოტოს გრძელი შემთხვევითი მისამართი აქვს. ვისაც ზუსტად ეს მისამართი აქვს (მაგალითად, სტუმარმა ფოტო შეინახა ან გადააგზავნა), შეუძლია მისი გახსნა. ძალიან პირადი ფოტოების შემთხვევაში ეს გაითვალისწინეთ.',
         ],
       },
@@ -128,7 +128,7 @@ function ka(c) {
         heading: 'ბავშვების ფოტოები და მოსაგონარი სახლები',
         paragraphs: [
           'სხვა ადამიანების, განსაკუთრებით ბავშვების, ფოტოები გააზიარეთ მხოლოდ მაშინ, თუ ამის უფლება გაქვთ და ისინი ან მათი მშობლები ამას სიამოვნებით მიიღებენ. დაფიქრდით, ვის აქვს ბმული.',
-          'ვინმეს მოსაგონარ სახლზეც იგივე წესები მოქმედებს: მისი გახსნა მხოლოდ მათ შეუძლიათ, ვისაც ბმულს მისცემთ.',
+          'ვინმეს მოსაგონარ სახლზეც იგივე წესები მოქმედებს: მისი გახსნა მხოლოდ მათ შეუძლიათ, ვისაც ბმულს მისცემთ. თუ გვეტყვით, რომ სახლი მოსაგონარია, მას მოვნიშნავთ, რომ მასზე საჩუქრის ბაფთა და საჩუქრის ყუთი არასდროს გამოჩნდეს. სტუმრები ამ ნიშნის შესახებ ვერ გაიგებენ.',
           'მეპატრონეს ნებისმიერი ფოტოს ჩამოხსნა ნებისმიერ დროს შეუძლია.',
         ],
       },

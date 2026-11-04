@@ -18,6 +18,16 @@ export const KEEP_MONTHLY = 12
 // R2's free plan holds 10 GB. Past this, the backup still runs but fails loudly, so GitHub emails us.
 export const SIZE_ALARM_BYTES = 8 * 1024 ** 3
 
+// Which table says a file is still in use, per storage bucket. A file in these buckets that no row
+// points to is left over. Files in any other bucket are never deleted.
+// The week's wait leaves alone a photo that is uploaded but not yet saved at this very moment.
+// A photo has two files: the full one and the small copy for the frames. Both count as in use.
+export const LEFTOVER_FILES_SQL = `
+  select o.bucket_id, o.name from storage.objects o
+   where o.created_at < now() - interval '7 days'
+     and ((o.bucket_id = 'photos' and not exists (select 1 from public.photos p where p.path = o.name or p.small_path = o.name))
+       or (o.bucket_id = 'capsule' and not exists (select 1 from public.capsule_items c where c.photo_path = o.name)))`
+
 // Settings come from GitHub's secrets when running there, or from .env.local on your own computer.
 export function readSettings() {
   const settings = {}

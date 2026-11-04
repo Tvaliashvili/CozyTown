@@ -15,6 +15,7 @@ const EMPTY_ORDER = {
   note: '',
   letterFrom: '',
   letterBody: '',
+  quiet: false,
 }
 
 // The "New order" form: one filled-in form makes one house, ready to print a card for.
@@ -149,6 +150,10 @@ export default function NewOrder({ streets, houses, onCreated }) {
             multiline rows={6} onChange={(value) => setField('letterBody', value)} />
 
           <h3>Outside of the house</h3>
+          <label className="admin-check">
+            <input type="checkbox" checked={order.quiet} onChange={(e) => setField('quiet', e.target.checked)} />
+            Memorial house: quiet signs only (no gift bow, no gift box)
+          </label>
           <label className="admin-check">
             <input type="checkbox" checked={pickDesign} onChange={(e) => setPickDesign(e.target.checked)} />
             The buyer chose colors (the keeper can still change them)

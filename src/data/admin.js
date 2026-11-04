@@ -39,6 +39,7 @@ export async function createOrder(order) {
     order_note: order.note,
     letter_from: order.letterFrom,
     letter_body: order.letterBody,
+    quiet_house: order.quiet,
   })
   if (error) throw error
   return data[0]
@@ -55,6 +56,12 @@ export async function setOrderPaid(code, paid) {
   const { data: house, error: houseError } = await supabase.from('houses').select('id').eq('code', code).single()
   if (houseError) throw houseError
   const { error } = await supabase.from('orders').update({ paid }).eq('house_id', house.id)
+  if (error) throw error
+}
+
+// A memorial house: no gift bow and no gift box on the street, only quiet signs.
+export async function setHouseQuiet(code, quiet) {
+  const { error } = await supabase.rpc('admin_set_quiet', { house_code: code, make_quiet: quiet })
   if (error) throw error
 }
 

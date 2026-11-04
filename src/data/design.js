@@ -52,6 +52,13 @@ export const NEIGHBOURS = {
   },
 }
 
+// Signs on the pretend neighbours, so the demo shows what a street with life in it looks like.
+export const NEIGHBOUR_SIGNS = {
+  1: { giftBow: true },
+  2: { newLetter: true },
+  5: { capsuleGift: true },
+}
+
 const STORAGE_KEY = 'myHouseDesign'
 
 // The demo house is kept in this browser only; real houses live in the database (houses.js).

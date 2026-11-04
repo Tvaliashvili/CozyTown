@@ -19,7 +19,7 @@ const TAP_TOLERANCE = 10
 // One plot: a lawn and a stone path, plus either a house or a "free plot" sign.
 // onSelect makes the house tappable; labelRef pins an HTML label (from App.jsx) above the roof.
 // lanterns: how many visitor lanterns glow on the lawn (only known for the house being shown).
-export default function Plot({ x, design, onSelect, labelRef, lanterns = 0 }) {
+export default function Plot({ x, design, signs, onSelect, labelRef, lanterns = 0 }) {
   function handleClick(event) {
     if (!onSelect || event.delta > TAP_TOLERANCE) return
     event.stopPropagation()
@@ -48,7 +48,7 @@ export default function Plot({ x, design, onSelect, labelRef, lanterns = 0 }) {
           onPointerOver={() => setPointerCursor(true)}
           onPointerOut={() => setPointerCursor(false)}
         >
-          <House design={design} />
+          <House design={design} signs={signs} />
         </group>
       ) : (
         <FreeSign />

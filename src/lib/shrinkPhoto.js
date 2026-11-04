@@ -3,12 +3,25 @@
 // 1280 px on the longest side still looks sharp when a photo is opened full screen.
 const LONGEST_SIDE = 1280
 const QUALITY = 0.82
+// The small copy shown in the picture frames. Frames are at most about 130 px wide, on phone screens
+// that pack up to 3 real pixels into each one, so this stays sharp at around 30 KB instead of 250 KB.
+const SMALL_LONGEST_SIDE = 480
+const SMALL_QUALITY = 0.7
 
 // Returns { blob, width, height }. Throws if the browser can't read the file
 // (for example an unusual format), so the caller can say "try another photo".
-export async function shrinkPhoto(file) {
+export function shrinkPhoto(file) {
+  return shrink(file, LONGEST_SIDE, QUALITY)
+}
+
+// Makes the small copy from an already shrunk photo. Same answer as shrinkPhoto.
+export function makeSmallCopy(blob) {
+  return shrink(blob, SMALL_LONGEST_SIDE, SMALL_QUALITY)
+}
+
+async function shrink(file, longestSide, quality) {
   const image = await openImage(file)
-  const scale = Math.min(1, LONGEST_SIDE / Math.max(image.naturalWidth, image.naturalHeight))
+  const scale = Math.min(1, longestSide / Math.max(image.naturalWidth, image.naturalHeight))
   const width = Math.round(image.naturalWidth * scale)
   const height = Math.round(image.naturalHeight * scale)
 
@@ -17,9 +30,9 @@ export async function shrinkPhoto(file) {
   canvas.height = height
   canvas.getContext('2d').drawImage(image, 0, 0, width, height)
 
-  let blob = await toBlob(canvas, 'image/webp')
+  let blob = await toBlob(canvas, 'image/webp', quality)
   // Older iPhones can't make WebP and hand back a PNG instead, which is far too big. JPEG works everywhere.
-  if (!blob || blob.type !== 'image/webp') blob = await toBlob(canvas, 'image/jpeg')
+  if (!blob || blob.type !== 'image/webp') blob = await toBlob(canvas, 'image/jpeg', quality)
   if (!blob) throw new Error('Could not shrink the photo')
   return { blob, width, height }
 }
@@ -38,6 +51,6 @@ async function openImage(file) {
   }
 }
 
-function toBlob(canvas, type) {
-  return new Promise((resolve) => canvas.toBlob(resolve, type, QUALITY))
+function toBlob(canvas, type, quality) {
+  return new Promise((resolve) => canvas.toBlob(resolve, type, quality))
 }

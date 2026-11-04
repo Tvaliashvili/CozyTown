@@ -17,9 +17,10 @@ const Stats = debug ? lazy(() => import('@react-three/drei').then((m) => ({ defa
 // myPlot: which plot (counted from the left) is the house being shown.
 // neighbours: { plotNumber: design } for the other houses; plots not listed are free.
 // myLanterns: how many visitor lanterns glow in front of the house being shown.
+// mySigns, neighbourSigns: small signs on the houses, see House.jsx. Neighbours: { plotNumber: signs }.
 // editing: a panel covers part of the screen, so the camera frames the house in the space left.
 // tallPanel: that panel is the tall lantern screen (see CameraRig).
-export default function Town({ myPlot, myDesign, myLanterns, neighbours, editing, tallPanel, onSelectMine, labelRef, onReady }) {
+export default function Town({ myPlot, myDesign, myLanterns, mySigns, neighbours, neighbourSigns, editing, tallPanel, onSelectMine, labelRef, onReady }) {
   return (
     <Canvas
       // "demand": only redraw when something changes, instead of 60 times a second.
@@ -59,12 +60,14 @@ export default function Town({ myPlot, myDesign, myLanterns, neighbours, editing
         myPlot={myPlot}
         myDesign={myDesign}
         myLanterns={myLanterns}
+        mySigns={mySigns}
         neighbours={neighbours}
+        neighbourSigns={neighbourSigns}
         onSelectMine={onSelectMine}
         labelRef={labelRef}
       />
       <CameraRig startX={PLOT_XS[myPlot]} focusX={editing ? PLOT_XS[myPlot] : null} tallPanel={tallPanel} />
-      <ShadowRefresher design={myDesign} />
+      <ShadowRefresher design={myDesign} signs={mySigns} />
       <BreathingLights />
       <ReadySignal onReady={onReady} />
       {Stats && (
@@ -76,13 +79,14 @@ export default function Town({ myPlot, myDesign, myLanterns, neighbours, editing
   )
 }
 
-// Recalculates shadows once after the town appears and whenever your house changes.
-function ShadowRefresher({ design }) {
+// Recalculates shadows once after the town appears and whenever your house changes,
+// including when a sign that casts a shadow (the capsule's gift box) goes away.
+function ShadowRefresher({ design, signs }) {
   const { gl, invalidate } = useThree()
   useEffect(() => {
     gl.shadowMap.needsUpdate = true
     invalidate()
-  }, [gl, invalidate, design])
+  }, [gl, invalidate, design, signs])
   return null
 }
 

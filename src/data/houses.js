@@ -14,8 +14,16 @@ export async function loadHouse(code) {
 
   // { plotNumber: design } for every other house on the street. Empty plots aren't listed.
   const neighbours = {}
-  for (const { plot, design } of street) {
-    if (plot !== house.plot) neighbours[plot] = cleanDesign(design)
+  // The only sign strangers get: the database tells nobody else about a neighbour's letters or capsule.
+  const neighbourSigns = {}
+  let giftBow = false
+  for (const { plot, design, gift_bow } of street) {
+    if (plot === house.plot) {
+      giftBow = gift_bow
+    } else {
+      neighbours[plot] = cleanDesign(design)
+      neighbourSigns[plot] = { giftBow: gift_bow }
+    }
   }
 
   return {
@@ -32,7 +40,10 @@ export async function loadHouse(code) {
     lanternCount: house.lantern_count,
     // Keeper only: the time capsule's day has come and they haven't looked inside yet.
     capsuleNews: house.capsule_news,
+    // Small signs on the outside of the house, see src/scene/House.jsx.
+    signs: { giftBow, newLetter: house.new_letter, capsuleGift: house.capsule_gift },
     neighbours,
+    neighbourSigns,
   }
 }
 
@@ -89,6 +100,12 @@ export function isNewLantern(lantern, seenUntil) {
 // would otherwise hide new lanterns or keep old ones "new" forever.
 export async function markLanternsSeen(code, newestLantern) {
   const { error } = await supabase.from('houses').update({ keeper_seen_at: newestLantern.created_at }).eq('code', code)
+  if (error) throw error
+}
+
+// The keeper has opened the mailbox: the flag goes down until the next letter arrives.
+export async function markLettersSeen(code) {
+  const { error } = await supabase.rpc('mark_letters_seen', { house_code: code })
   if (error) throw error
 }
 

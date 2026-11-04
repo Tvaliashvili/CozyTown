@@ -125,6 +125,7 @@ export default {
   'room.wallFullHint': 'Tap a photo to take it down and make room for a new one.',
   'room.lettersTitle': 'Letters',
   'room.lettersText': 'Read and write',
+  'room.lettersNew': 'A new letter is waiting for you',
   'room.share': 'Share',
   'room.copied': 'Link copied',
   'room.copyThis': 'Copy this link:',

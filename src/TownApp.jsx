@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import StreetView from './StreetView.jsx'
 import HouseTown from './HouseTown.jsx'
-import { loadDesign, saveDesign, MY_PLOT, NEIGHBOURS } from './data/design.js'
+import { loadDesign, saveDesign, MY_PLOT, NEIGHBOURS, NEIGHBOUR_SIGNS } from './data/design.js'
 import { useI18n } from './i18n/i18n.jsx'
 
 // houseCode set: someone's real house from the database (/h/<code>).
@@ -26,6 +26,7 @@ function DemoTown() {
       plot={MY_PLOT}
       design={design}
       neighbours={NEIGHBOURS}
+      neighbourSigns={NEIGHBOUR_SIGNS}
       onChange={setDesign}
       canEdit
       label={{ title: t('yourHouse'), text: t('tapToDecorate') }}

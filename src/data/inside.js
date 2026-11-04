@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase.js'
+import { makeSmallCopy } from '../lib/shrinkPhoto.js'
 
 // Everything inside a house: photos on the walls and letters in the mailbox.
 // Who may do what is decided by the database (supabase/migrations), not here:
@@ -12,8 +13,29 @@ export async function loadPhotos(code) {
   return data.map(withUrl)
 }
 
+// url: the full photo, for when it's opened. smallUrl: the small copy, for the frames.
+// Photos hung before small copies existed have none, so they show the full photo everywhere.
 function withUrl(photo) {
-  return { ...photo, url: supabase.storage.from('photos').getPublicUrl(photo.path).data.publicUrl }
+  const addressOf = (path) => supabase.storage.from('photos').getPublicUrl(path).data.publicUrl
+  const url = addressOf(photo.path)
+  return { ...photo, url, smallUrl: photo.small_path ? addressOf(photo.small_path) : url }
+}
+
+function extensionOf(blob) {
+  return blob.type === 'image/webp' ? 'webp' : 'jpg'
+}
+
+// Uploads the small copy next to the full photo. Returns its path, or null if that didn't work:
+// the photo still hangs, the frame just downloads the full one. Not worth failing a photo over.
+async function uploadSmallCopy(houseFolder, name, blob) {
+  try {
+    const small = await makeSmallCopy(blob)
+    const path = `${houseFolder}/${name}-small.${extensionOf(small.blob)}`
+    const { error } = await supabase.storage.from('photos').upload(path, small.blob, { contentType: small.blob.type })
+    return error ? null : path
+  } catch {
+    return null
+  }
 }
 
 // Photos and letters are stored by the house's id, not its code.
@@ -33,21 +55,22 @@ export async function houseId(code) {
 // slot = which frame (0-4). Returns the new photo, ready to show.
 export async function hangPhoto(code, { blob, width, height }, slot, caption) {
   const id = await houseId(code)
-  const extension = blob.type === 'image/webp' ? 'webp' : 'jpg'
   // A long random name, so nobody can guess the photo's address.
-  const path = `${id}/${crypto.randomUUID()}.${extension}`
+  const name = crypto.randomUUID()
+  const path = `${id}/${name}.${extensionOf(blob)}`
 
   const { error: uploadError } = await supabase.storage.from('photos').upload(path, blob, { contentType: blob.type })
   if (uploadError) throw uploadError
+  const smallPath = await uploadSmallCopy(id, name, blob)
 
   const { data, error } = await supabase
     .from('photos')
-    .insert({ house_id: id, path, slot, width, height, caption: caption.trim() || null })
-    .select('id, path, caption, slot, width, height')
+    .insert({ house_id: id, path, small_path: smallPath, slot, width, height, caption: caption.trim() || null })
+    .select('id, path, small_path, caption, slot, width, height')
     .single()
   if (error) {
-    // Don't leave a file behind that no frame points to.
-    await supabase.storage.from('photos').remove([path])
+    // Don't leave files behind that no frame points to.
+    await supabase.storage.from('photos').remove(smallPath ? [path, smallPath] : [path])
     throw error
   }
   return withUrl(data)
@@ -57,8 +80,8 @@ export async function hangPhoto(code, { blob, width, height }, slot, caption) {
 export async function takeDownPhoto(photo) {
   const { error } = await supabase.from('photos').delete().eq('id', photo.id)
   if (error) throw error
-  // If only this part fails, the photo is already gone from the wall; the file is just left over.
-  await supabase.storage.from('photos').remove([photo.path])
+  // If only this part fails, the photo is already gone from the wall; the files are just left over.
+  await supabase.storage.from('photos').remove(photo.small_path ? [photo.path, photo.small_path] : [photo.path])
 }
 
 // Newest letters first.

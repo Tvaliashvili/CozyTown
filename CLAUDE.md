@@ -57,21 +57,20 @@ Consequences of "no email yet":
 Budget is near zero: stay on free tiers. Supabase free has no automatic backups, so we run our own
 nightly backup (database + storage) from the start. Move to Supabase Pro once paying customers arrive.
 
-**Hosting limits and costs** (rough, Nov 2026 — check current pricing pages):
-- Photos live in **Supabase Storage**, not Cloudflare. Cloudflare Pages only serves the site and has
-  no traffic limit on free. (The "10 GB free" is Cloudflare R2, which we don't use yet.)
+**Hosting limits and costs** (rough, Nov 2026 - check current pricing pages):
+- Photos live in **Supabase Storage**, not Cloudflare. The Cloudflare Worker only serves the site and has
+  a generous free limit. Cloudflare R2 (10 GB free) holds only our backups so far.
 - Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~250 KB after shrinking, so a
-  5-photo house is ~1.25 MB → ~800 full houses of storage, but only ~4,000 room visits/month,
-  because a room downloads all 5 full-size photos even though the frames are small.
-  **Downloads run out before storage.**
+  5-photo house is ~1.25 MB → ~800 full houses of storage. **Downloads run out before storage**, so
+  the frames now show small copies (~30 KB each) and a room visit costs ~150 KB instead of ~1.25 MB,
+  plus ~250 KB per photo someone taps open. Room for ~8,000 visits a month if people open 2 photos each,
+  up to ~30,000 if they only look at the wall, instead of ~4,000 (estimates, not measured on real traffic).
 - Supabase Pro ≈ $25/month (~68 ₾) ≈ two house sales a month.
 - Each house pays once but costs every month: costs grow with *total* houses, income only with
   *new* sales. That's why monthly income matters (see "Ways to earn"). Until it exists, set aside
   a small part of every sale (e.g. 5 ₾) as a hosting fund.
-- Cheap fixes, in order: (1) small preview photos (~30 KB) in the frames, full photo only when
-  opened — cuts downloads ~5–8× (worth doing before launch); (2) later, move photos to Cloudflare
-  R2 (10 GB free, no download fees) — needs a small server function for uploads, since secret keys
-  can't be in the browser.
+- Next cheap fix, for later: move photos to Cloudflare R2 (no download fees). It needs a small server
+  function for uploads, since secret keys can't be in the browser, and its 10 GB is shared with the backups.
 
 ## Infrastructure
 - Code: https://github.com/Tvaliashvili/CozyTown (branch `main`).
@@ -107,7 +106,15 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   frames (`frames.js`; the database allows slots 0-4), plus letters. It covers the street, which stays
   loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
   Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
-  Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`).
+  Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`). Each photo on the wall has two files:
+  the full one (`path`) and a small copy for the frames (`small_path`, ~30 KB; empty on older photos, which then
+  show the full file). The full one downloads only when tapped; the zip and the backups use the real files.
+  Anything that deletes or tidies photo files must handle both (`LEFTOVER_FILES_SQL` in `scripts/backup/shared.js`).
+- **Signs on the street** (`src/scene/House.jsx`, still, never moving): big bow on the roof = gift not claimed
+  (`get_street`, so also on neighbours); mailbox flag up = a letter the keeper hasn't looked at, gift box at the door
+  = capsule day has come and the keeper hasn't looked inside (both from `get_house`, so only with that house's link).
+  The flag goes down through `mark_letters_seen()` when the keeper opens the letters. `houses.quiet` marks a memorial
+  house (admin page: order form or house list): no bow, no gift box. The database never tells visitors a house is quiet.
 - The **time capsule** (`src/inside/Capsule.jsx`, `src/data/capsule.js`) is one chest per house with one
   opening day (Tbilisi time). **Filled and locked once** (founder, Nov 2026): on one page the keeper writes a
   letter, adds up to 10 photos and picks the day, then a warning step, then `seal_capsule()` saves it all at
@@ -183,9 +190,9 @@ features, not in temporary folders. A new function visitors may call goes into `
       usability fixes, performance, terms and privacy pages.
 - [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.
 
-**Living street (planned polish, after the must-haves for selling: admin page, backup, export)**:
-the street is completely still today and feels a bit lonely. Add small, calm signs of what's
-happening in each house:
+**Living street (polish, first step built Nov 2026: mailbox flag, gift bow, capsule gift box)**:
+the street was completely still and felt a bit lonely. Small, calm signs of what's
+happening in each house. Still to add from this list:
 - *Tied to the house*: mailbox flag up for a new letter; lit lanterns glow; gift box with a ribbon
   on the doorstep on capsule-opening day; a big gift bow on unclaimed houses; balloons on a
   birthday/anniversary (if the keeper adds the date); a warm window light after a recent visit.
@@ -197,7 +204,6 @@ happening in each house:
   people, driving cars) cost battery and FPS on budget phones. Start with still signs; add gentle,
   slow animation later only if needed.
 - **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
-- First step: mailbox flag, gift bow on unclaimed houses, capsule gift box.
 
 **Town map and neighbourhoods (planned, founder decided Nov 2026: start small, then expand)**:
 - Layers: town → neighbourhood → street (8 plots, already in the database) → house. Neighbourhoods
@@ -217,7 +223,7 @@ happening in each house:
 **Memorial houses get their own quiet neighbourhood**, "The Garden Quarter" (ბაღების უბანი),
 inside Cozy Town, not a separate site:
 - Calm mood: evening light, gardens, candles; no balloons and no cheerful gift offers.
-- **Never call it a cemetery** — a peaceful garden, not a graveyard.
+- **Never call it a cemetery**: a peaceful garden, not a graveyard.
 - **The buyer chooses**: a family may want a memorial house on the same street as their other houses. Allow it.
 - A house can move there later (e.g. when its person passes away). Links are `/h/<code>` with no
   street in them, so printed QR codes keep working after a move.
@@ -225,10 +231,10 @@ inside Cozy Town, not a separate site:
 
 **Market check (web search, Nov 2026, US results only)**: nothing found combining a *gift* of a cozy
 *place* with a printed QR, for *living* people, in Georgian. Pieces exist separately: memorial
-sites (MuchLoved, Keeper, Mimorial — virtual candles and roses), QR memorial keychains (Memorygram
+sites (MuchLoved, Keeper, Mimorial: virtual candles and roses), QR memorial keychains (Memorygram
 ~$69.99), browser 3D farewell rooms (farvel), time-capsule apps (FutureMe, Capsy), couples apps
 (Between, Paired). People already pay for keepsake QRs and virtual flowers. Some memorial sites have
-closed and left dead QR codes — our 6-months-notice + export promise is a selling point.
+closed and left dead QR codes, so our 6-months-notice + export promise is a selling point.
 Still to check: Georgian sellers on Instagram/Facebook. Real proof = customer conversations and Valentine's pre-orders.
 
 **Out of MVP on purpose**: live multiplayer, avatars, voice/video, public browsable interiors,
@@ -249,7 +255,7 @@ photos and letters stay visible and downloadable; only *new* paid extras stop. L
 2. **Seasonal decorations**: New Year lights and snow, spring flowers, Valentine's; sold each season, every year.
 3. **Physical products from the house**: yearly printed photo book of its photos and letters,
    framed picture of the house, house-shaped New Year ornament (same print shops as cards/keychains).
-4. **Optional "Cozy Town Plus" (later, ~5–9 ₾/month)**: more photos/albums, voice notes, more
+4. **Optional "Cozy Town Plus" (later, ~5-9 ₾/month)**: more photos/albums, voice notes, more
    co-decorators, letters scheduled for a future date, seasonal decorations included.
    The basic house is complete without it.
 5. **Group and business houses**: weddings (guests leave letters/photos; sold via wedding planners),

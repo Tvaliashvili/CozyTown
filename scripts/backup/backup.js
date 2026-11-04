@@ -20,7 +20,7 @@ import path from 'node:path'
 import { zipSync, strToU8 } from 'fflate'
 import { Encrypter } from 'age-encryption'
 import {
-  KEEP_MONTHLY, KEEP_NIGHTLY, PHOTO_COPIES, SIZE_ALARM_BYTES,
+  KEEP_MONTHLY, KEEP_NIGHTLY, LEFTOVER_FILES_SQL, PHOTO_COPIES, SIZE_ALARM_BYTES,
   connectToDatabase, connectToFolder, connectToR2, connectToStorage, formatSize, listOf, photoCopyName,
   readSettings, sha256,
 } from './shared.js'
@@ -31,15 +31,6 @@ const PUBLIC_KEY = fs.readFileSync(new URL('./public-key.txt', import.meta.url),
 // so everyone can sign in as before after a restore. storage.objects is kept for reference only:
 // those rows come back by themselves when the files are uploaded again.
 const EXTRA_TABLES = ['auth.users', 'auth.identities', 'storage.objects']
-
-// Which table says a file is still in use, per storage bucket. A file in these buckets that no row
-// points to is left over. Files in any other bucket are never deleted.
-// The week's wait leaves alone a photo that is uploaded but not yet saved at this very moment.
-const LEFTOVER_FILES_SQL = `
-  select o.bucket_id, o.name from storage.objects o
-   where o.created_at < now() - interval '7 days'
-     and ((o.bucket_id = 'photos' and not exists (select 1 from public.photos p where p.path = o.name))
-       or (o.bucket_id = 'capsule' and not exists (select 1 from public.capsule_items c where c.photo_path = o.name)))`
 
 const settings = readSettings()
 const toFolder = process.argv.includes('--to-folder') ? process.argv[process.argv.indexOf('--to-folder') + 1] : null

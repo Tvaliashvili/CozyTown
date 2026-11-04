@@ -128,6 +128,7 @@ export default {
   'room.wallFullHint': 'შეეხეთ ფოტოს, რომ ჩამოხსნათ და ახალს ადგილი გაუთავისუფლოთ.',
   'room.lettersTitle': 'წერილები',
   'room.lettersText': 'წაიკითხეთ და დაწერეთ',
+  'room.lettersNew': 'ახალი წერილი გელოდებათ',
   'room.share': 'გაზიარება',
   'room.copied': 'ბმული დაკოპირდა',
   'room.copyThis': 'დააკოპირეთ ეს ბმული:',

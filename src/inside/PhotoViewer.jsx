@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { takeDownPhoto } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { TrashIcon } from '../ui/icons.jsx'
@@ -9,6 +9,17 @@ export default function PhotoViewer({ photo, canTakeDown, onTakenDown, onClose }
   const { t } = useI18n()
   // 'looking' | 'confirming' | 'removing' | 'failed'
   const [state, setState] = useState('looking')
+  // The frame already downloaded the small copy, so it shows at once, even on slow internet.
+  // The full photo takes over when it arrives. If it never does, the small one stays.
+  const [fullReady, setFullReady] = useState(false)
+  useEffect(() => {
+    const full = new Image()
+    full.onload = () => setFullReady(true)
+    full.src = photo.url
+    return () => {
+      full.onload = null
+    }
+  }, [photo.url])
 
   async function takeDown() {
     setState('removing')
@@ -22,7 +33,7 @@ export default function PhotoViewer({ photo, canTakeDown, onTakenDown, onClose }
 
   return (
     <div className="viewer" role="dialog" aria-modal="true" aria-label={photo.caption || t('room.photo')}>
-      <img src={photo.url} alt={photo.caption || ''} />
+      <img src={fullReady ? photo.url : photo.smallUrl} alt={photo.caption || ''} />
       {photo.caption && <p className="viewer-caption">{photo.caption}</p>}
 
       {state === 'looking' ? (

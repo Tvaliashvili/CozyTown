@@ -10,6 +10,7 @@ import {
   loadHouse,
   loadKeeperLanterns,
   markLanternsSeen,
+  markLettersSeen,
   saveHouseDesign,
   submitHouseDesign,
 } from './data/houses.js'
@@ -157,6 +158,22 @@ export default function HouseTown({ code, inside }) {
     if (house.lanternCount === 1) setLanternListOpen(false)
   }
 
+  // The mailbox flag goes down. If telling the database fails, it's just up again next time.
+  function onLettersSeen() {
+    setHouse((current) => ({ ...current, signs: { ...current.signs, newLetter: false } }))
+    markLettersSeen(code).catch(() => {})
+  }
+
+  // The keeper has looked inside the capsule: the street notice and the gift box go away.
+  // A helper looking inside changes nothing: the box waits for the keeper.
+  function onCapsuleSeen() {
+    setHouse((current) =>
+      current.isKeeper
+        ? { ...current, capsuleNews: false, signs: { ...current.signs, capsuleGift: false } }
+        : current,
+    )
+  }
+
   function goInside() {
     navigate(`/h/${code}/inside`, { state: { fromStreet: true } })
   }
@@ -282,6 +299,8 @@ export default function HouseTown({ code, inside }) {
         onShare={house.isKeeper ? () => setShareOpen(true) : undefined}
         focusHouse={lanternOpen || lanternListOpen || shareOpen}
         neighbours={house.neighbours}
+        signs={house.signs}
+        neighbourSigns={house.neighbourSigns}
         onChange={changeDesign}
         canEdit={canEdit}
         label={label}
@@ -298,8 +317,10 @@ export default function HouseTown({ code, inside }) {
           design={house.design}
           isKeeper={house.isKeeper}
           isHelper={house.isHelper}
+          newLetter={house.signs.newLetter}
           onLeave={goOutside}
-          onCapsuleSeen={() => setHouse((current) => ({ ...current, capsuleNews: false }))}
+          onCapsuleSeen={onCapsuleSeen}
+          onLettersSeen={onLettersSeen}
         />
       )}
       {confirming && <FinishDialog onConfirm={finish} onCancel={() => setConfirming(false)} />}

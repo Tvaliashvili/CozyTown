@@ -23,7 +23,8 @@ import './room.css'
 // onCapsuleSeen: called when the keeper opens a time capsule whose day has come,
 // so the street stops saying "your time capsule has opened".
 // design: the outside of the house, drawn on the offline page in the "Download everything" zip.
-export default function Room({ code, title, design, isKeeper, isHelper, onLeave, onCapsuleSeen }) {
+// newLetter: the mailbox flag is up. onLettersSeen: the keeper has the letters in front of them.
+export default function Room({ code, title, design, isKeeper, isHelper, newLetter, onLeave, onCapsuleSeen, onLettersSeen }) {
   const { t, lang } = useI18n()
   const canDecorate = isKeeper || isHelper
   const [photos, setPhotos] = useState(null) // null = still loading
@@ -77,6 +78,13 @@ export default function Room({ code, title, design, isKeeper, isHelper, onLeave,
   }
 
   useEffect(loadEverything, [code, canDecorate])
+
+  // The flag goes down only once the keeper can really see the letters, not if they failed to load.
+  useEffect(() => {
+    if (lettersOpen && letters && isKeeper && newLetter) onLettersSeen?.()
+  }, [lettersOpen, letters, isKeeper, newLetter])
+
+  const lettersGlow = isKeeper && newLetter
 
   // { slot: photo } so each frame can find its photo.
   const photoInFrame = {}
@@ -135,7 +143,7 @@ export default function Room({ code, title, design, isKeeper, isHelper, onLeave,
                     onClick={() => setViewing(photo)}
                     aria-label={photo.caption || t('room.photo')}
                   >
-                    <img src={photo.url} alt="" decoding="async" />
+                    <img src={photo.smallUrl} alt="" decoding="async" />
                   </button>
                 )
               }
@@ -196,11 +204,11 @@ export default function Room({ code, title, design, isKeeper, isHelper, onLeave,
             </button>
             {wallFull && <p className="room-note">{t('room.wallFullHint')}</p>}
 
-            <button type="button" className="room-card" onClick={() => setLettersOpen(true)}>
+            <button type="button" className={lettersGlow ? 'room-card glowing' : 'room-card'} onClick={() => setLettersOpen(true)}>
               <LetterIcon />
               <span>
                 <strong>{t('room.lettersTitle')}</strong>
-                <span>{t('room.lettersText')}</span>
+                <span>{lettersGlow ? t('room.lettersNew') : t('room.lettersText')}</span>
               </span>
             </button>
 

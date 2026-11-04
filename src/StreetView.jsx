@@ -28,6 +28,8 @@ export default function StreetView({
   onShare,
   focusHouse = false,
   neighbours,
+  signs,
+  neighbourSigns,
   onChange,
   canEdit,
   label,
@@ -68,6 +70,8 @@ export default function StreetView({
         myDesign={design}
         myLanterns={lanterns}
         neighbours={neighbours}
+        mySigns={signs}
+        neighbourSigns={neighbourSigns}
         editing={covered}
         tallPanel={focusHouse}
         onSelectMine={onTapHouse}

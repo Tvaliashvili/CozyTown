@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { addLetter, setOrderPaid, unlockDesign } from '../data/admin.js'
+import { addLetter, setHouseQuiet, setOrderPaid, unlockDesign } from '../data/admin.js'
 import { groupGiftCode } from '../data/links.js'
 import { formatDate } from '../lib/formatDate.js'
 import { Link } from '../router.jsx'
@@ -95,6 +95,7 @@ function HouseRow({ house, streets, onChanged }) {
           {house.design_final ? 'Outside final' : 'Outside not final yet'}
         </li>
         <li className="chip">{house.photo_count} photos · {house.lantern_count} lanterns</li>
+        {house.quiet && <li className="chip">Memorial: quiet signs only</li>}
       </ul>
 
       <div className="admin-order">
@@ -116,6 +117,9 @@ function HouseRow({ house, streets, onChanged }) {
         </button>
         <button type="button" className="pill-button soft" onClick={() => { setWriting(!writing); setLetterSent(false) }}>
           Add a letter
+        </button>
+        <button type="button" className="pill-button soft" disabled={busy} onClick={() => run(() => setHouseQuiet(house.code, !house.quiet))}>
+          {house.quiet ? 'Not a memorial' : 'Memorial: quiet signs'}
         </button>
         {house.design_final && (
           <button type="button" className="pill-button soft" disabled={busy} onClick={unlock}>

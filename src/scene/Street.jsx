@@ -34,7 +34,7 @@ const HILLS = [
   [22, -30, 24, 2.5, 9, COLORS.hill],
 ]
 
-export default function Street({ myPlot, myDesign, myLanterns, neighbours, onSelectMine, labelRef }) {
+export default function Street({ myPlot, myDesign, myLanterns, mySigns, neighbours, neighbourSigns, onSelectMine, labelRef }) {
   return (
     <group>
       {/* Grass everywhere */}
@@ -55,9 +55,9 @@ export default function Street({ myPlot, myDesign, myLanterns, neighbours, onSel
 
       {PLOT_XS.map((x, i) =>
         i === myPlot ? (
-          <Plot key={x} x={x} design={myDesign} onSelect={onSelectMine} labelRef={labelRef} lanterns={myLanterns} />
+          <Plot key={x} x={x} design={myDesign} signs={mySigns} onSelect={onSelectMine} labelRef={labelRef} lanterns={myLanterns} />
         ) : (
-          <Plot key={x} x={x} design={neighbours[i]} />
+          <Plot key={x} x={x} design={neighbours[i]} signs={neighbourSigns?.[i]} />
         ),
       )}
 
