@@ -224,7 +224,8 @@ happening in each house. Still to add from this list:
   change; the database already has everything. Keep it a flat picture for budget phones; no live 3D overview.
 - Settled (Nov 2026): First Street is in the Old Town; `/map` stays reachable to anyone who types it; the map
   shows **no free-plot counts** (while the town is small they only say how empty it is), only "All plots are taken".
-- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.
+- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones. Seen from above
+  at a tilt, like a board game (founder's choice, Nov 2026); territories light up under the hover.
 - **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
   for exploring and for choosing a plot when buying; grandparents never have to navigate it.
 - Neighbourhoods with character: an Old Town with carved wooden balconies (a Tbilisi touch),
@@ -258,6 +259,10 @@ houses, seasonal decorations, subscription, legacy keeper for memorial/baby hous
 
 ## Pricing hypothesis (test, not decided)
 Digital house ~39 ₾ · with printed card ~49 ₾ · with engraved wooden keychain ~69-79 ₾.
+**By neighbourhood (founder's idea, Nov 2026, not for launch):** a small premium for the Old Town (say +10 ₾), justified by
+its carved balconies in 3D and framed as "a house in the Old Town", never as rent. At most two tiers, by neighbourhood not
+street; the Garden Quarter always at the base price, never a tier. The recipient never sees prices, so it can't confuse them.
+Neighbouring plots for a family are probably the stronger upsell.
 
 ## Ways to earn beyond selling houses (ideas, founder liked them, Nov 2026)
 **Rule**: nothing paid ever locks away what's already there. If someone stops paying, their house,

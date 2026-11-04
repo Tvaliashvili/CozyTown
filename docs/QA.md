@@ -255,6 +255,10 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   Phone checklist step 13 added.
 - **Hover (founder):** the territory under the mouse lights up (soft cream fill and edge) and its name lifts; keyboard focus on a
   name does the same. On phones the press flash stays. Tested: hovering the Old Town's houses lights both.
+- **Redrawn from above (founder chose "bird's-eye, tilted"):** the picture now looks down at the town like a board game:
+  roofs with two slopes, a main road dividing the Old Town from Riverside, the river from the hills into the gardens, a thin band
+  of evening sky with the peaks at the top edge so it still flows from the header. Territories follow the snow line, the road and
+  the garden's edge. Checked by eye at 390 and 320 px in both languages. Still 10 KB.
 - **Growing the map (founder: "like a GTA map", meaning seen from the top with territories lighting up on hover, not zooming):**
   the drawing is extended by hand as neighbourhoods open, with streets drawn in place once there are more than a few. Recorded in CLAUDE.md.
 
