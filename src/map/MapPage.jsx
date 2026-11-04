@@ -6,13 +6,30 @@ import { Link, navigate } from '../router.jsx'
 import { BackIcon } from '../ui/icons.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
 import { hideLoadingScreen } from '../ui/loadingScreen.js'
-import { MAP_PLACES } from './places.js'
+import { MAP_LAYOUTS } from './places.js'
 import './map.css'
+
+// Screens at least as wide as they are tall get the landscape drawing, which fits with no scrolling.
+// Must match the media rule in map.css.
+const WIDE_SCREEN = '(min-aspect-ratio: 1/1)'
+
+// True on a wide screen. Changes when a phone is turned sideways.
+function useWideScreen() {
+  const [wide, setWide] = useState(() => window.matchMedia(WIDE_SCREEN).matches)
+  useEffect(() => {
+    const query = window.matchMedia(WIDE_SCREEN)
+    const update = () => setWide(query.matches)
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+  return wide
+}
 
 // /map: a flat drawing of the town you tap. Deliberately not 3D, so it's light on budget phones.
 // It's only for looking around: a QR code still goes straight to its house.
 export default function MapPage() {
   const { t, lang } = useI18n()
+  const layout = MAP_LAYOUTS[useWideScreen() ? 'wide' : 'tall']
   // null while loading, then the list of neighbourhoods.
   const [town, setTown] = useState(null)
   const [failed, setFailed] = useState(false)
@@ -43,31 +60,35 @@ export default function MapPage() {
     <div className="map-page">
       <header className="map-top">
         <div className="map-nav">
-          <Link to="/" onClick={back} className="pill-button glass" aria-label={t('map.back')}>
+          <Link to="/" onClick={back} className="pill-button paper" aria-label={t('map.back')}>
             <BackIcon />
           </Link>
-          <LanguageToggle className="pill-button glass" />
+          <LanguageToggle className="pill-button paper" />
         </div>
         <h1>{t('map.title')}</h1>
         <p>{t('map.intro')}</p>
       </header>
 
       <main className="map-board">
-        <img src="/art/town-map.svg" alt="" className="map-art" />
+        {/* picture: the phone downloads only the drawing it will show. */}
+        <picture>
+          <source media={WIDE_SCREEN} srcSet="/art/town-map-wide.svg" />
+          <img src="/art/town-map.svg" alt="" className="map-art" />
+        </picture>
 
         {/* Tapping the drawing itself: each neighbourhood's part of it is an invisible shape.
             The name buttons below stay the real controls (keyboard, screen readers); these only add
             a bigger place to tap, which is why they're hidden from assistive tech. */}
         {town && (
-          <svg className="map-areas" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">
+          <svg className="map-areas" viewBox={layout.viewBox} preserveAspectRatio="none" aria-hidden="true">
             {town.map((hood) => {
-              const place = MAP_PLACES[hood.slug]
+              const place = layout.places[hood.slug]
               if (!place) return null
               return (
-                <polygon
+                <path
                   key={hood.slug}
                   className={litSlug === hood.slug ? 'lit' : undefined}
-                  points={place.area.map(([x, y]) => `${x},${y}`).join(' ')}
+                  d={place.area}
                   onClick={() => setOpenSlug(hood.slug)}
                   onMouseEnter={() => setLitSlug(hood.slug)}
                   onMouseLeave={() => setLitSlug(null)}
@@ -78,7 +99,7 @@ export default function MapPage() {
         )}
 
         {town?.map((hood) => {
-          const place = MAP_PLACES[hood.slug]
+          const place = layout.places[hood.slug]
           if (!place) return null
           const isOpen = hood.streets.some((street) => street.open)
           const classes = ['map-place', isOpen && 'open', litSlug === hood.slug && 'lit'].filter(Boolean).join(' ')

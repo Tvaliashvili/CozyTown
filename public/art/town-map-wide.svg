@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
+  <!-- The town map for wide screens: the same town as town-map.svg, laid out to fill a landscape screen.
+       No words in here: the names are real buttons on top, and each neighbourhood's territory
+       is a tappable shape. src/map/places.js says where they go, in this drawing's own units. -->
+  <defs>
+    <filter id="ink" x="-3%" y="-3%" width="106%" height="106%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="4" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/>
+    </filter>
+    <clipPath id="sheet"><rect x="12" y="12" width="976" height="576"/></clipPath>
+
+    <g id="house">
+      <polygon points="1,11 23,11 23,26 1,26" fill="#fff9ec"/>
+      <polygon points="-3,11 12,0 27,11"/>
+      <rect x="4" y="15" width="5" height="5" fill="#f2c14e" stroke-width="1"/>
+      <path d="M14 26 V19 h5 V26" fill="none"/>
+    </g>
+    <g id="balcony">
+      <polygon points="1,8 23,8 23,28 1,28" fill="#fff9ec"/>
+      <polygon points="-3,8 12,-3 27,8"/>
+      <rect x="4" y="10.5" width="4" height="4" fill="#f2c14e" stroke-width="1"/>
+      <rect x="16" y="10.5" width="4" height="4" fill="#f2c14e" stroke-width="1"/>
+      <path d="M-2 16.5 H26 M-2 20.5 H26 M1 16.5 v4 M5 16.5 v4 M9 16.5 v4 M13 16.5 v4 M17 16.5 v4 M21 16.5 v4" fill="none" stroke-width="1"/>
+      <path d="M9 28 V23 h5 V28" fill="none"/>
+    </g>
+    <g id="tree">
+      <path d="M0 8 V14" fill="none"/>
+      <path d="M-7 4 C-10 -3 -3 -8 1 -7 C7 -8 10 -1 7 4 C6 8 -5 9 -7 4 Z" fill="#c6d6a8"/>
+    </g>
+    <g id="dark">
+      <path d="M0 8 V14" fill="none"/>
+      <path d="M-7 4 C-10 -3 -3 -8 1 -7 C7 -8 10 -1 7 4 C6 8 -5 9 -7 4 Z" fill="#9db98e"/>
+    </g>
+    <g id="pine">
+      <path d="M0 -10 L7 4 H-7 Z" fill="#fff9ec"/>
+      <path d="M0 4 V9" fill="none"/>
+    </g>
+    <g id="lantern">
+      <circle r="5.5" fill="#f2c14e" opacity="0.35" stroke="none"/>
+      <circle r="2" fill="#f2c14e" stroke-width="1"/>
+    </g>
+  </defs>
+
+  <!-- The folds in the paper, inside the map's border -->
+  <g clip-path="url(#sheet)" stroke-width="1.5">
+    <path d="M333 0 V600 M666 0 V600 M0 300 H1000" stroke="#d8c8a8" opacity="0.65"/>
+    <path d="M334.5 0 V600 M667.5 0 V600 M0 301.5 H1000" stroke="#fffaf0" opacity="0.8"/>
+  </g>
+  <rect x="6" y="6" width="988" height="588" fill="none" stroke="#4a3b33" stroke-width="2"/>
+  <rect x="12" y="12" width="976" height="576" fill="none" stroke="#4a3b33" stroke-width="0.9"/>
+
+  <g filter="url(#ink)" stroke="#4a3b33" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Soft colour washes -->
+    <g stroke="none">
+      <path d="M14 14 H986 V172 C800 192 640 164 480 182 C320 202 160 170 14 186 Z" fill="#e6e4ec" opacity="0.8"/>
+      <path d="M14 198 C160 182 320 214 474 194 C466 270 486 350 466 424 C320 440 160 412 14 430 Z" fill="#efc9a2" opacity="0.55"/>
+      <path d="M488 192 C640 174 800 204 986 184 V416 C800 436 640 408 480 426 C498 350 478 270 488 192 Z" fill="#cfe0c0" opacity="0.7"/>
+      <path d="M14 444 C160 426 320 454 470 438 C640 420 800 450 986 428 V586 H14 Z" fill="#a9c6a0" opacity="0.6"/>
+    </g>
+
+    <!-- Mountains: outlines with hatching on their shaded sides -->
+    <g fill="#fff9ec">
+      <path d="M110 146 L190 42 L270 146"/>
+      <path d="M236 152 L340 26 L448 152"/>
+      <path d="M410 146 L490 54 L574 146"/>
+      <path d="M610 142 L706 30 L808 142"/>
+      <path d="M770 146 L850 60 L934 146"/>
+    </g>
+    <g fill="none" stroke-width="1.1">
+      <path d="M200 58 L212 74 M208 72 L222 92 M216 86 L234 112 M226 104 L246 134"/>
+      <path d="M352 44 L366 64 M360 60 L378 86 M370 78 L392 110 M380 98 L408 138"/>
+      <path d="M500 70 L512 86 M508 84 L524 106 M518 100 L540 132"/>
+      <path d="M718 46 L732 66 M726 62 L744 88 M736 80 L758 112 M746 100 L772 134"/>
+      <path d="M860 74 L872 90 M868 88 L884 110 M878 104 L900 134"/>
+      <path d="M176 60 L190 68 L204 58 M324 46 L340 56 L356 44 M476 72 L490 80 L504 70 M690 50 L706 60 L722 48 M836 78 L850 86 L864 76"/>
+    </g>
+
+    <!-- The stream off the mountain, the lake, and the river leaving by the bottom of the map -->
+    <path d="M712 142 C708 150 716 154 712 164" fill="none" stroke-width="1.1"/>
+    <path d="M714 186 C698 232 770 250 760 298 C750 348 644 366 668 418 C690 466 800 476 850 518 C878 544 898 566 908 588" fill="none" stroke-width="22" stroke-linecap="butt"/>
+    <path d="M714 186 C698 232 770 250 760 298 C750 348 644 366 668 418 C690 466 800 476 850 518 C878 544 898 566 908 588" fill="none" stroke="#bcd8de" stroke-width="19" stroke-linecap="butt"/>
+    <ellipse cx="716" cy="176" rx="44" ry="15" fill="#bcd8de"/>
+    <path d="M694 174 q7 -4 14 0 M720 180 q7 -4 14 0" fill="none" stroke-width="1.1"/>
+    <path d="M744 268 q6 -3 12 0 M690 368 q6 -3 12 0 M770 466 q6 -3 12 0 M866 540 q6 -3 12 0" fill="none" stroke-width="1.1"/>
+
+    <!-- Paths, drawn as dotted walking routes -->
+    <g fill="none" stroke-width="2" stroke-dasharray="1 7">
+      <path d="M300 168 C312 214 262 256 268 306 C276 366 420 382 470 432 C500 464 486 530 480 586"/>
+      <path d="M290 300 C400 286 560 300 730 292 L972 276"/>
+      <path d="M480 470 C400 490 280 480 190 528 M480 470 C560 492 620 500 650 560"/>
+    </g>
+    <!-- The little bridge -->
+    <path d="M730 290 Q760 276 792 288 L792 302 Q760 290 730 304 Z" fill="#fff9ec"/>
+
+    <!-- Snowy Hills -->
+    <use href="#pine" x="62" y="150"/>
+    <use href="#pine" x="98" y="166"/>
+    <use href="#pine" x="462" y="168"/>
+    <use href="#pine" x="584" y="160"/>
+    <use href="#pine" x="956" y="150"/>
+    <use href="#pine" x="618" y="172"/>
+    <use href="#house" transform="translate(146 140) scale(1.25)" fill="#e8e2ea"/>
+    <use href="#house" transform="translate(376 146) scale(1.25)" fill="#e8e2ea"/>
+    <use href="#house" transform="translate(830 148) scale(1.25)" fill="#e8e2ea"/>
+
+    <!-- Old Town, with carved balconies and its round stone tower -->
+    <use href="#balcony" transform="translate(40 214) scale(1.35)" fill="#c8664c"/>
+    <path d="M112 262 V226 H134 V262" fill="#fff9ec"/>
+    <path d="M107 228 L123 194 L139 228 Z" fill="#b45a42"/>
+    <path d="M118 254 V242 a5 5 0 0 1 10 0 V254 Z" fill="#f2c14e" stroke-width="1.1"/>
+    <use href="#house" transform="translate(166 224) scale(1.35)" fill="#b45a42"/>
+    <use href="#balcony" transform="translate(350 218) scale(1.35)" fill="#b45a42"/>
+    <use href="#house" transform="translate(414 224) scale(1.35)" fill="#c8664c"/>
+    <use href="#house" transform="translate(32 282) scale(1.35)" fill="#b45a42"/>
+    <use href="#balcony" transform="translate(84 278) scale(1.35)" fill="#c8664c"/>
+    <use href="#balcony" transform="translate(372 286) scale(1.35)" fill="#c8664c"/>
+    <use href="#balcony" transform="translate(40 346) scale(1.35)" fill="#c8664c"/>
+    <use href="#house" transform="translate(100 354) scale(1.35)" fill="#b45a42"/>
+    <use href="#house" transform="translate(162 360) scale(1.35)" fill="#c8664c"/>
+    <use href="#balcony" transform="translate(226 366) scale(1.35)" fill="#b45a42"/>
+    <use href="#house" transform="translate(292 376) scale(1.35)" fill="#c8664c"/>
+    <use href="#tree" x="436" y="300"/>
+    <use href="#tree" x="26" y="402"/>
+    <use href="#tree" x="344" y="276"/>
+
+    <!-- Riverside -->
+    <use href="#house" transform="translate(516 212) scale(1.3)" fill="#7f9db4"/>
+    <use href="#house" transform="translate(600 226) scale(1.3)" fill="#b45a42"/>
+    <use href="#house" transform="translate(516 336) scale(1.3)" fill="#7f9db4"/>
+    <use href="#house" transform="translate(824 206) scale(1.3)" fill="#7f9db4"/>
+    <use href="#house" transform="translate(904 232) scale(1.3)" fill="#b45a42"/>
+    <use href="#house" transform="translate(848 318) scale(1.3)" fill="#7f9db4"/>
+    <use href="#house" transform="translate(920 356) scale(1.3)" fill="#7f9db4"/>
+    <use href="#tree" x="668" y="218"/>
+    <use href="#tree" x="560" y="388"/>
+    <use href="#tree" x="958" y="316"/>
+    <use href="#tree" x="790" y="386"/>
+    <path d="M700 346 q11 8 22 0 l-3 6 h-16 z M711 328 v18 M711 330 l8 11 h-8" fill="#fff9ec" stroke-width="1.1"/>
+
+    <!-- The Garden Quarter -->
+    <use href="#dark" x="50" y="474"/>
+    <use href="#dark" x="112" y="462"/>
+    <use href="#dark" x="264" y="466"/>
+    <use href="#dark" x="668" y="460"/>
+    <use href="#dark" x="740" y="492"/>
+    <use href="#dark" x="944" y="462"/>
+    <use href="#dark" x="60" y="552"/>
+    <use href="#dark" x="330" y="552"/>
+    <use href="#dark" x="600" y="556"/>
+    <use href="#dark" x="958" y="548"/>
+    <use href="#house" transform="translate(152 516) scale(1.3)" fill="#8f7a8d"/>
+    <use href="#house" transform="translate(700 530) scale(1.3)" fill="#8f7a8d"/>
+    <use href="#lantern" x="202" y="478"/>
+    <use href="#lantern" x="370" y="470"/>
+    <use href="#lantern" x="596" y="474"/>
+    <use href="#lantern" x="256" y="550"/>
+    <use href="#lantern" x="420" y="562"/>
+    <use href="#lantern" x="808" y="552"/>
+    <g fill="#c8664c" stroke="none"><circle cx="98" cy="520" r="2"/><circle cx="108" cy="528" r="2"/><circle cx="88" cy="530" r="2"/><circle cx="552" cy="536" r="2"/><circle cx="562" cy="544" r="2"/><circle cx="542" cy="546" r="2"/></g>
+
+    <!-- A small compass, in the corner -->
+    <g transform="translate(52 62)" fill="#fff9ec" stroke-width="1.1">
+      <circle r="22"/>
+      <path d="M0 -19 L5 0 L0 19 L-5 0 Z"/>
+      <path d="M0 -19 L5 0 L-5 0 Z" fill="#bf4c39"/>
+    </g>
+  </g>
+</svg>

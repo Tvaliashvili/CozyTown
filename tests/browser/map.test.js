@@ -48,7 +48,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
     return { left: box.left, top: box.top, width: box.width, height: box.height }
   })
   await page.mouse.move(board.left + board.width * 0.12, board.top + board.height * 0.56)
-  await page.waitForSelector('.map-areas polygon.lit', { timeout: 5000 })
+  await page.waitForSelector('.map-areas path.lit', { timeout: 5000 })
   check('hovering the drawn houses lights up their territory and their name',
     (await page.$eval('.map-place.lit strong', (each) => each.textContent)) === 'Old Town')
   await page.mouse.click(board.left + board.width * 0.12, board.top + board.height * 0.56)
@@ -106,6 +106,36 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
       return box.left >= 0 && box.right <= window.innerWidth
     }))
   check('Georgian on a small phone: every name stays on screen', insideScreen)
+  const overlaps = await small.$$eval('.map-place', (all) => {
+    const boxes = all.map((each) => each.getBoundingClientRect())
+    return boxes.some((a, i) => boxes.slice(i + 1).some((b) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom))
+  })
+  check('Georgian on a small phone: no two names overlap', !overlaps)
+
+  // ---------- Wide screens: the landscape drawing, with nothing to scroll ----------
+  for (const [width, height, lang] of [[1280, 800, 'en'], [1920, 1080, 'ka'], [844, 390, 'ka']]) {
+    const wide = await openPage(null, { lang, width, height })
+    await wide.goto(`${base}/map`, { waitUntil: 'networkidle0' })
+    await wide.waitForSelector('.map-place')
+    const seen = await wide.evaluate(() => {
+      const board = document.querySelector('.map-board').getBoundingClientRect()
+      const root = document.documentElement
+      return {
+        drawing: document.querySelector('.map-art').currentSrc,
+        scrolls: root.scrollHeight > window.innerHeight || root.scrollWidth > window.innerWidth,
+        fits: board.bottom <= window.innerHeight && board.right <= window.innerWidth,
+        namesInside: [...document.querySelectorAll('.map-place')].every((name) => {
+          const box = name.getBoundingClientRect()
+          return box.left >= board.left && box.right <= board.right && box.top >= board.top && box.bottom <= board.bottom
+        }),
+      }
+    })
+    const size = `${width}x${height} ${lang}`
+    check(`${size}: shows the wide drawing`, seen.drawing.endsWith('town-map-wide.svg'), seen.drawing)
+    check(`${size}: the whole map fits, with no scrolling`, seen.fits && !seen.scrolls, JSON.stringify(seen))
+    check(`${size}: every name stays on the map`, seen.namesInside)
+  }
 
   // ---------- Streets that can't be visited ----------
   const missing = await openPage(null, { lang: 'en' })

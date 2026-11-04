@@ -103,10 +103,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
 - `/map` is the town map (`src/map/`, `src/data/map.js`), reached from the map button in the street's top bar: a flat drawing
-  (`public/art/town-map.svg`) with real buttons on top and an invisible tappable shape per neighbourhood, both placed by
-  `src/map/places.js`. `/map/<street>` shows an open street,
+  (`public/art/town-map.svg`, or `town-map-wide.svg` on wide screens) with real buttons on top and an invisible tappable
+  shape per neighbourhood, both placed by `src/map/places.js`, once per drawing. `/map/<street>` shows an open street,
   outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
-  database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it.
+  database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it in both drawings.
 - `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture
   frames (`frames.js`; the database allows slots 0-4), plus letters. It covers the street, which stays
   loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
@@ -219,13 +219,15 @@ happening in each house. Still to add from this list:
 - **Still to do**: choosing a plot when buying, and making neighbourhoods look different in 3D (balconies, snow,
   evening light). Every street looks the same for now.
 - **How it grows** (founder, Nov 2026: "like a GTA map": seen from the top, neighbourhoods light up under the hover,
-  expanded from time to time; not zooming): the drawing gets extended by hand each time a neighbourhood opens, with each
-  open street drawn in its place for tapping once a neighbourhood has more than a few. Only the picture and `places.js`
+  expanded from time to time; not zooming): the drawings get extended by hand each time a neighbourhood opens, with each
+  open street drawn in its place for tapping once a neighbourhood has more than a few. Only the pictures and `places.js`
   change; the database already has everything. Keep it a flat picture for budget phones; no live 3D overview.
 - Settled (Nov 2026): First Street is in the Old Town; `/map` stays reachable to anyone who types it; the map
   shows **no free-plot counts** (while the town is small they only say how empty it is), only "All plots are taken".
-- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones. Seen from above
-  at a tilt, like a board game (founder's choice, Nov 2026); territories light up under the hover.
+- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones. It's a **hand-inked
+  paper map** (founder picked it from 3 styles on the design canvas, Nov 2026); territories light up under the hover. Two
+  drawings of the same town: `town-map.svg` (tall screens) and `town-map-wide.svg` (wide screens, fits with no scrolling).
+  A river starts somewhere real and leaves by an edge of the map; a map seen from above has no sky.
 - **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
   for exploring and for choosing a plot when buying; grandparents never have to navigate it.
 - Neighbourhoods with character: an Old Town with carved wooden balconies (a Tbilisi touch),

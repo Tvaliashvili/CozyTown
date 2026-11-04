@@ -260,16 +260,23 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   of evening sky with the peaks at the top edge so it still flows from the header. Territories follow the snow line, the road and
   the garden's edge. Checked by eye at 390 and 320 px in both languages. Still 10 KB.
 - **Founder's verdict on the redraw: horrible ("the river is starting from the sky").** Fair: hand-written drawings without a design
-  step. Three styles are now on the design canvas (A Storybook island, B Clean regions, C Paper map), waiting for the founder's pick.
-  Whichever wins also gets a landscape version, so a wide screen shows the whole map with no scrolling (founder's request).
+  step. Three styles went on the design canvas (A Storybook island, B Clean regions, C Paper map), and the founder picked **C**
+  ("looks ok I guess", so worth asking again once it's seen on a phone). It's now the real map, with a new landscape drawing:
+  a wide screen shows the whole map with no scrolling (founder's request). The landscape drawing isn't on the canvas.
+  Tested: 1280x800, 1920x1080 and a phone held sideways: whole map fits, no scrolling, names inside the map; on a 320 px phone in
+  Georgian, no two names overlap. The ink wobble is an SVG filter: about 60 ms to draw at 6x slower CPU (headless, so only a rough
+  guide; check on the real phone, Q5).
 - **Roof colour (founder):** the dark slate `#3f3f4f` merged with the evening sky. Replaced by teal `#2a7f8a` in the customizer's
   list, the demo neighbour and the landing drawing. `cleanDesign()` drops colours no longer on the list, so this was checked first:
   no real house used it (one house in the database, red roof). Checked by eye on the 3D street and the landing page.
 - **Test timeouts:** a full browser run took over 10 minutes and failed with navigation timeouts (6 failures, then 1 on a rerun). One
   was a false alarm from the new map button, fixed in `lanterns.test.js`. The computer had ~1 GB of 6 GB free and 48% CPU when idle,
-  with six old dev servers still running. `georgian-small-phone.test.js` still fails now and then, at different steps (2 of 4 runs alone,
-  even after closing its first page). **Cause not proven:** memory is the likely one, since the failing steps don't touch the map, but
-  it wasn't compared with the code from before the map. Next: rerun with the old servers closed. If it still fails, treat it as a real bug.
+  with six old dev servers still running. `georgian-small-phone.test.js` failed now and then, at different steps (2 of 4 runs alone,
+  even after closing its first page). With the founder's OK the six servers were closed: CPU fell to 17%, free memory didn't improve
+  (they used little), and the test then passed 3 of 3. **Cause not proven:** CPU load is the likely one, but it wasn't compared with
+  the code from before the map. If it fails again on an idle computer, treat it as a real bug. This computer has only 6 GB.
+- **Tests after the paper map:** `npm run test:browser` 172 passed, 0 failed, with the old servers closed. `npm run test:db` 268 passed
+  earlier the same day; no database change since.
 - **Growing the map (founder: "like a GTA map", meaning seen from the top with territories lighting up on hover, not zooming):**
   the drawing is extended by hand as neighbourhoods open, with streets drawn in place once there are more than a few. Recorded in CLAUDE.md.
 
