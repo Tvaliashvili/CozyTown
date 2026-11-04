@@ -57,6 +57,22 @@ Consequences of "no email yet":
 Budget is near zero: stay on free tiers. Supabase free has no automatic backups, so we run our own
 nightly backup (database + storage) from the start. Move to Supabase Pro once paying customers arrive.
 
+**Hosting limits and costs** (rough, Nov 2026 — check current pricing pages):
+- Photos live in **Supabase Storage**, not Cloudflare. Cloudflare Pages only serves the site and has
+  no traffic limit on free. (The "10 GB free" is Cloudflare R2, which we don't use yet.)
+- Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~250 KB after shrinking, so a
+  5-photo house is ~1.25 MB → ~800 full houses of storage, but only ~4,000 room visits/month,
+  because a room downloads all 5 full-size photos even though the frames are small.
+  **Downloads run out before storage.**
+- Supabase Pro ≈ $25/month (~68 ₾) ≈ two house sales a month.
+- Each house pays once but costs every month: costs grow with *total* houses, income only with
+  *new* sales. That's why monthly income matters (see "Ways to earn"). Until it exists, set aside
+  a small part of every sale (e.g. 5 ₾) as a hosting fund.
+- Cheap fixes, in order: (1) small preview photos (~30 KB) in the frames, full photo only when
+  opened — cuts downloads ~5–8× (worth doing before launch); (2) later, move photos to Cloudflare
+  R2 (10 GB free, no download fees) — needs a small server function for uploads, since secret keys
+  can't be in the browser.
+
 ## Infrastructure
 - Code: https://github.com/Tvaliashvili/CozyTown (branch `main`).
 - Supabase project `cozytown`, ref `ynkupominvvioqpwihfv`, region eu-central-1 (Frankfurt), free plan.
@@ -167,6 +183,54 @@ features, not in temporary folders. A new function visitors may call goes into `
       usability fixes, performance, terms and privacy pages.
 - [ ] **Launch**: Valentine's soft launch with manual payments; Mother's Day push with keychains.
 
+**Living street (planned polish, after the must-haves for selling: admin page, backup, export)**:
+the street is completely still today and feels a bit lonely. Add small, calm signs of what's
+happening in each house:
+- *Tied to the house*: mailbox flag up for a new letter; lit lanterns glow; gift box with a ribbon
+  on the doorstep on capsule-opening day; a big gift bow on unclaimed houses; balloons on a
+  birthday/anniversary (if the keeper adds the date); a warm window light after a recent visit.
+  Memorial houses get only quiet signs (e.g. a small candle in the window).
+- *Ambient*: a cat asleep on a doorstep, birds on a roof, day/night following Tbilisi time,
+  seasons (snow, autumn leaves), chimney smoke, a bicycle by a fence.
+- **Never** police, ambulance, coroner or anything alarming: some houses are memorials or for babies.
+- **Static first**: the canvas only redraws on demand, so things that move all the time (walking
+  people, driving cars) cost battery and FPS on budget phones. Start with still signs; add gentle,
+  slow animation later only if needed.
+- **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
+- First step: mailbox flag, gift bow on unclaimed houses, capsule gift box.
+
+**Town map and neighbourhoods (planned, founder decided Nov 2026: start small, then expand)**:
+- Layers: town → neighbourhood → street (8 plots, already in the database) → house. Neighbourhoods
+  are one new table on top of `streets`.
+- **Launch with the one street we have.** Build the map once there are several full streets (~50+ houses).
+  Then open **one street at a time**, the next only when the current one is nearly full, so the
+  town never looks empty or abandoned.
+- The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.
+- **Visitors still go straight to the house**: the QR opens `/h/<code>` directly. The map is only
+  for exploring and for choosing a plot when buying; grandparents never have to navigate it.
+- Neighbourhoods with character: an Old Town with carved wooden balconies (a Tbilisi touch),
+  Riverside, Snowy Hills, and the quiet Garden Quarter (below).
+- **Family streets**: a family buys neighbouring plots (grandma's house next to the grandchildren's),
+  a reason to buy more than one house.
+- Strangers browsing the map see outsides only; house names are already shown inside only.
+
+**Memorial houses get their own quiet neighbourhood**, "The Garden Quarter" (ბაღების უბანი),
+inside Cozy Town, not a separate site:
+- Calm mood: evening light, gardens, candles; no balloons and no cheerful gift offers.
+- **Never call it a cemetery** — a peaceful garden, not a graveyard.
+- **The buyer chooses**: a family may want a memorial house on the same street as their other houses. Allow it.
+- A house can move there later (e.g. when its person passes away). Links are `/h/<code>` with no
+  street in them, so printed QR codes keep working after a move.
+- Arrives together with the map.
+
+**Market check (web search, Nov 2026, US results only)**: nothing found combining a *gift* of a cozy
+*place* with a printed QR, for *living* people, in Georgian. Pieces exist separately: memorial
+sites (MuchLoved, Keeper, Mimorial — virtual candles and roses), QR memorial keychains (Memorygram
+~$69.99), browser 3D farewell rooms (farvel), time-capsule apps (FutureMe, Capsy), couples apps
+(Between, Paired). People already pay for keepsake QRs and virtual flowers. Some memorial sites have
+closed and left dead QR codes — our 6-months-notice + export promise is a selling point.
+Still to check: Georgian sellers on Instagram/Facebook. Real proof = customer conversations and Valentine's pre-orders.
+
 **Out of MVP on purpose**: live multiplayer, avatars, voice/video, public browsable interiors,
 decorations shop, subscriptions, online payments, email notifications.
 
@@ -175,6 +239,28 @@ houses, seasonal decorations, subscription, legacy keeper for memorial/baby hous
 
 ## Pricing hypothesis (test, not decided)
 Digital house ~39 ₾ · with printed card ~49 ₾ · with engraved wooden keychain ~69-79 ₾.
+
+## Ways to earn beyond selling houses (ideas, founder liked them, Nov 2026)
+**Rule**: nothing paid ever locks away what's already there. If someone stops paying, their house,
+photos and letters stay visible and downloadable; only *new* paid extras stop. Lanterns stay free.
+1. **Small gifts left at a house**: for a few lari, anyone leaves a bouquet, birthday cake, balloon
+   or New Year tree with a short note; it appears on the doorstep (ties into the living street).
+   Repeats every birthday/anniversary. Memorial houses: only quiet gifts (candle, flowers), never pushed.
+2. **Seasonal decorations**: New Year lights and snow, spring flowers, Valentine's; sold each season, every year.
+3. **Physical products from the house**: yearly printed photo book of its photos and letters,
+   framed picture of the house, house-shaped New Year ornament (same print shops as cards/keychains).
+4. **Optional "Cozy Town Plus" (later, ~5–9 ₾/month)**: more photos/albums, voice notes, more
+   co-decorators, letters scheduled for a future date, seasonal decorations included.
+   The basic house is complete without it.
+5. **Group and business houses**: weddings (guests leave letters/photos; sold via wedding planners),
+   colleague farewells/retirements, school graduation classes.
+6. **Partner shops**: real flowers or cake from a Tbilisi florist/bakery delivered with the digital gift, for a commission.
+
+**Avoid**: ads on the street; selling or sharing anything about people's houses.
+**Limits**: small payments need the Bank of Georgia / TBC gateway (nobody bank-transfers 3 ₾),
+and they only sell if people come back to the house (living street, bigger room).
+**Order**: at launch with manual payment → physical products, wedding/group houses. After the
+gateway → gifts at the door, seasonal decorations. Later → Plus subscription, partner shops.
 
 ## Founder owns
 Landing page and CSS styling, Georgian copy and translations, choosing colors/props for the look,
