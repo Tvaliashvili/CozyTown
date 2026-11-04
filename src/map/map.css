@@ -84,12 +84,19 @@
 .map-areas polygon {
   /* "transparent" still counts as painted, so taps land on it; "none" would let them fall through. */
   fill: transparent;
+  stroke: transparent;
+  stroke-width: 3;
+  stroke-linejoin: round;
   cursor: pointer;
+  transition: fill 0.2s, stroke 0.2s;
 }
 
-/* A soft flash while the finger is down, so the tap feels answered */
+/* The territory lights up under the mouse (or when its name has keyboard focus, set from MapPage),
+   and flashes softly while a finger is down, so the tap feels answered */
+.map-areas polygon.lit,
 .map-areas polygon:active {
-  fill: rgba(255, 246, 233, 0.18);
+  fill: rgba(255, 246, 233, 0.2);
+  stroke: rgba(255, 246, 233, 0.7);
 }
 
 /* Big enough for older fingers, and centered on its spot on the drawing. */
@@ -114,6 +121,16 @@
   line-height: 1.2;
   box-shadow: var(--shadow);
   cursor: pointer;
+}
+
+.map-place {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Its name lifts a little while its territory is lit */
+.map-place.lit {
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 10px 26px rgba(30, 20, 50, 0.4);
 }
 
 .map-place:active {

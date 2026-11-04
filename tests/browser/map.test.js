@@ -47,6 +47,10 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
     const box = each.getBoundingClientRect()
     return { left: box.left, top: box.top, width: box.width, height: box.height }
   })
+  await page.mouse.move(board.left + board.width * 0.12, board.top + board.height * 0.56)
+  await page.waitForSelector('.map-areas polygon.lit', { timeout: 5000 })
+  check('hovering the drawn houses lights up their territory and their name',
+    (await page.$eval('.map-place.lit strong', (each) => each.textContent)) === 'Old Town')
   await page.mouse.click(board.left + board.width * 0.12, board.top + board.height * 0.56)
   await page.waitForSelector('.map-sheet')
   check('tapping the drawn houses opens their neighbourhood', (await text(page, '#map-sheet-title')) === 'Old Town')

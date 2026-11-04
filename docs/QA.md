@@ -253,4 +253,8 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   the map's back arrow steps back to the house it came from. The street reached *from* the map shows no map button (Back already
   leads there). This is earlier than the "~50+ houses" plan: visitors see one street and three "Opens later" neighbourhoods.
   Phone checklist step 13 added.
+- **Hover (founder):** the territory under the mouse lights up (soft cream fill and edge) and its name lifts; keyboard focus on a
+  name does the same. On phones the press flash stays. Tested: hovering the Old Town's houses lights both.
+- **Growing the map (founder: "like a GTA map", meaning seen from the top with territories lighting up on hover, not zooming):**
+  the drawing is extended by hand as neighbourhoods open, with streets drawn in place once there are more than a few. Recorded in CLAUDE.md.
 

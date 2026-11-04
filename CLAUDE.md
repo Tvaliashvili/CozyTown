@@ -218,6 +218,10 @@ happening in each house. Still to add from this list:
   (`/admin`), the next only when the current one is nearly full, so the town never looks empty or abandoned.
 - **Still to do**: choosing a plot when buying, and making neighbourhoods look different in 3D (balconies, snow,
   evening light). Every street looks the same for now.
+- **How it grows** (founder, Nov 2026: "like a GTA map": seen from the top, neighbourhoods light up under the hover,
+  expanded from time to time; not zooming): the drawing gets extended by hand each time a neighbourhood opens, with each
+  open street drawn in its place for tapping once a neighbourhood has more than a few. Only the picture and `places.js`
+  change; the database already has everything. Keep it a flat picture for budget phones; no live 3D overview.
 - Settled (Nov 2026): First Street is in the Old Town; `/map` stays reachable to anyone who types it; the map
   shows **no free-plot counts** (while the town is small they only say how empty it is), only "All plots are taken".
 - The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.

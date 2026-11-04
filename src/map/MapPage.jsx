@@ -18,6 +18,8 @@ export default function MapPage() {
   const [failed, setFailed] = useState(false)
   // useBackState: the phone's Back button closes the sheet instead of leaving the map.
   const [openSlug, setOpenSlug] = useBackState(null)
+  // The neighbourhood under the mouse (or keyboard focus): its territory lights up and its name lifts.
+  const [litSlug, setLitSlug] = useState(null)
 
   function load() {
     setFailed(false)
@@ -64,8 +66,11 @@ export default function MapPage() {
               return (
                 <polygon
                   key={hood.slug}
+                  className={litSlug === hood.slug ? 'lit' : undefined}
                   points={place.area.map(([x, y]) => `${x},${y}`).join(' ')}
                   onClick={() => setOpenSlug(hood.slug)}
+                  onMouseEnter={() => setLitSlug(hood.slug)}
+                  onMouseLeave={() => setLitSlug(null)}
                 />
               )
             })}
@@ -76,13 +81,18 @@ export default function MapPage() {
           const place = MAP_PLACES[hood.slug]
           if (!place) return null
           const isOpen = hood.streets.some((street) => street.open)
+          const classes = ['map-place', isOpen && 'open', litSlug === hood.slug && 'lit'].filter(Boolean).join(' ')
           return (
             <button
               key={hood.slug}
               type="button"
-              className={isOpen ? 'map-place open' : 'map-place'}
+              className={classes}
               style={{ left: `${place.label.x}%`, top: `${place.label.y}%` }}
               onClick={() => setOpenSlug(hood.slug)}
+              onMouseEnter={() => setLitSlug(hood.slug)}
+              onMouseLeave={() => setLitSlug(null)}
+              onFocus={() => setLitSlug(hood.slug)}
+              onBlur={() => setLitSlug(null)}
             >
               <strong>{lang === 'ka' ? hood.nameKa : hood.nameEn}</strong>
               {!isOpen && <span>{t('map.opensLater')}</span>}
