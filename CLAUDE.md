@@ -102,7 +102,7 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   `/town` demo street saved in the browser (`src/TownApp.jsx`) and `/h/<code>` a real house from the
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
-- `/map` is the town map, not linked from anywhere yet (`src/map/`, `src/data/map.js`): a flat drawing
+- `/map` is the town map (`src/map/`, `src/data/map.js`), reached from the map button in the street's top bar: a flat drawing
   (`public/art/town-map.svg`) with real buttons on top and an invisible tappable shape per neighbourhood, both placed by
   `src/map/places.js`. `/map/<street>` shows an open street,
   outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
@@ -210,15 +210,14 @@ happening in each house. Still to add from this list:
   slow animation later only if needed.
 - **Privacy**: visit signs stay soft and vague; strangers must not be able to tell who visits whom or when.
 
-**Town map and neighbourhoods (groundwork built Nov 2026 at the founder's request, not linked from anywhere yet;
-founder decided: start small, then expand)**:
+**Town map and neighbourhoods (built Nov 2026 at the founder's request; founder decided: start small, then expand)**:
 - Layers: town → neighbourhood → street (8 plots, already in the database) → house. Neighbourhoods
   are one new table on top of `streets`.
-- **Launch with the one street we have.** Link the map once there are several full streets (~50+ houses).
-  Then open **one street at a time** (`/admin`), the next only when the current one is nearly full, so the
-  town never looks empty or abandoned.
-- **Still to do when it goes live**: a link to it, choosing a plot when buying, and making neighbourhoods look
-  different in 3D (balconies, snow, evening light). Every street looks the same for now.
+- **Launch with the one street we have.** The map is linked from every street's top bar (founder's call, Nov 2026:
+  earlier than the "~50+ houses" idea, so closed neighbourhoods show as "Opens later"). Open **one street at a time**
+  (`/admin`), the next only when the current one is nearly full, so the town never looks empty or abandoned.
+- **Still to do**: choosing a plot when buying, and making neighbourhoods look different in 3D (balconies, snow,
+  evening light). Every street looks the same for now.
 - Settled (Nov 2026): First Street is in the Old Town; `/map` stays reachable to anyone who types it; the map
   shows **no free-plot counts** (while the town is small they only say how empty it is), only "All plots are taken".
 - The map is a flat, light illustrated drawing you tap (not another 3D scene), for budget phones.

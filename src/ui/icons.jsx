@@ -20,6 +20,8 @@ function Line({ size = 22, children }) {
 }
 
 export const BackIcon = () => <Line><path d="M15 18l-6-6 6-6" /></Line>
+// A folded paper map, for the button to the town map
+export const MapIcon = () => <Line><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" /><path d="M9 4v14M15 6v14" /></Line>
 
 export const GiftIcon = () => (
   <Line>

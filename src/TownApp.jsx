@@ -29,6 +29,7 @@ function DemoTown() {
       neighbourSigns={NEIGHBOUR_SIGNS}
       onChange={setDesign}
       canEdit
+      showMap
       label={{ title: t('yourHouse'), text: t('tapToDecorate') }}
     />
   )

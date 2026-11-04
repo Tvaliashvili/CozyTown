@@ -296,6 +296,7 @@ export default function HouseTown({ code, inside }) {
         design={house.design}
         lanterns={house.lanternCount}
         showAccount={house.isKeeper || house.isHelper}
+        showMap
         onShare={house.isKeeper ? () => setShareOpen(true) : undefined}
         focusHouse={lanternOpen || lanternListOpen || shareOpen}
         neighbours={house.neighbours}

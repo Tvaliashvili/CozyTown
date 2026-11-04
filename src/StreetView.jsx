@@ -6,7 +6,7 @@ import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
 import { useBackState } from './lib/useBackState.js'
 import { Link } from './router.jsx'
-import { BackIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
+import { BackIcon, MapIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
 
 // The street screen, shared by the demo street (/town) and real houses (/h/<code>).
 //
@@ -23,6 +23,7 @@ import { BackIcon, PersonIcon, ShareIcon, SlideIcon } from './ui/icons.jsx'
 // plot null: no house is singled out (walking down a street from the map), so no label either.
 // subtitle: replaces the tagline in the top bar, e.g. with the street's name.
 // backTo, backLabel, onBack: where the top bar's back button goes. The home page unless set.
+// showMap: a button to the town map in the top bar. Not on a street reached from the map, where Back already leads there.
 export default function StreetView({
   plot,
   design,
@@ -45,6 +46,7 @@ export default function StreetView({
   backTo = '/',
   backLabel,
   onBack,
+  showMap = false,
 }) {
   const { t } = useI18n()
   // useBackState: the phone's Back button closes the decorating panel, instead of leaving the street.
@@ -111,6 +113,12 @@ export default function StreetView({
           </div>
         </div>
         <div className="top-bar-buttons">
+          {/* state: so the map's back arrow can step back to this house instead of going to the home page. */}
+          {showMap && (
+            <Link to="/map" state={{ fromHouse: true }} className="pill-button" aria-label={t('street.map')}>
+              <MapIcon />
+            </Link>
+          )}
           {onShare && (
             <button type="button" className="pill-button" onClick={onShare} aria-label={t('share.button')}>
               <ShareIcon />

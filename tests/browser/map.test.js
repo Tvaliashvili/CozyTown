@@ -59,6 +59,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   check('the street opens from the map', new URL(page.url()).pathname === '/map/first-street')
   check('no house is singled out', !(await page.$('.house-label')))
   check('no button to claim or decorate a house', !(await page.$('.gift-call')))
+  check('no second map button on a street reached from the map', !(await page.$('.top-bar-buttons a[href="/map"]')))
   await wait(500)
   const said = answers.join(' ')
   check("nothing sent to the visitor holds a house's name or code", !said.includes(secretTitle) && !said.includes(house.code))
@@ -68,6 +69,21 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await page.waitForSelector('.map-place')
   await wait(300)
   check('the back button returns to the map, with the sheet closed', new URL(page.url()).pathname === '/map' && !(await page.$('.map-sheet')))
+
+  // ---------- From a house to the map and back ----------
+  await page.goto(`${base}/h/${house.code}`)
+  await page.waitForSelector('canvas', { timeout: 60000 })
+  await page.waitForSelector('.top-bar-buttons a[href="/map"]')
+  check("a house's street has a button to the map", true)
+  await page.click('.top-bar-buttons a[href="/map"]')
+  await page.waitForSelector('.map-place')
+  await page.click('.map-nav a.pill-button')
+  await page.waitForSelector('canvas', { timeout: 60000 })
+  check("the map's back arrow returns to the house", new URL(page.url()).pathname === `/h/${house.code}`)
+  // Leave this page on something light: a 3D street starting up (software-drawn here) is enough to make
+  // the next page's load time out.
+  await page.goto(`${base}/map`)
+  await page.waitForSelector('.map-place')
 
   // ---------- In Georgian ----------
   const georgian = await openPage(null, { lang: 'ka' })

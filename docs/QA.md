@@ -98,6 +98,8 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 10. Read the Terms and Privacy pages (links at the bottom of the landing page). Is anything untrue or unclear?
 11. Street signs: open `/town` and slide along. Can you spot the bow on a roof, the raised mailbox flag and the gift box at a door, on a small screen? Do they feel calm, not busy?
 12. Photos on slow internet: go inside a house with photos. Do the frames look sharp? Tap one: it should appear at once and get sharper a moment later.
+13. Town map: from your house, tap the map button in the top bar. Tap the Old Town's houses, then First Street, slide along,
+    then the back arrows until you're home. Does it feel like a place, not a menu? Is the drawing sharp on your screen?
 
 Write what went wrong under a new review entry below.
 
@@ -247,4 +249,8 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
 - **Founder's try-out:** the map felt like a list, because only the name pills reacted. Now each neighbourhood's part of the
   drawing (its houses, hills, gardens) is an invisible tappable shape (`area` in `src/map/places.js`), with a soft flash while
   pressed. The pills stay the real buttons for keyboards and screen readers. Browser test taps the Old Town's houses, away from its name.
+- **Linked now (founder's call, 2026-11-04):** every street's top bar (real houses and `/town`) has a map button, for everyone;
+  the map's back arrow steps back to the house it came from. The street reached *from* the map shows no map button (Back already
+  leads there). This is earlier than the "~50+ houses" plan: visitors see one street and three "Opens later" neighbourhoods.
+  Phone checklist step 13 added.
 

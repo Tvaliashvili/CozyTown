@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { loadTownMap } from '../data/map.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { useBackState } from '../lib/useBackState.js'
-import { Link } from '../router.jsx'
+import { Link, navigate } from '../router.jsx'
 import { BackIcon } from '../ui/icons.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
 import { hideLoadingScreen } from '../ui/loadingScreen.js'
@@ -29,11 +29,19 @@ export default function MapPage() {
 
   const openHood = town?.find((hood) => hood.slug === openSlug)
 
+  // Came here from a house's street? Then step back to it, so the phone's own Back stays in step.
+  // Opened straight from a link? Then the home page.
+  function back(event) {
+    event.preventDefault()
+    if (window.history.state?.fromHouse) window.history.back()
+    else navigate('/')
+  }
+
   return (
     <div className="map-page">
       <header className="map-top">
         <div className="map-nav">
-          <Link to="/" className="pill-button glass" aria-label={t('street.home')}>
+          <Link to="/" onClick={back} className="pill-button glass" aria-label={t('map.back')}>
             <BackIcon />
           </Link>
           <LanguageToggle className="pill-button glass" />

@@ -170,6 +170,7 @@ export default {
 
   // ---------- The street's top bar ----------
   'street.home': 'Home page',
+  'street.map': 'Town map',
   'street.account': 'Your account and signing out',
 
   // ---------- Visitor lanterns ----------
@@ -338,6 +339,7 @@ export default {
   'map.notOpenYet': 'Nobody lives here yet. It opens once the streets before it have filled up.',
   'map.streetFull': 'All plots are taken',
   'map.close': 'Close',
+  'map.back': 'Back',
   'map.backToMap': 'Back to the map',
   'map.failed': "The map didn't load. Check your internet connection and try again.",
   'map.streetClosed.title': 'This street isn’t open yet',

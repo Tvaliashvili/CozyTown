@@ -173,6 +173,7 @@ export default {
 
   // ---------- ქუჩის ზედა ზოლი (DRAFT: founder to review) ----------
   'street.home': 'მთავარი გვერდი',
+  'street.map': 'ქალაქის რუკა',
   'street.account': 'თქვენი ანგარიში და გასვლა',
 
   // ---------- სტუმრების ფარნები (DRAFT: founder to review) ----------
@@ -341,6 +342,7 @@ export default {
   'map.notOpenYet': 'აქ ჯერ არავინ ცხოვრობს. გაიხსნება, როცა წინა ქუჩები შეივსება.',
   'map.streetFull': 'ყველა ნაკვეთი დაკავებულია',
   'map.close': 'დახურვა',
+  'map.back': 'უკან',
   'map.backToMap': 'რუკაზე დაბრუნება',
   'map.failed': 'რუკა ვერ ჩაიტვირთა. შეამოწმეთ ინტერნეტი და სცადეთ თავიდან.',
   'map.streetClosed.title': 'ეს ქუჩა ჯერ არ გახსნილა',
