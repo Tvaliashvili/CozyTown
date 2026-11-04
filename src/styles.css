@@ -249,6 +249,18 @@ textarea.text-field {
   text-decoration: none;
 }
 
+/* Phones: with the map button there's less room, so the title wraps. Keep the back button level
+   with the other buttons, and drop the tagline, which would otherwise run down onto the hills. */
+@media (max-width: 480px) {
+  .top-bar-title {
+    align-items: flex-start;
+  }
+
+  .top-bar-tagline {
+    display: none;
+  }
+}
+
 .top-bar p {
   margin: 2px 0 0;
   font-size: 0.95rem;
@@ -981,4 +993,50 @@ textarea.text-field {
   line-height: 1.45;
   text-align: center;
   box-shadow: 0 0 0 3px var(--gold), var(--shadow);
+}
+
+/* ---------- Georgian text ---------- */
+
+/* Georgian has no everyday capital letters. "uppercase" turns it into a rarely used all-capitals
+   alphabet, and with the extra letter spacing that suits English labels, it comes out thin, gappy
+   and hard to read. So in Georgian those labels are plain text, a little bigger. */
+html[lang='ka'] .step-number,
+html[lang='ka'] .control h3 {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+html[lang='ka'] .step-number {
+  font-size: 17px;
+}
+
+html[lang='ka'] .control h3 {
+  font-size: 16px;
+}
+
+/* The smallest texts, which the English sizes leave too small to read comfortably in Georgian.
+   The tabs and little tags sit in tight spaces, so they stay a bit below the rest. */
+html[lang='ka'] .tab {
+  font-size: 14.5px;
+}
+
+html[lang='ka'] .house-label-bubble span,
+html[lang='ka'] .map-place span,
+html[lang='ka'] .tag-ribbon,
+html[lang='ka'] .new-chip {
+  font-size: 15px;
+}
+
+html[lang='ka'] .hero-badge,
+html[lang='ka'] .landing-footer,
+html[lang='ka'] .small,
+html[lang='ka'] .signin-locked,
+html[lang='ka'] .legal-updated,
+html[lang='ka'] .hint,
+html[lang='ka'] .save-warning,
+html[lang='ka'] .lantern-note,
+html[lang='ka'] .keeper-lantern-date,
+html[lang='ka'] .room-card span span,
+html[lang='ka'] .letter-date {
+  font-size: 16px;
 }

@@ -275,6 +275,15 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   even after closing its first page). With the founder's OK the six servers were closed: CPU fell to 17%, free memory didn't improve
   (they used little), and the test then passed 3 of 3. **Cause not proven:** CPU load is the likely one, but it wasn't compared with
   the code from before the map. If it fails again on an idle computer, treat it as a real bug. This computer has only 6 GB.
+- **Georgian text (founder: "spacing between and very small"):** two labels (`.step-number`, `.control h3`) used uppercase with letter
+  spacing, a style for English; Georgian has no everyday capitals, so it turned into a thin, gappy all-capitals alphabet. Those are
+  now plain and bigger, and the smallest Georgian texts went up (block at the end of `src/styles.css`, Georgian only). New test
+  `georgian-text-size.test.js`: no spaced or capitalised Georgian, nothing under 14.5 px on 6 screens, English unchanged. Not
+  covered by that test: the keeper's room, the capsule and the printed card (keeper-room sizes were raised by reading the CSS).
+- **Landing roof, again (founder: "you still didn't fix"):** the site was fixed, but the design canvas holds its own copy of the landing
+  page, still dark. Now teal there too. Lesson: the canvas and the site don't share files, so check both.
+- **Regression from the map button, fixed:** on phones the title wrapped, the back button dropped out of line, and the tagline ran
+  onto the hills, in both languages. Now the buttons stay level and the tagline is hidden up to 480 px wide.
 - **Tests after the paper map:** `npm run test:browser` 172 passed, 0 failed, with the old servers closed. `npm run test:db` 268 passed
   earlier the same day; no database change since.
 - **Growing the map (founder: "like a GTA map", meaning seen from the top with territories lighting up on hover, not zooming):**

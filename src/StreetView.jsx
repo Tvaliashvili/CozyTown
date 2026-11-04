@@ -109,7 +109,7 @@ export default function StreetView({
             <h1>
               <Link to="/">{t('appName')}</Link>
             </h1>
-            <p>{subtitle ?? t('tagline')}</p>
+            {subtitle ? <p>{subtitle}</p> : <p className="top-bar-tagline">{t('tagline')}</p>}
           </div>
         </div>
         <div className="top-bar-buttons">
