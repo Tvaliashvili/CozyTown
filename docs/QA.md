@@ -244,4 +244,7 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
 - **Tests:** the map browser test now adds its street to the Garden Quarter: checks the reminder appears, the moved house became
   quiet, and the sheet shows no numbers.
 - **Founder:** the new Georgian privacy paragraph is DRAFT.
+- **Founder's try-out:** the map felt like a list, because only the name pills reacted. Now each neighbourhood's part of the
+  drawing (its houses, hills, gardens) is an invisible tappable shape (`area` in `src/map/places.js`), with a soft flash while
+  pressed. The pills stay the real buttons for keyboards and screen readers. Browser test taps the Old Town's houses, away from its name.
 

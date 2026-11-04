@@ -42,8 +42,14 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await page.waitForFunction(() => !document.querySelector('.map-sheet'))
   check("the phone's Back closes the sheet and stays on the map", new URL(page.url()).pathname === '/map')
 
-  // Into a street
-  await clickText(page, '.map-place', 'Old Town')
+  // Into a street, by tapping the drawing itself (the Old Town's houses, away from its name)
+  const board = await page.$eval('.map-board', (each) => {
+    const box = each.getBoundingClientRect()
+    return { left: box.left, top: box.top, width: box.width, height: box.height }
+  })
+  await page.mouse.click(board.left + board.width * 0.12, board.top + board.height * 0.56)
+  await page.waitForSelector('.map-sheet')
+  check('tapping the drawn houses opens their neighbourhood', (await text(page, '#map-sheet-title')) === 'Old Town')
   await page.waitForSelector('.map-street')
   const sheetText = await text(page, '.map-sheet')
   check('the sheet names the street without plot numbers', sheetText.includes('First Street') && !/\d of \d/.test(sheetText), sheetText)

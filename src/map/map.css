@@ -73,6 +73,25 @@
   height: 100%;
 }
 
+/* The invisible tappable shapes over the drawing, one per neighbourhood */
+.map-areas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.map-areas polygon {
+  /* "transparent" still counts as painted, so taps land on it; "none" would let them fall through. */
+  fill: transparent;
+  cursor: pointer;
+}
+
+/* A soft flash while the finger is down, so the tap feels answered */
+.map-areas polygon:active {
+  fill: rgba(255, 246, 233, 0.18);
+}
+
 /* Big enough for older fingers, and centered on its spot on the drawing. */
 .map-place {
   position: absolute;

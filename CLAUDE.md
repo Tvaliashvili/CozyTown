@@ -103,7 +103,8 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   database (`src/HouseTown.jsx`, talks to the database through `src/data/houses.js`). Both draw the
   same screen, `src/StreetView.jsx`. A tiny router in `src/router.jsx`.
 - `/map` is the town map, not linked from anywhere yet (`src/map/`, `src/data/map.js`): a flat drawing
-  (`public/art/town-map.svg`) with real buttons on top, placed by `src/map/places.js`. `/map/<street>` shows an open street,
+  (`public/art/town-map.svg`) with real buttons on top and an invisible tappable shape per neighbourhood, both placed by
+  `src/map/places.js`. `/map/<street>` shows an open street,
   outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
   database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it.
 - `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture

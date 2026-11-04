@@ -44,6 +44,26 @@ export default function MapPage() {
 
       <main className="map-board">
         <img src="/art/town-map.svg" alt="" className="map-art" />
+
+        {/* Tapping the drawing itself: each neighbourhood's part of it is an invisible shape.
+            The name buttons below stay the real controls (keyboard, screen readers); these only add
+            a bigger place to tap, which is why they're hidden from assistive tech. */}
+        {town && (
+          <svg className="map-areas" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">
+            {town.map((hood) => {
+              const place = MAP_PLACES[hood.slug]
+              if (!place) return null
+              return (
+                <polygon
+                  key={hood.slug}
+                  points={place.area.map(([x, y]) => `${x},${y}`).join(' ')}
+                  onClick={() => setOpenSlug(hood.slug)}
+                />
+              )
+            })}
+          </svg>
+        )}
+
         {town?.map((hood) => {
           const place = MAP_PLACES[hood.slug]
           if (!place) return null
@@ -53,7 +73,7 @@ export default function MapPage() {
               key={hood.slug}
               type="button"
               className={isOpen ? 'map-place open' : 'map-place'}
-              style={{ left: `${place.x}%`, top: `${place.y}%` }}
+              style={{ left: `${place.label.x}%`, top: `${place.label.y}%` }}
               onClick={() => setOpenSlug(hood.slug)}
             >
               <strong>{lang === 'ka' ? hood.nameKa : hood.nameEn}</strong>
