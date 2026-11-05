@@ -4,9 +4,10 @@ import { hangPhoto } from '../data/inside.js'
 import { useI18n } from '../i18n/i18n.jsx'
 
 // "Hang this photo?" - shrinks the chosen photo, shows it, and asks for a few optional words.
-// slot = the frame it will hang in.
+// slot = the frame it will hang in, or null when the frames are full and it goes in the album.
 export default function AddPhoto({ code, file, slot, onHung, onCancel }) {
   const { t } = useI18n()
+  const toAlbum = slot === null
   // 'preparing' | 'ready' | 'saving' | 'failed' (upload didn't work) | 'unreadable' (not a photo we can open)
   const [state, setState] = useState('preparing')
   const [shrunk, setShrunk] = useState(null)
@@ -47,7 +48,7 @@ export default function AddPhoto({ code, file, slot, onHung, onCancel }) {
   return (
     <div className="dialog-backdrop">
       <form className="dialog add-photo" role="dialog" aria-modal="true" aria-labelledby="add-photo-title" onSubmit={hang}>
-        <h2 id="add-photo-title">{t('add.title')}</h2>
+        <h2 id="add-photo-title">{toAlbum ? t('add.titleAlbum') : t('add.title')}</h2>
 
         {state === 'preparing' && <p role="status">{t('add.preparing')}</p>}
         {preview && <img className="add-photo-preview" src={preview} alt="" />}
@@ -77,7 +78,8 @@ export default function AddPhoto({ code, file, slot, onHung, onCancel }) {
               </p>
             )}
             <button type="submit" className="big-button accent" disabled={busy}>
-              {state === 'saving' ? t('add.saving') : t('add.hang')}
+              {state === 'saving' && (toAlbum ? t('add.adding') : t('add.saving'))}
+              {state !== 'saving' && (toAlbum ? t('add.toAlbum') : t('add.hang'))}
             </button>
           </>
         )}

@@ -5,7 +5,7 @@ Two kinds, both run against the real Supabase project using the settings in `.en
 | Command | What it does | Time |
 |---|---|---|
 | `npm run test:db` | Checks the database rules: who may read and change what. Each test runs inside a transaction that is **rolled back**, so nothing is ever saved. | ~1 min |
-| `npm run test:browser` | Starts the site on this computer and uses it in headless Chrome as throwaway keepers, helpers, visitors and an admin. Every account, house and photo it makes is **removed** at the end (and leftovers from a crashed run are removed at the start). | ~4 min |
+| `npm run test:browser` | Starts the site on this computer and uses it in headless Chrome as throwaway keepers, helpers, visitors and an admin. Every account, house and photo it makes is **removed** at the end (and leftovers from a crashed run are removed at the start). | ~9 min |
 | `npm test` | Both, database first. | |
 | `npm run test:restore` | A full restore rehearsal on a throwaway Postgres on this computer (first: `npm install --no-save embedded-postgres@17.11.0-beta.19`). Rebuilds the database from the migrations, compares it with live, restores the newest backup into it. Changes nothing on the site. See `docs/BACKUPS.md`. | ~1 min |
 
@@ -29,3 +29,6 @@ Needs Chrome (or Edge) installed. Set `CHROME_PATH` if it lives somewhere unusua
 
 `npm run test:browser` starts by deleting **every** `@cozytown-test.dev` account (leftovers from a crash), so never run
 it while something else is using test accounts.
+
+**Before a full run:** close your browser and keep the laptop awake. With a browser open this computer runs out of breath and tests
+fail on timeouts, which look like bugs but aren't. If the laptop sleeps, the test loses its database connection and gives up after 15 minutes.

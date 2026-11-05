@@ -101,6 +101,8 @@ export default async function run({ check, newUser, newHouse, openPage, clickTex
   await isAt('the card page opens', { path: `${street}/card` })
   await back()
   await page.waitForSelector('.house-label', { timeout: 60000 })
-  await wait(500)
+  // The share sheet's history steps are skipped a moment after the street is back. On a busy computer that
+  // moment can be seconds, so wait for it. If the steps were never skipped, the check below still fails.
+  await page.waitForFunction(() => (history.state?.overlayDepth ?? 0) === 0, { timeout: 15000 }).catch(() => {})
   await isAt('Back from the card returns to the street with nothing left open', { path: street, sheet: false, depth: 0 })
 }

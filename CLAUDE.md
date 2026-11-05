@@ -19,6 +19,8 @@ small files, clear names, short comments that explain *why*. Explain changes in 
 - **Promise**: "Your memories are always yours. Download everything any time. If we ever close,
   we give at least 6 months' notice." Never promise "forever".
 - **Export**: zip of all photos + letters + a simple offline HTML page of the house.
+- **Photos in a house** (founder, Nov 2026): 30 in all, included. Up to 5 hang in the frames as favourites, and the album holds
+  all of them. The database refuses a 31st. Selling more room (e.g. +50 for ~9 ₾) is an idea for later; nothing paid ever locks away what's there.
 - **Privacy**: houses are private by default, opened only by an unguessable link / QR.
   Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
 - **Accounts**: only keepers (and the helpers they invite) sign in. Visitors need no account and can light a lantern anonymously.
@@ -60,11 +62,12 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
 **Hosting limits and costs** (rough, Nov 2026 - check current pricing pages):
 - Photos live in **Supabase Storage**, not Cloudflare. The Cloudflare Worker only serves the site and has
   a generous free limit. Cloudflare R2 (10 GB free) holds only our backups so far.
-- Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~250 KB after shrinking, so a
-  5-photo house is ~1.25 MB → ~800 full houses of storage. **Downloads run out before storage**, so
-  the frames now show small copies (~30 KB each) and a room visit costs ~150 KB instead of ~1.25 MB,
-  plus ~250 KB per photo someone taps open. Room for ~8,000 visits a month if people open 2 photos each,
-  up to ~30,000 if they only look at the wall, instead of ~4,000 (estimates, not measured on real traffic).
+- Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~280 KB after shrinking (250 KB + a 30 KB small copy),
+  so a completely full 30-photo house is ~8.4 MB → ~120 full houses of storage, more in practice since most won't fill it.
+  `/admin` shows how full storage is and turns red at 700 MB. The frames show small copies (~30 KB each), so a room visit
+  costs ~150 KB, plus ~300 KB per screen of the album if opened, plus ~250 KB per photo someone taps open.
+  Room for ~8,000 visits a month if people open 2 photos each, up to ~30,000 if they only look at the wall
+  (estimates, not measured on real traffic). Possible saving, untested on real phone photos: shrink the full photo harder.
 - Supabase Pro ≈ $25/month (~68 ₾) ≈ two house sales a month.
 - Each house pays once but costs every month: costs grow with *total* houses, income only with
   *new* sales. That's why monthly income matters (see "Ways to earn"). Until it exists, set aside
@@ -109,11 +112,15 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
   database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it in both drawings.
 - `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture
-  frames (`frames.js`; the database allows slots 0-4), plus letters. It covers the street, which stays
-  loaded underneath. Anyone with the link sees the photos; letters are keeper-only.
+  frames (`frames.js`; the database allows slots 0-4), a photo album on a shelf (`Album.jsx`), plus letters. It covers the
+  street, which stays loaded underneath. Anyone with the link sees all the photos; letters are keeper-only.
+  One `photos` table: a photo with a `slot` hangs in that frame, one with no slot is only in the album. New photos fill empty
+  frames first, then the album; the viewer (`PhotoViewer.jsx`: arrows, swipe) moves them between the two. Several chosen at once
+  go through `AddMany.jsx`, one at a time. The album downloads a small copy only when it comes near the screen (not `loading="lazy"`,
+  which starts over 1,000 px early). Visitors only get the album when it shows something the walls don't.
   Photo files are in a public bucket under long random names; only `get_house_photos()` reveals them.
-  Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`). Each photo on the wall has two files:
-  the full one (`path`) and a small copy for the frames (`small_path`, ~30 KB; empty on older photos, which then
+  Photos are shrunk on the device first (`src/lib/shrinkPhoto.js`). Each photo has two files:
+  the full one (`path`) and a small copy for the frames and album (`small_path`, ~30 KB; empty on older photos, which then
   show the full file). The full one downloads only when tapped; the zip and the backups use the real files.
   Anything that deletes or tidies photo files must handle both (`LEFTOVER_FILES_SQL` in `scripts/backup/shared.js`).
 - **Signs on the street** (`src/scene/House.jsx`, still, never moving): big bow on the roof = gift not claimed
@@ -280,7 +287,7 @@ photos and letters stay visible and downloadable; only *new* paid extras stop. L
 2. **Seasonal decorations**: New Year lights and snow, spring flowers, Valentine's; sold each season, every year.
 3. **Physical products from the house**: yearly printed photo book of its photos and letters,
    framed picture of the house, house-shaped New Year ornament (same print shops as cards/keychains).
-4. **Optional "Cozy Town Plus" (later, ~5-9 ₾/month)**: more photos/albums, voice notes, more
+4. **Optional "Cozy Town Plus" (later, ~5-9 ₾/month)**: room for more photos (a house includes 30), voice notes, more
    co-decorators, letters scheduled for a future date, seasonal decorations included.
    The basic house is complete without it.
 5. **Group and business houses**: weddings (guests leave letters/photos; sold via wedding planners),

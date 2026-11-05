@@ -1,16 +1,26 @@
 import { supabase } from '../lib/supabase.js'
 import { makeSmallCopy } from '../lib/shrinkPhoto.js'
 
-// Everything inside a house: photos on the walls and letters in the mailbox.
+// Everything inside a house: photos and letters.
 // Who may do what is decided by the database (supabase/migrations), not here:
-//   photos  - anyone with the house link can see them; only the keeper hangs or removes them.
+//   photos  - anyone with the house link can see them; only the keeper and helpers add or remove them.
 //   letters - only the keeper can read and write them.
 
-// The photos on the walls, each with the address of its picture file.
+// How many photos a house holds, frames included. The database refuses more
+// (supabase/migrations/20261111000000_photo_album.sql); this number is only for saying so nicely.
+export const PHOTO_LIMIT = 30
+
+// Every photo in the house, each with the address of its picture file.
+// slot: which frame it hangs in, or null when it's only in the album.
 export async function loadPhotos(code) {
   const { data, error } = await supabase.rpc('get_house_photos', { house_code: code })
   if (error) throw error
   return data.map(withUrl)
+}
+
+// The order the album shows: the frames first, then the rest as they came.
+export function inAlbumOrder(photos) {
+  return [...photos].sort((a, b) => (a.slot ?? 99) - (b.slot ?? 99))
 }
 
 // url: the full photo, for when it's opened. smallUrl: the small copy, for the frames.
@@ -51,8 +61,8 @@ export async function houseId(code) {
   return houseIds.get(code)
 }
 
-// Uploads a shrunk photo (from shrinkPhoto) and hangs it in a frame.
-// slot = which frame (0-4). Returns the new photo, ready to show.
+// Uploads a shrunk photo (from shrinkPhoto) and hangs it in a frame or puts it in the album.
+// slot = which frame (0-4), or null for the album. Returns the new photo, ready to show.
 export async function hangPhoto(code, { blob, width, height }, slot, caption) {
   const id = await houseId(code)
   // A long random name, so nobody can guess the photo's address.
@@ -76,11 +86,19 @@ export async function hangPhoto(code, { blob, width, height }, slot, caption) {
   return withUrl(data)
 }
 
-// Takes a photo off the wall and deletes its file.
+// Hangs a photo in a frame, or moves it off the wall into the album (slot = null).
+// Nothing is uploaded: only the note of where it belongs changes. Returns the photo with its new place.
+export async function movePhoto(photo, slot) {
+  const { error } = await supabase.from('photos').update({ slot }).eq('id', photo.id)
+  if (error) throw error
+  return { ...photo, slot }
+}
+
+// Deletes a photo and its files, wherever it is in the house.
 export async function takeDownPhoto(photo) {
   const { error } = await supabase.from('photos').delete().eq('id', photo.id)
   if (error) throw error
-  // If only this part fails, the photo is already gone from the wall; the files are just left over.
+  // If only this part fails, the photo is already gone from the house; the files are just left over.
   await supabase.storage.from('photos').remove(photo.small_path ? [photo.path, photo.small_path] : [photo.path])
 }
 

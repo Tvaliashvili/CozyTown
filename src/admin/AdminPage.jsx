@@ -6,6 +6,7 @@ import { Link } from '../router.jsx'
 import { hideLoadingScreen } from '../ui/loadingScreen.js'
 import { BackIcon } from '../ui/icons.jsx'
 import BackupStatus from './BackupStatus.jsx'
+import StorageStatus from './StorageStatus.jsx'
 import HouseList from './HouseList.jsx'
 import NewOrder from './NewOrder.jsx'
 import TownStreets from './TownStreets.jsx'
@@ -79,6 +80,7 @@ export default function AdminPage() {
     content = (
       <>
         <BackupStatus />
+        <StorageStatus />
         <NewOrder streets={streets} houses={houses} quietStreets={quietStreets} onCreated={reload} />
         <HouseList streets={streets} houses={houses} quietStreets={quietStreets} onChanged={reload} />
         <TownStreets town={town} onChanged={reload} />

@@ -51,7 +51,7 @@ None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
 
 | ID | Date | What | Commit |
 |---|---|---|---|
-| Q18 | 2026-11-05 | 🟠 Decorating panel left only a 40-70 px strip for the choices on small phones. Up to 640 px wide (and on short screens) tabs are one line with the icon beside the word, swatches 48 px, "Make it final" 44 px: all 9 wall colours now fit on 360x640 without scrolling, buttons stay at least 44 px. Phones held sideways had no room at all: they now get the side panel, like big screens. `tests/browser/decorating-panel.test.js`. | decorating panel commit |
+| Q18 | 2026-11-05 | 🟠 Decorating panel left only a 40-70 px strip for the choices on small phones. Up to 640 px wide (and on short screens) tabs are one line with the icon beside the word, swatches 48 px, "Make it final" 44 px: all 9 wall colours now fit on 360x640 without scrolling, buttons stay at least 44 px. Phones held sideways had no room at all: they now get the side panel, like big screens. `tests/browser/decorating-panel.test.js`. | a98cad1 |
 | Q6 | 2026-11-04 | 🟢 The landing page downloaded every text for every page. Now `en.js`/`ka.js` hold only the landing page's 63 texts; the other 291 are in `en-app.js`/`ka-app.js` and download with the first other page (`lazyPage` in `App.jsx`). Landing page: **89.2 → 79.0 KB** gzip. | *(this commit)* |
 | Q16 | 2026-11-03 | 🟢 Every backup was a full copy of all photos (42 kept), so R2's free 10 GB would have filled at ~1,000 photos. Now each photo is copied to R2 **once**, encrypted on its own, and the nightly zip holds only the database (25 KB instead of 277 KB today). A copy is deleted once no kept backup lists it. Room now for ~40,000 photos. `/admin` shows how much of the 10 GB is used. | 7e8678b |
 | Q7 | 2026-11-03 | 🟢 Photo files with nothing pointing to them (deleted house, failed capsule upload) were left behind for ever. The nightly backup now deletes them from Supabase, if they are over a week old and already copied into the backups. If more than half of all files look left over, it deletes nothing and fails. | 7e8678b |
@@ -87,6 +87,8 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Backups (Q1) | 7 for `backup_runs` (only admins read it, nobody on the site can write it). **Restore rehearsal:** in a rolled-back transaction, emptied all 14 tables of the live database, loaded them from a backup, and compared each row by row: all identical, `get_house()` works on the restored house | `/admin` line when there's no backup, a late one, a fresh one. Backup opened with the right key; refused with a wrong key and with one changed byte; restore refuses a project that has houses. Real upload to R2 + `backup:check` from this computer; GitHub run passed; the secret key reads the private capsule bucket (test file, deleted). **Once-only photo copies (Q16) and tidy-up (Q7), 2026-11-03:** a folder backup opened, extracted photos were byte-identical to the live ones, one changed byte in a photo copy was caught; the old-style backup still opens; two real runs on R2 with a planted, backdated left-over file: run 1 copied 4 photos and deleted the planted file only, run 2 copied 0 and removed the planted copy no backup needed; `backup:check` then opened all 3 photos. Not rehearsed: a full restore from a new-style backup into an empty project |
 | Security sweep | `security.test.js`: all 13 tables have row security on; visitors can read only `streets` and call only the 8 listed functions; every security-definer function pins `search_path` | - |
 | Town map | 40+ (`map.test.js`): the map gives no house names or codes, only admins add, open, close and move, new streets start closed, a moved house keeps its link, keeper and letters, the Garden Quarter keeps every house quiet | 24 checks (`map.test.js`): no 3D downloaded on the map, tap to street and back, phone Back, nothing private sent to a visitor, Georgian at 320 px, closed and unknown streets, admin adds and opens a street and moves a house |
+| Photo album | 20 in `photos.test.js`: no-frame photos, moving (not into a taken or missing frame), stranger and visitor refused, the 31st refused, deleting makes room, storage figure for admins only | 33 in `album.test.js`: several at once, frames fill first, album from the shelf, arrows and swipe, moving, Back one step at a time, delete with files, too many chosen, visitor's downloads counted, 320 px Georgian |
+| Decorating panel | - | 18 in `decorating-panel.test.js`: 6 screen sizes incl. sideways: room for the choices, buttons at least 44 px, no sideways scroll |
 | Terms & Privacy | - | both pages in English and Georgian at 360 px: titles, sections, no sideways scroll, no long dashes; footer and sign-in links work |
 
 ## Phone checklist (for the founder, on real phones)
@@ -107,6 +109,10 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
 12. Photos on slow internet: go inside a house with photos. Do the frames look sharp? Tap one: it should appear at once and get sharper a moment later.
 13. Town map: from your house, tap the map button in the top bar. Tap the Old Town's houses, then First Street, slide along,
     then the back arrows until you're home. Does it feel like a place, not a menu? Is the drawing sharp on your screen?
+14. Photo album: tap "Add photos" and pick 8 at once from the gallery. Do the frames fill first and the rest land in the album? How long does it take
+    on mobile data, and does the phone stay usable? Tap the book on the shelf (is it easy to hit?), swipe through, move one to the album and hang another.
+    Can someone over 60 find the album and get back out?
+15. Decorating panel: tap your house. Can you reach every tab and choice with a thumb? Try it with the phone held sideways too.
 
 Write what went wrong under a new review entry below.
 
@@ -337,4 +343,21 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   take-down button, in code not touched here. That file then passed 3 of 3 alone, so load is the likely cause, not proven (like the timeouts noted on 2026-11-04).
   If it fails on an idle computer, treat it as a real bug. Landing page: ~80 KB gzip (79 before), and its test still passes.
 - **Founder:** new Georgian DRAFT texts: `menu.*` in `ka.js`, `capsule.startOver`, `capsule.delete*`, `capsule.deleting` in `ka-app.js`, one Terms paragraph.
+
+### 2026-11-05 · Photo album: 30 photos in a house
+- **Built (founder approved):** a book on the shelf and a card open the album. New photos fill empty frames first, then the album. Several can be chosen at once
+  (`AddMany.jsx`, one at a time, with a Stop button). The viewer has arrows and swipe, and moves a photo between wall and album. Migration
+  `20261111000000_photo_album.sql`, tested rolled back, then applied: `slot` may be empty, a trigger refuses a 31st photo, and `admin_storage_use()` feeds a storage line on `/admin` (red at 700 MB).
+- **Choices made without asking, for the founder to check:** 30 means in total, including the 5 in frames. "Take it off the wall" is now "Delete", since moving to the album is
+  the gentle option. Visitors only get the album when it shows something the walls don't. `/privacy` now says all photos are visible to anyone with the link (EN + KA draft).
+- **Measured:** a visitor's room downloads 5 small copies; opening a full album downloads 10 of 30, the rest only on scrolling. These are counts of files, not real traffic.
+- **Tests, final code:** `npm run test:db` 301 passed. `npm run test:browser` 270 passed, 0 failed, 11 minutes in all, with Brave closed.
+- **The earlier timeouts now have a likely cause: a busy computer.** With Brave open (5.9 GB RAM, CPU often 66-100%) full runs hit timeouts all over, and the old code
+  a98cad1 failed the same way, so the album didn't cause them. Brave closed: clean, and landing went from about 5 minutes to under one. One clean run, and two other changes went in before it
+  (below), so this is strong evidence, not proof. **To test: close the browser and keep the lid open.**
+- **Test fixes:** the runner gives up after 15 minutes on one file, because a laptop going to sleep mid-test left it waiting for over 2 hours (not yet seen triggering). A Chrome that won't close cleanly
+  no longer hides results. Longer page limits in `kit.js`. The album test keeps one page open at a time. The back-button test waits for the history steps instead of a fixed half second.
+- **Not tested:** real phones (checklist steps 14-15), real phone photos, adding many on slow mobile data. After my last look at the screens, the viewer's Delete and Close button widths changed; the 320 px test checks they fit, but nobody has looked at them.
+- **Not done on purpose:** shrinking photos harder (needs real phone photos to judge), refusing duplicates, selling more room, small copies for older photos (Q21). The landing page still only says "Photos on the walls".
+- **Founder:** new Georgian DRAFT texts: `album.*`, `add.titleAlbum`, `add.toAlbum`, `add.adding`, `add.many*`, `room.previous`, `room.next`, `room.toWall`, `room.toAlbum`, `room.noFreeFrame`, `room.takeDown*`, `room.addPhoto`, and the `/privacy` change.
 

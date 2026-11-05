@@ -32,7 +32,7 @@ function en(c) {
         heading: 'Who can see what',
         paragraphs: [
           'A house is private. It opens only with its link or QR code, which is long and impossible to guess.',
-          'Anyone with the link can see the outside of the house, the photos on the walls with their captions, and how many lanterns are lit. The outside can show small signs: a raised mailbox flag when a new letter is waiting, and a gift box when the time capsule\'s day has come. They cannot read letters or see what is in the time capsule.',
+          'Anyone with the link can see the outside of the house, all the photos in the house (on the walls and in the album) with their captions, and how many lanterns are lit. The outside can show small signs: a raised mailbox flag when a new letter is waiting, and a gift box when the time capsule\'s day has come. They cannot read letters or see what is in the time capsule.',
           'Letters are for the keeper only. Helpers see only the letters they wrote themselves.',
           'The time capsule stays locked until its day, for everyone, including the keeper and us.',
           'People walking down the street in the app see only the outside of houses, never what is inside. The only sign they can see on other houses is a gift bow on a gift nobody has claimed yet. The town map works the same way: anyone can look along the streets that are open, without a link, and sees only the outsides, with no names.',
@@ -118,7 +118,7 @@ function ka(c) {
         heading: 'ვინ რას ხედავს',
         paragraphs: [
           'სახლი პირადია. ის მხოლოდ თავისი ბმულით ან QR კოდით იხსნება, რომელიც გრძელია და მისი გამოცნობა შეუძლებელია.',
-          'ვისაც ბმული აქვს, ხედავს სახლის გარე მხარეს, კედლებზე ჩამოკიდებულ ფოტოებს წარწერებით და რამდენი ფარანი ანთია. გარე მხარეს შეიძლება პატარა ნიშნები გამოჩნდეს: აწეული დროშა საფოსტო ყუთზე, როცა ახალი წერილი ელოდება, და საჩუქრის ყუთი, როცა დროის კაფსულის დღე დადგება. წერილების წაკითხვა და დროის კაფსულის შიგთავსის ნახვა არ შეუძლია.',
+          'ვისაც ბმული აქვს, ხედავს სახლის გარე მხარეს, სახლის ყველა ფოტოს (კედლებზე და ალბომში) წარწერებით და რამდენი ფარანი ანთია. გარე მხარეს შეიძლება პატარა ნიშნები გამოჩნდეს: აწეული დროშა საფოსტო ყუთზე, როცა ახალი წერილი ელოდება, და საჩუქრის ყუთი, როცა დროის კაფსულის დღე დადგება. წერილების წაკითხვა და დროის კაფსულის შიგთავსის ნახვა არ შეუძლია.',
           'წერილები მხოლოდ მეპატრონისთვისაა. დამხმარეები მხოლოდ საკუთარ წერილებს ხედავენ.',
           'დროის კაფსულა დაკეტილია თავის დღემდე ყველასთვის, მათ შორის მეპატრონისთვის და ჩვენთვისაც.',
           'ვინც აპლიკაციაში ქუჩას ათვალიერებს, მხოლოდ სახლების გარე მხარეს ხედავს და არასდროს იმას, რაც შიგნითაა. სხვა სახლებზე ერთადერთი ნიშანი, რაც მას შეუძლია დაინახოს, საჩუქრის ბაფთაა იმ საჩუქარზე, რომელიც ჯერ არავის მიუღია. ქალაქის რუკაც ასევე მუშაობს: ნებისმიერს შეუძლია ბმულის გარეშე დაათვალიეროს გახსნილი ქუჩები და ხედავს მხოლოდ სახლების გარე მხარეს, სახელების გარეშე.',

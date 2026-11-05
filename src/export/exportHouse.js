@@ -8,7 +8,7 @@ import { houseDrawing } from './houseDrawing.js'
 // "Download everything": our promise that memories are always the keeper's (see CLAUDE.md).
 // Makes one zip on the phone itself and hands it to the browser to save:
 //   index.html       a page that opens without internet: the house, photos, letters, lanterns
-//   photos/          every photo on the wall
+//   photos/          every photo in the house: the frames and the album
 //   letters/         every letter, as plain text
 //   capsule/         the time capsule, once its day has come (before that, nobody can get it)
 //   lanterns.txt     who lit a lantern and what they wrote

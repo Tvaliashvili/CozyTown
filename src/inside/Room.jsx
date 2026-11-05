@@ -1,23 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import RoomArt from './RoomArt.jsx'
 import AddPhoto from './AddPhoto.jsx'
+import AddMany from './AddMany.jsx'
+import Album from './Album.jsx'
 import PhotoViewer from './PhotoViewer.jsx'
 import Letters from './Letters.jsx'
 import Capsule, { countInside } from './Capsule.jsx'
 import Helpers from './Helpers.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
-import { FRAMES } from './frames.js'
-import { loadLetters, loadPhotos } from '../data/inside.js'
+import { ALBUM_SPOT, FRAMES } from './frames.js'
+import { PHOTO_LIMIT, inAlbumOrder, loadLetters, loadPhotos } from '../data/inside.js'
 import { loadCapsule } from '../data/capsule.js'
 import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { useBackState } from '../lib/useBackState.js'
-import { AddPhotoIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, AlbumIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
 // The room inside a house (/h/<code>/inside). It covers the street, which stays loaded underneath.
-//   Keeper  → hangs photos in the frames, reads and writes letters, fills the time capsule,
-//             shares the house link, invites helpers.
+//   Keeper  → adds photos (the 5 frames fill first, then the album), reads and writes letters,
+//             fills the time capsule, shares the house link, invites helpers.
 //   Helper  → the same, except inviting others; they only see the letters they wrote themselves.
 //   Visitor → looks at the photos. Letters are private, so visitors don't see them at all.
 // onCapsuleSeen: called when the keeper opens a time capsule whose day has come,
@@ -32,8 +34,9 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
   const [letters, setLetters] = useState(null) // keeper and helpers; null = still loading
   const [lettersFailed, setLettersFailed] = useState(false)
   // useBackState: the phone's Back button closes these pages, instead of leaving the room.
-  const [adding, setAdding] = useBackState(null) // { file, slot } while "Hang this photo?" is open
+  const [adding, setAdding] = useBackState(null) // { files, slot } while adding photos
   const [viewing, setViewing] = useBackState(null) // the photo opened full screen
+  const [albumOpen, setAlbumOpen] = useBackState(false)
   const [lettersOpen, setLettersOpen] = useBackState(false)
   // Keeper and helpers: the time capsule chest. undefined = still loading, null = no chest yet.
   const [capsule, setCapsule] = useState(undefined)
@@ -41,7 +44,7 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
   const [capsuleOpen, setCapsuleOpen] = useBackState(false)
   const [helpersOpen, setHelpersOpen] = useBackState(false) // keeper only
 
-  // One hidden file picker for every frame; slotToFill remembers which frame asked for it.
+  // One hidden file picker for everything; slotToFill remembers which frame asked for it, if any.
   const fileInput = useRef(null)
   const slotToFill = useRef(null)
 
@@ -86,26 +89,63 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
 
   const lettersGlow = isKeeper && newLetter
 
-  // { slot: photo } so each frame can find its photo.
+  // { slot: photo } so each frame can find its photo. Photos with no slot are only in the album.
   const photoInFrame = {}
-  for (const photo of photos ?? []) photoInFrame[photo.slot] = photo
-  const firstEmptyFrame = FRAMES.findIndex((_, slot) => !photoInFrame[slot])
-  const wallFull = photos !== null && firstEmptyFrame === -1
+  for (const photo of photos ?? []) {
+    if (photo.slot !== null) photoInFrame[photo.slot] = photo
+  }
+  const emptyFrames = FRAMES.map((_, slot) => slot).filter((slot) => !photoInFrame[slot])
+  const firstEmptyFrame = emptyFrames[0] ?? -1
+  const houseFull = (photos?.length ?? 0) >= PHOTO_LIMIT
+  // Visitors only get the album when it shows them something the walls don't.
+  const showAlbum = photos !== null && (canDecorate || photos.some((photo) => photo.slot === null))
 
+  // Tapping an empty frame: one photo, for that frame.
   function pickPhotoFor(slot) {
+    if (houseFull) {
+      setAlbumOpen(true) // it says why nothing more fits
+      return
+    }
+    openPicker(slot, false)
+  }
+
+  // The "Add photos" buttons: as many as fit.
+  function pickPhotos() {
+    openPicker(null, true)
+  }
+
+  function openPicker(slot, many) {
     slotToFill.current = slot
+    fileInput.current.multiple = many
     fileInput.current.value = '' // so choosing the same photo again still counts
     fileInput.current.click()
   }
 
+  // The plan is made once, here, so frames filling up while photos arrive can't change it.
   function onFileChosen(event) {
-    const file = event.target.files[0]
-    if (file) setAdding({ file, slot: slotToFill.current })
+    const chosen = [...event.target.files]
+    if (chosen.length === 0) return
+    const roomLeft = PHOTO_LIMIT - photos.length
+    setAdding({
+      files: chosen.slice(0, roomLeft),
+      noRoom: Math.max(0, chosen.length - roomLeft),
+      slot: slotToFill.current ?? emptyFrames[0] ?? null,
+      frames: emptyFrames,
+    })
+  }
+
+  function onAdded(photo) {
+    setPhotos((current) => inAlbumOrder([...current, photo]))
   }
 
   function onHung(photo) {
-    setPhotos((current) => [...current, photo])
+    onAdded(photo)
     setAdding(null)
+  }
+
+  function onMoved(photo) {
+    setPhotos((current) => inAlbumOrder(current.map((p) => (p.id === photo.id ? photo : p))))
+    setViewing(photo)
   }
 
   function onTakenDown(photo) {
@@ -162,6 +202,15 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
                 </button>
               )
             })}
+          {showAlbum && (
+            <button
+              type="button"
+              className="album-spot"
+              style={{ '--x': ALBUM_SPOT.x, '--y': ALBUM_SPOT.y, '--w': ALBUM_SPOT.width, '--h': ALBUM_SPOT.height }}
+              onClick={() => setAlbumOpen(true)}
+              aria-label={t('album.open')}
+            />
+          )}
         </div>
 
         {photosFailed && (
@@ -196,13 +245,23 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
             <button
               type="button"
               className="big-button accent"
-              onClick={() => pickPhotoFor(firstEmptyFrame)}
-              disabled={photos === null || wallFull}
+              onClick={pickPhotos}
+              disabled={photos === null || houseFull}
             >
               <AddPhotoIcon />
-              {wallFull ? t('room.wallFull') : t('room.addPhoto')}
+              {houseFull ? t('album.full') : t('room.addPhoto')}
             </button>
-            {wallFull && <p className="room-note">{t('room.wallFullHint')}</p>}
+            {houseFull && <p className="room-note">{t('album.fullHint')}</p>}
+
+            {showAlbum && (
+              <button type="button" className="room-card" onClick={() => setAlbumOpen(true)}>
+                <AlbumIcon />
+                <span>
+                  <strong>{t('album.title')}</strong>
+                  <span>{t('album.count').replace('{n}', photos.length).replace('{max}', PHOTO_LIMIT)}</span>
+                </span>
+              </button>
+            )}
 
             <button type="button" className={lettersGlow ? 'room-card glowing' : 'room-card'} onClick={() => setLettersOpen(true)}>
               <LetterIcon />
@@ -235,19 +294,56 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
             {isKeeper && <ExportButton code={code} title={title} design={design} />}
           </>
         ) : (
-          photos?.length > 0 && <p className="room-note">{t('room.visitorNote')}</p>
+          <>
+            {showAlbum && (
+              <button type="button" className="room-card" onClick={() => setAlbumOpen(true)}>
+                <AlbumIcon />
+                <span>
+                  <strong>{t('album.title')}</strong>
+                  <span>{countText(t, photos.length, 'room.photos')}</span>
+                </span>
+              </button>
+            )}
+            {photos?.length > 0 && <p className="room-note">{t('room.visitorNote')}</p>}
+          </>
         )}
       </section>
 
       <input ref={fileInput} type="file" accept="image/*" hidden onChange={onFileChosen} />
 
-      {adding && (
-        <AddPhoto code={code} file={adding.file} slot={adding.slot} onHung={onHung} onCancel={() => setAdding(null)} />
+      {albumOpen && (
+        <Album
+          photos={photos ?? []}
+          canDecorate={canDecorate}
+          onAdd={pickPhotos}
+          onOpenPhoto={setViewing}
+          onClose={() => setAlbumOpen(false)}
+        />
+      )}
+      {/* One photo that fits gets the box with a preview and words. Anything else, even a single photo
+          that no longer fits because a helper just took the last place, goes to the box that can say so. */}
+      {adding && adding.files.length === 1 && adding.noRoom === 0 && (
+        <AddPhoto code={code} file={adding.files[0]} slot={adding.slot} onHung={onHung} onCancel={() => setAdding(null)} />
+      )}
+      {adding && !(adding.files.length === 1 && adding.noRoom === 0) && (
+        <AddMany
+          code={code}
+          files={adding.files}
+          noRoom={adding.noRoom}
+          freeFrames={adding.frames}
+          onAdded={onAdded}
+          onClose={() => setAdding(null)}
+        />
       )}
       {viewing && (
         <PhotoViewer
+          key={viewing.id}
           photo={viewing}
-          canTakeDown={canDecorate}
+          photos={photos ?? []}
+          freeFrame={firstEmptyFrame}
+          canDecorate={canDecorate}
+          onShow={setViewing}
+          onMoved={onMoved}
           onTakenDown={onTakenDown}
           onClose={() => setViewing(null)}
         />

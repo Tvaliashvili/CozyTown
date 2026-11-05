@@ -93,6 +93,13 @@ export async function unlockDesign(code) {
   if (error) throw error
 }
 
+// How much space all photo files take on Supabase: { bytes, files }.
+export async function loadStorageUse() {
+  const { data, error } = await supabase.rpc('admin_storage_use')
+  if (error) throw error
+  return data[0]
+}
+
 // The newest line from the nightly backup's diary (public.backup_runs), or null if there's none yet.
 export async function loadLastBackup() {
   const { data, error } = await supabase

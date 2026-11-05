@@ -3,9 +3,12 @@
 export const ROOM_WIDTH = 390
 export const ROOM_HEIGHT = 480
 
-// The picture frames on the wall. A photo's "slot" in the database is its place in this list.
-// The database only allows slots 0-4 (supabase/migrations/20261103200000_inside_the_house.sql),
-// so adding a frame here needs a new migration too.
+// Where the photo album stands on its little shelf (drawn in RoomArt.jsx, a real button on top in Room.jsx).
+export const ALBUM_SPOT = { x: 146, y: 388, width: 76, height: 38 }
+
+// The picture frames on the wall. A photo's "slot" in the database is its place in this list;
+// a photo with no slot is only in the album. The database only allows slots 0-4
+// (supabase/migrations/20261103200000_inside_the_house.sql), so adding a frame here needs a new migration too.
 //   tilt: degrees, so the frames look hung by hand
 //   look: 'wood', 'dark' or 'cream' (colors in room.css)
 export const FRAMES = [

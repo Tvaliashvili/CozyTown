@@ -20,6 +20,7 @@ function Line({ size = 22, children }) {
 }
 
 export const BackIcon = () => <Line><path d="M15 18l-6-6 6-6" /></Line>
+export const ForwardIcon = () => <Line><path d="M9 18l6-6-6-6" /></Line>
 // Three lines, for the phone menu, and the cross that replaces them while it's open
 export const MenuIcon = () => <Line><path d="M4 6h16M4 12h16M4 18h16" /></Line>
 export const CloseIcon = () => <Line><path d="M6 6l12 12M18 6L6 18" /></Line>
@@ -54,6 +55,9 @@ export const AddPhotoIcon = () => (
   <Line><rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="2" /><path d="M21 16l-5-5-9 8" /><path d="M19 3v4M17 5h4" /></Line>
 )
 export const PlusIcon = () => <Line size={32}><path d="M12 5v14M5 12h14" /></Line>
+export const AlbumIcon = () => (
+  <Line size={28}><path d="M6 3h13v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" /><rect x="8" y="7" width="8" height="6" rx="1" /></Line>
+)
 export const LetterIcon = () => <Line size={28}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></Line>
 export const PenIcon = () => <Line><path d="M4 20l4-1 11-11-3-3L5 16z" /><path d="M14 6l3 3" /></Line>
 export const TrashIcon = () => <Line><path d="M4 7h16" /><path d="M10 11v6M14 11v6" /><path d="M6 7l1 13h10l1-13" /><path d="M9 7V4h6v3" /></Line>

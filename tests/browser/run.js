@@ -14,6 +14,9 @@ import { makeKit, wait, TEST_EMAIL_END } from './kit.js'
 
 const PORT = 5199
 const BASE = `http://localhost:${PORT}`
+// If the laptop sleeps during a test, its database connection dies and the test would wait for ever.
+// The slowest file takes about 7 minutes on a busy computer.
+const FILE_TIME_LIMIT_MS = 15 * 60 * 1000
 const CHROMES = [
   process.env.CHROME_PATH,
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -55,6 +58,13 @@ try {
     console.log(`\n${file}`)
     const { default: runTest } = await import(pathToFileURL(path.join(folder, file)))
     const kit = makeKit({ settings, db, storage, browser, base: BASE })
+    // Stops everything. The accounts it leaves behind are removed at the start of the next run.
+    const timeLimit = setTimeout(() => {
+      console.log(`\n${file} stopped answering after 15 minutes. Did the computer go to sleep? Run it again.`)
+      browser.process()?.kill()
+      server?.kill()
+      process.exit(1)
+    }, FILE_TIME_LIMIT_MS)
     try {
       await runTest(kit)
     } catch (error) {
@@ -62,13 +72,17 @@ try {
     } finally {
       kit.check('no errors on the page', kit.pageErrors.length === 0, kit.pageErrors.join(' / '))
       await kit.cleanUp()
-      for (const context of browser.browserContexts().slice(1)) await context.close()
+      for (const context of browser.browserContexts().slice(1)) {
+        await context.close().catch((error) => console.log(`  (couldn't close a page: ${error.message})`))
+      }
+      clearTimeout(timeLimit)
     }
     passed += kit.results.passed
     failed += kit.results.failed
   }
 } finally {
-  await browser.close()
+  // On Windows, Chrome can hold on to a temp file for a moment. That must not hide the real result.
+  await browser.close().catch((error) => console.log(`(Chrome didn't close cleanly: ${error.message})`))
   server?.kill()
   await db.end()
 }

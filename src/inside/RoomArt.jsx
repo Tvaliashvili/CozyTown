@@ -1,7 +1,7 @@
 import { ROOM_WIDTH, ROOM_HEIGHT } from './frames.js'
 
-// The drawing of the room: warm wall, a window onto the night, a lamp and letters on the
-// side table, and the time capsule chest. The picture frames are real buttons on top (Room.jsx).
+// The drawing of the room: warm wall, a window onto the night, the photo album on its shelf, a lamp and
+// letters on the side table, and the time capsule chest. The frames and the album are real buttons on top (Room.jsx).
 //
 // The wall and floor are drawn far wider and taller than the room itself, and the drawing is
 // allowed to spill over its edges (overflow: visible), so on any screen shape the wall reaches
@@ -51,6 +51,16 @@ export default function RoomArt() {
       <rect x="26" y="268" width="140" height="10" rx="3" fill="#8a6240" />
       <ellipse cx="56" cy="266" rx="16" ry="6" fill="#5f8a5a" />
       <path d="M48 262 c-6 -14 4 -18 8 -8 c4 -10 14 -6 8 8z" fill="#4f7a4b" />
+
+      {/* a little shelf under the frames, with the photo album lying on it */}
+      <rect x="140" y="426" width="88" height="6" rx="2" fill="#8a6240" />
+      <path d="M152 432 l6 8 M216 432 l-6 8" stroke="#6d4a2e" strokeWidth="3" strokeLinecap="round" />
+      <rect x="155" y="398" width="60" height="28" rx="3" fill="#fff6e9" />
+      <path d="M155 404 H215 M155 410 H215 M155 416 H215" stroke="#e3d3bb" strokeWidth="1" />
+      <rect x="151" y="392" width="64" height="30" rx="3" fill="#8e4a4a" />
+      <rect x="151" y="392" width="9" height="30" rx="3" fill="#6f3838" />
+      <rect x="170" y="398" width="34" height="18" rx="1.5" fill="#f2c14e" opacity="0.9" />
+      <path d="M187 412 c-7 -5 -8 -11 -3.5 -11 c2 0 3 1.4 3.5 2.4 c0.5 -1 1.5 -2.4 3.5 -2.4 c4.5 0 3.5 6 -3.5 11z" fill="#8e4a4a" />
 
       {/* side table with the lamp and a little pile of letters */}
       <circle cx="300" cy="372" r="78" fill="url(#room-lamp)" />

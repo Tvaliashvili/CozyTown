@@ -71,6 +71,10 @@ export function makeKit({ settings, db, storage, browser, base }) {
     const context = await browser.createBrowserContext()
     const page = await context.newPage()
     await page.setViewport({ width, height, deviceScaleFactor: 1, isMobile: true, hasTouch: true })
+    // These tests check what the site does, not how fast. Each open page draws a 3D street in software, so a
+    // computer short of memory can take over 30 seconds to load the next one, even with nothing wrong (2026-11-05).
+    page.setDefaultNavigationTimeout(120000)
+    page.setDefaultTimeout(60000)
     page.on('pageerror', (error) => pageErrors.push(error.message))
     page.on('dialog', (dialog) => dialog.accept())
     await page.goto(base + '/')
