@@ -138,6 +138,8 @@ export default {
   'room.close': 'Close',
   'room.previous': 'Previous photo',
   'room.next': 'Next photo',
+  'room.wallLeft': 'See the wall to the left',
+  'room.wallRight': 'See the wall to the right',
   'room.toWall': 'Hang it on the wall',
   'room.toAlbum': 'Move it to the album',
   'room.noFreeFrame': 'All frames are full. To hang this one, first move a framed photo to the album.',

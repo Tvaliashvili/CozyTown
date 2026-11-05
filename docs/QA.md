@@ -24,6 +24,8 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | Q22 | 🟢 | Phones | Landing is 8,600 px tall at 360 px in Georgian (13.5 screens). | Step pictures beside the text, 2 occasions per row, frames 2x2, less section padding: saves ~2,000 px. Founder's CSS, so only if wanted. |
 | Q23 | 🟢 | Phones | Helpers and capsule pages open with 6-7 lines before the main button. Keeper's lantern rows are ~130 px each. Empty frames are 35-48 px tap targets at 320-360 px. | Shorter intros, one-line lantern rows, a bigger invisible tap area on `.frame.empty`. |
 | Q24 | 🟢 | Tablets | Street on portrait tablets: the house is ~40% of the width, with ~370 px of empty road below it. | Bring the camera closer on tall screens (`CameraRig.jsx`). |
+| Q25 | 🟢 | Room | Long wall: if a keeper moves many photos to the album, gaps stay. With photos only in frames 0 and 11 a visitor swipes past a bare stretch (furniture only) to the second photo. New photos fill the gaps first. | Close the gaps when showing it to visitors, if real keepers run into this. |
+| Q26 | 🟢 | Room | Long wall on computers: a mouse wheel doesn't move it; only the arrows, or a trackpad's sideways swipe. | Turn the wheel into sideways scrolling, if anyone asks. |
 
 ### Questions for the founder (product choices made without asking)
 None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
@@ -88,6 +90,7 @@ Everything below can be re-run: `npm run test:db` (~1 min) and `npm run test:bro
 | Security sweep | `security.test.js`: all 13 tables have row security on; visitors can read only `streets` and call only the 8 listed functions; every security-definer function pins `search_path` | - |
 | Town map | 40+ (`map.test.js`): the map gives no house names or codes, only admins add, open, close and move, new streets start closed, a moved house keeps its link, keeper and letters, the Garden Quarter keeps every house quiet | 24 checks (`map.test.js`): no 3D downloaded on the map, tap to street and back, phone Back, nothing private sent to a visitor, Georgian at 320 px, closed and unknown streets, admin adds and opens a street and moves a house |
 | Photo album | 20 in `photos.test.js`: no-frame photos, moving (not into a taken or missing frame), stranger and visitor refused, the 31st refused, deleting makes room, storage figure for admins only | 33 in `album.test.js`: several at once, frames fill first, album from the shelf, arrows and swipe, moving, Back one step at a time, delete with files, too many chosen, visitor's downloads counted, 320 px Georgian |
+| Long wall | Frames 0-14 allowed, 15 refused (`photos.test.js`) | 25 in `long-wall.test.js`: the wall grows with the photos, empty frames ahead, next frame peeks in, a new photo is brought into view, arrows to both ends, a real finger swipe, visitor's downloads counted, few photos means nothing to swipe, computer layout beside the sheet, 320 px Georgian |
 | Decorating panel | - | 18 in `decorating-panel.test.js`: 6 screen sizes incl. sideways: room for the choices, buttons at least 44 px, no sideways scroll |
 | Terms & Privacy | - | both pages in English and Georgian at 360 px: titles, sections, no sideways scroll, no long dashes; footer and sign-in links work |
 
@@ -113,6 +116,8 @@ Do this on a **cheap Android** and an **iPhone**, in Georgian, ideally with some
     on mobile data, and does the phone stay usable? Tap the book on the shelf (is it easy to hit?), swipe through, move one to the album and hang another.
     Can someone over 60 find the album and get back out?
 15. Decorating panel: tap your house. Can you reach every tab and choice with a thumb? Try it with the phone held sideways too.
+16. Long wall: fill 15 frames, then swipe along the wall. Is it smooth on the cheap Android? Does a swipe ever open a photo by accident, or trigger the phone's own Back gesture
+    near the screen edge? Without being told, does someone over 60 notice there's more wall? Do they use the arrow?
 
 Write what went wrong under a new review entry below.
 
@@ -360,4 +365,14 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
 - **Not tested:** real phones (checklist steps 14-15), real phone photos, adding many on slow mobile data. After my last look at the screens, the viewer's Delete and Close button widths changed; the 320 px test checks they fit, but nobody has looked at them.
 - **Not done on purpose:** shrinking photos harder (needs real phone photos to judge), refusing duplicates, selling more room, small copies for older photos (Q21). The landing page still only says "Photos on the walls".
 - **Founder:** new Georgian DRAFT texts: `album.*`, `add.titleAlbum`, `add.toAlbum`, `add.adding`, `add.many*`, `room.previous`, `room.next`, `room.toWall`, `room.toAlbum`, `room.noFreeFrame`, `room.takeDown*`, `room.addPhoto`, and the `/privacy` change.
+
+### 2026-11-05 · The long wall: 15 frames
+- **Built (founder's idea and OK):** 15 frames instead of 5, on a wall that swipes sideways. Still 30 photos in a house. Migration `20261112000000_fifteen_frames.sql`, tested rolled back, then applied. Frames 0-4 didn't move, so photos already hanging stay where they are.
+- **Choices made without asking, for the founder to check:** the wall grows by whole stretches, each with its own furniture (plant, sideboard, armchair, second window with no moon, floor lamp). Keepers see at least the first 5 frames, or up to their last photo plus 2 empty ones; visitors only frames with a photo. A new photo landing off-screen slides the wall to it. Frames stay the same size on the screen as before.
+- **Possible next step, not done:** frames on a keeper's small phone are still small (first frame 56 px tall on 320x568, Q23), because the button sheet takes up to 56% of the height. A shorter sheet would now make them bigger, since the wall no longer needs to fit the width, but it would push Letters and the capsule further down. The founder's call, ideally after phone testing.
+- **Measured:** a visitor who doesn't swipe at a full wall on a 390 px phone downloads 6 of 15 small copies (the first try downloaded 8, so the look-ahead went from 150 to 100 px). Walking the whole wall downloads 15. A full wall takes 2 arrow presses for a keeper on that phone. Counts of files, not real traffic.
+- **Tests:** `npm run test:db` 302 passed. Full `npm run test:browser` 294 passed, 0 failed, then the look-ahead changed (one number) and the long-wall test was made to wait for its arrows; those two files re-run: `long-wall` 25 passed, `album` 33 passed. The rest of the suite was not re-run after that last change.
+- **Intermittent failures while testing:** in about 4 of 11 `long-wall` runs an arrow was late or the page didn't load, with Brave open (0.9 of 5.9 GB free, CPU 100%). Measured, the arrow always came, between 0.6 and 7.4 seconds after the wall moved, so the likely cause is the busy computer and the 3D street drawn in software, not stuck arrows. Not proven on a real phone: watch for slow arrows in checklist step 16.
+- **Not tested:** real phones, iPhone Safari (the phone's Back gesture at the screen edge, the swipe), photos from real keepers on the new frames' shapes. Test swipes were headless Chrome only.
+- **Founder:** new Georgian DRAFT texts: `room.wallLeft`, `room.wallRight` (read out by screen readers, not shown on screen).
 

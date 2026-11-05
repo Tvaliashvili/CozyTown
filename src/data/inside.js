@@ -62,7 +62,7 @@ export async function houseId(code) {
 }
 
 // Uploads a shrunk photo (from shrinkPhoto) and hangs it in a frame or puts it in the album.
-// slot = which frame (0-4), or null for the album. Returns the new photo, ready to show.
+// slot = which frame (0-14), or null for the album. Returns the new photo, ready to show.
 export async function hangPhoto(code, { blob, width, height }, slot, caption) {
   const id = await houseId(code)
   // A long random name, so nobody can guess the photo's address.

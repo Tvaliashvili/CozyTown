@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import RoomArt from './RoomArt.jsx'
+import Wall from './Wall.jsx'
 import AddPhoto from './AddPhoto.jsx'
 import AddMany from './AddMany.jsx'
 import Album from './Album.jsx'
@@ -8,17 +8,17 @@ import Letters from './Letters.jsx'
 import Capsule, { countInside } from './Capsule.jsx'
 import Helpers from './Helpers.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
-import { ALBUM_SPOT, FRAMES } from './frames.js'
+import { FRAMES } from './frames.js'
 import { PHOTO_LIMIT, inAlbumOrder, loadLetters, loadPhotos } from '../data/inside.js'
 import { loadCapsule } from '../data/capsule.js'
 import { formatDay } from '../lib/formatDate.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { useBackState } from '../lib/useBackState.js'
-import { AddPhotoIcon, AlbumIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, PlusIcon, ShareIcon } from '../ui/icons.jsx'
+import { AddPhotoIcon, AlbumIcon, BackIcon, DownloadIcon, LetterIcon, LockIcon, PeopleIcon, ShareIcon } from '../ui/icons.jsx'
 import './room.css'
 
 // The room inside a house (/h/<code>/inside). It covers the street, which stays loaded underneath.
-//   Keeper  → adds photos (the 5 frames fill first, then the album), reads and writes letters,
+//   Keeper  → adds photos (the 15 frames fill first, then the album), reads and writes letters,
 //             fills the time capsule, shares the house link, invites helpers.
 //   Helper  → the same, except inviting others; they only see the letters they wrote themselves.
 //   Visitor → looks at the photos. Letters are private, so visitors don't see them at all.
@@ -43,6 +43,7 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
   const [capsuleFailed, setCapsuleFailed] = useState(false)
   const [capsuleOpen, setCapsuleOpen] = useBackState(false)
   const [helpersOpen, setHelpersOpen] = useBackState(false) // keeper only
+  const [justHung, setJustHung] = useState(null) // { slot } of the last photo to go up, so the wall can go there
 
   // One hidden file picker for everything; slotToFill remembers which frame asked for it, if any.
   const fileInput = useRef(null)
@@ -136,6 +137,7 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
 
   function onAdded(photo) {
     setPhotos((current) => inAlbumOrder([...current, photo]))
+    if (photo.slot !== null) setJustHung({ slot: photo.slot })
   }
 
   function onHung(photo) {
@@ -146,6 +148,7 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
   function onMoved(photo) {
     setPhotos((current) => inAlbumOrder(current.map((p) => (p.id === photo.id ? photo : p))))
     setViewing(photo)
+    if (photo.slot !== null) setJustHung({ slot: photo.slot })
   }
 
   function onTakenDown(photo) {
@@ -160,58 +163,15 @@ export default function Room({ code, title, design, isKeeper, isHelper, newLette
   return (
     <div className="room">
       <div className="room-scene">
-        <div className="room-stage">
-          <RoomArt />
-          {photos &&
-            FRAMES.map((frame, slot) => {
-              const photo = photoInFrame[slot]
-              // Frames are placed in drawing units; room.css turns them into screen sizes.
-              const place = {
-                '--x': frame.x,
-                '--y': frame.y,
-                '--w': frame.width,
-                '--h': frame.height,
-                '--tilt': `${frame.tilt}deg`,
-              }
-              if (photo) {
-                return (
-                  <button
-                    key={slot}
-                    type="button"
-                    className={`frame ${frame.look}`}
-                    style={place}
-                    onClick={() => setViewing(photo)}
-                    aria-label={photo.caption || t('room.photo')}
-                  >
-                    <img src={photo.smallUrl} alt="" decoding="async" />
-                  </button>
-                )
-              }
-              // Visitors don't see empty frames; there's nothing for them to do with one.
-              if (!canDecorate) return null
-              return (
-                <button
-                  key={slot}
-                  type="button"
-                  className="frame empty"
-                  style={place}
-                  onClick={() => pickPhotoFor(slot)}
-                  aria-label={t('room.addHere')}
-                >
-                  <PlusIcon />
-                </button>
-              )
-            })}
-          {showAlbum && (
-            <button
-              type="button"
-              className="album-spot"
-              style={{ '--x': ALBUM_SPOT.x, '--y': ALBUM_SPOT.y, '--w': ALBUM_SPOT.width, '--h': ALBUM_SPOT.height }}
-              onClick={() => setAlbumOpen(true)}
-              aria-label={t('album.open')}
-            />
-          )}
-        </div>
+        <Wall
+          photoInFrame={photos ? photoInFrame : null}
+          canDecorate={canDecorate}
+          showAlbum={showAlbum}
+          justHung={justHung}
+          onOpenPhoto={setViewing}
+          onPickFrame={pickPhotoFor}
+          onOpenAlbum={() => setAlbumOpen(true)}
+        />
 
         {photosFailed && (
           <div className="room-problem" role="alert">

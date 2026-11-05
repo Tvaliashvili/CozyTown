@@ -41,7 +41,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   check('the progress box closes by itself', !(await page.$('.add-many-bar')))
 
   // ---------- Frames full: a new photo goes in the album ----------
-  await addRows(3, [2, 3, 4])
+  await addRows(13, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
   await page.reload()
   await page.waitForSelector('.frame img', { timeout: 60000 })
   await page.waitForFunction(() => !document.querySelector('.frame.empty'))
@@ -59,23 +59,23 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await page.click('.album-spot')
   await page.waitForSelector('.album-grid')
   check('the book on the shelf opens the album', (await text(page, '#album-title')).includes('Photo album'))
-  check('it shows all 6 photos', (await page.$$('.album-photo')).length === 6)
+  check('it shows all 16 photos', (await page.$$('.album-photo')).length === 16)
   await shot(page, 'album')
-  await (await page.$$('.album-photo'))[5].click()
+  await (await page.$$('.album-photo'))[15].click()
   await page.waitForSelector('.viewer')
-  check('tapping the last one opens it, 6 of 6', (await text(page, '.viewer-count')).includes('6 / 6'))
+  check('tapping the last one opens it, 16 of 16', (await text(page, '.viewer-count')).includes('16 / 16'))
   check('its words show', (await text(page, '.viewer-caption')) === 'Summer')
   check('with a full wall it says why it can not be hung', (await text(page, '.viewer-note')).includes('All frames are full'))
   check('and offers no hang button', !(await page.$('.viewer-move')))
   await shot(page, 'viewer-album-photo')
 
   await page.click('.viewer-arrow.next')
-  check('the next arrow goes round to the first', (await text(page, '.viewer-count')).includes('1 / 6'))
+  check('the next arrow goes round to the first', (await text(page, '.viewer-count')).includes('1 / 16'))
   await page.touchscreen.touchStart(300, 200)
   await page.touchscreen.touchMove(100, 205)
   await page.touchscreen.touchEnd()
   await wait(100)
-  check('swiping left goes to the next one', (await text(page, '.viewer-count')).includes('2 / 6'), await text(page, '.viewer-count'))
+  check('swiping left goes to the next one', (await text(page, '.viewer-count')).includes('2 / 16'), await text(page, '.viewer-count'))
   await shot(page, 'viewer-framed-photo')
 
   // ---------- Moving between the wall and the album ----------
@@ -94,7 +94,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await page.goBack()
   await page.waitForSelector('.viewer', { hidden: true })
   check('Back closes the photo and stays in the album', Boolean(await page.$('.album-grid')))
-  const lastTile = (await page.$$('.album-photo'))[5]
+  const lastTile = (await page.$$('.album-photo'))[15]
   await lastTile.click()
   await page.waitForSelector('.viewer-delete')
   await page.click('.viewer-delete')
@@ -103,7 +103,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await page.click('.viewer-confirm .big-button.accent')
   await page.waitForSelector('.viewer', { hidden: true, timeout: 15000 })
   await wait(800)
-  check('a photo can be deleted from the album', (await page.$$('.album-photo')).length === 5)
+  check('a photo can be deleted from the album', (await page.$$('.album-photo')).length === 15)
   const { rows: left } = await db.query(`select name from storage.objects where bucket_id = 'photos' and name = any($1)`, [[inAlbum.path, inAlbum.small_path]])
   check('its files are gone too', left.length === 0, left.map((row) => row.name).join(', '))
   await page.goBack()
@@ -121,7 +121,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await wallOnly.close()
 
   // ---------- Choosing more than fits ----------
-  await addRows(24)
+  await addRows(14)
   page = await openPage(keeper)
   await page.goto(`${base}/h/${house.code}/inside`)
   await page.waitForSelector('.frame img', { timeout: 60000 })
@@ -146,7 +146,8 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   await visitor.goto(`${base}/h/${house.code}/inside`)
   await visitor.waitForSelector('.frame img', { timeout: 60000 })
   await wait(1500)
-  check('walking in downloads only the 5 frames', fetched.size === 5, String(fetched.size))
+  console.log(`  (walking in: ${fetched.size} of the 15 frames download)`)
+  check('walking in downloads only the frames near the screen', fetched.size <= 6, String(fetched.size))
   await visitor.click('.room-sheet .room-card')
   await visitor.waitForSelector('.album-grid')
   await wait(1000)

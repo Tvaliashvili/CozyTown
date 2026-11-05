@@ -12,24 +12,49 @@
   background: #a87b52;
 }
 
-/* The space above the bottom sheet. The room drawing is scaled to fit inside it. */
+/* The space above the bottom sheet. The room drawing is scaled to fit inside it.
+   --u is one unit of the drawing, so frames can be placed with the numbers from frames.js:
+   as big as lets one 390 × 480 stretch of wall fit on the screen. */
 .room-scene {
   position: relative;
   flex: 1;
   min-height: 0;
   overflow: hidden;
   container-type: size;
+  --u: min(100cqw / 390, 100cqh / 480);
 }
 
-/* The room at its true shape (390 × 480, see frames.js), as big as fits, at the top.
-   --u is one unit of the drawing, so frames can be placed with the numbers from frames.js. */
+/* Wall and floor, behind everything. They look the same all the way along, so they don't need to move. */
+.room-backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(390 * var(--u));
+  height: calc(480 * var(--u));
+  overflow: visible; /* lets the wall and floor reach the edges of the screen */
+}
+
+/* The part that swipes sideways. No scrollbar: the arrows and the next frame peeking in show there's more. */
+.room-wall {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain; /* a swipe at the end of the wall must not become the phone's Back gesture */
+  touch-action: pan-x pinch-zoom;
+  scrollbar-width: none;
+}
+
+.room-wall::-webkit-scrollbar {
+  display: none;
+}
+
+/* The wall as long as its photos need (--wall, in units, from Wall.jsx). Centered while it fits on the screen. */
 .room-stage {
   position: relative;
-  width: min(100cqw, 100cqh * 390 / 480);
-  aspect-ratio: 390 / 480;
+  width: calc(var(--wall) * var(--u));
+  height: calc(480 * var(--u));
   margin: 0 auto;
-  container-type: inline-size;
-  --u: calc(100cqw / 390);
 }
 
 .room-art {
@@ -37,7 +62,42 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow: visible; /* lets the wall and floor reach the edges of the screen */
+  overflow: visible; /* the rug and the chest stand on the floor, below the 480 units */
+}
+
+/* "There's more wall this way". Low down, over the furniture rather than people's photos. */
+.wall-arrow {
+  position: absolute;
+  top: 72%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 246, 233, 0.92);
+  box-shadow: 0 3px 10px rgba(74, 59, 51, 0.35);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.wall-arrow.left {
+  left: 8px;
+}
+
+.wall-arrow.right {
+  right: 8px;
+}
+
+.wall-arrow:active {
+  transform: scale(0.94);
+}
+
+.wall-arrow:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* ----- Picture frames ----- */
@@ -261,6 +321,15 @@
 @media (min-width: 900px) and (orientation: landscape) {
   .room-scene {
     padding-right: 432px;
+  }
+
+  /* The wall can still slide behind the sheet, but its end stops beside it. */
+  .room-wall {
+    padding-right: 432px;
+  }
+
+  .wall-arrow.right {
+    right: 440px;
   }
 
   .room-sheet {

@@ -19,7 +19,7 @@ small files, clear names, short comments that explain *why*. Explain changes in 
 - **Promise**: "Your memories are always yours. Download everything any time. If we ever close,
   we give at least 6 months' notice." Never promise "forever".
 - **Export**: zip of all photos + letters + a simple offline HTML page of the house.
-- **Photos in a house** (founder, Nov 2026): 30 in all, included. Up to 5 hang in the frames as favourites, and the album holds
+- **Photos in a house** (founder, Nov 2026): 30 in all, included. Up to 15 hang on the wall (raised from 5, Nov 2026), and the album holds
   all of them. The database refuses a 31st. Selling more room (e.g. +50 for ~9 ₾) is an idea for later; nothing paid ever locks away what's there.
 - **Privacy**: houses are private by default, opened only by an unguessable link / QR.
   Strangers on the street see exteriors only. Children's and memorial photos are sensitive.
@@ -64,10 +64,10 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   a generous free limit. Cloudflare R2 (10 GB free) holds only our backups so far.
 - Supabase free: ~1 GB storage, ~5 GB downloads/month. A photo is ~280 KB after shrinking (250 KB + a 30 KB small copy),
   so a completely full 30-photo house is ~8.4 MB → ~120 full houses of storage, more in practice since most won't fill it.
-  `/admin` shows how full storage is and turns red at 700 MB. The frames show small copies (~30 KB each), so a room visit
-  costs ~150 KB, plus ~300 KB per screen of the album if opened, plus ~250 KB per photo someone taps open.
-  Room for ~8,000 visits a month if people open 2 photos each, up to ~30,000 if they only look at the wall
-  (estimates, not measured on real traffic). Possible saving, untested on real phone photos: shrink the full photo harder.
+  `/admin` shows how full storage is and turns red at 700 MB. The frames show small copies (~30 KB each) and download only near the screen,
+  so a room visit costs ~180 KB without swiping (6 frames), up to ~450 KB for a full wall walked to the end, plus ~300 KB per screen of the album
+  if opened, plus ~250 KB per photo someone taps open. Worst case (every house a full wall, everyone walks all of it): ~5,300 visits a month
+  if people open 2 photos each, ~11,000 if they only look at the wall (estimates, not measured on real traffic). Possible saving, untested on real phone photos: shrink the full photo harder.
 - Supabase Pro ≈ $25/month (~68 ₾) ≈ two house sales a month.
 - Each house pays once but costs every month: costs grow with *total* houses, income only with
   *new* sales. That's why monthly income matters (see "Ways to earn"). Until it exists, set aside
@@ -111,9 +111,12 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   shape per neighbourhood, both placed by `src/map/places.js`, once per drawing. `/map/<street>` shows an open street,
   outsides only. `get_town_map()` gives names and counts, never a house's code or name. Neighbourhood names are in the
   database, their short texts in `map.about.<slug>`. A new neighbourhood needs all three, plus something drawn for it in both drawings.
-- `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 5 picture
-  frames (`frames.js`; the database allows slots 0-4), a photo album on a shelf (`Album.jsx`), plus letters. It covers the
+- `/h/<code>/inside` is the room inside a house (`src/inside/`): a 2D SVG drawing with 15 picture
+  frames (`frames.js`; the database allows slots 0-14), a photo album on a shelf (`Album.jsx`), plus letters. It covers the
   street, which stays loaded underneath. Anyone with the link sees all the photos; letters are keeper-only.
+  The **wall grows with the photos** (`Wall.jsx`), by whole stretches of 390 units, each with its own furniture (`RoomArt.jsx`). Visitors see only frames with
+  a photo; keepers see the first 5, or everything up to their last photo plus 2 empty ones. It swipes sideways (the browser's own scrolling, with big arrows for
+  those who wouldn't think to swipe). Wall and floor are a separate still layer. Frame images download only near the screen (`useNearScreen.js`).
   One `photos` table: a photo with a `slot` hangs in that frame, one with no slot is only in the album. New photos fill empty
   frames first, then the album; the viewer (`PhotoViewer.jsx`: arrows, swipe) moves them between the two. Several chosen at once
   go through `AddMany.jsx`, one at a time. The album downloads a small copy only when it comes near the screen (not `loading="lazy"`,

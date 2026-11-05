@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { PHOTO_LIMIT } from '../data/inside.js'
+import { useNearScreen } from '../lib/useNearScreen.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { AddPhotoIcon, BackIcon } from '../ui/icons.jsx'
 
@@ -50,24 +51,8 @@ export default function Album({ photos, canDecorate, onAdd, onOpenPhoto, onClose
 
 // One photo in the grid. It downloads its small copy only when it comes near the screen:
 // someone who opens a full album and looks at the first few shouldn't pay for all 30.
-// (The browser's own loading="lazy" starts far too early for this, over a thousand pixels ahead.)
 function AlbumPhoto({ photo, label, onOpen }) {
-  const button = useRef(null)
-  const [nearScreen, setNearScreen] = useState(false)
-
-  useEffect(() => {
-    const watcher = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setNearScreen(true)
-          watcher.disconnect()
-        }
-      },
-      { root: button.current.closest('.letters'), rootMargin: '150px' },
-    )
-    watcher.observe(button.current)
-    return () => watcher.disconnect()
-  }, [])
+  const [button, nearScreen] = useNearScreen('.letters', '150px')
 
   return (
     <li>
