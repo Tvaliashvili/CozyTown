@@ -39,13 +39,13 @@ export default async function run({ check, openPage, base }) {
     check(`${name}: Georgian text is readable`, bad.length === 0, bad.join(' / '))
   }
 
-  // Still on the demo street: on a phone the top bar's buttons stay in one line, with no tagline on the hills.
+  // Still on the demo street: on a phone the top bar stays in one line, with no tagline on the hills.
   const bar = await page.evaluate(() => ({
     back: document.querySelector('.top-bar-title .pill-button').getBoundingClientRect().top,
-    language: document.querySelector('.top-bar-buttons .pill-button').getBoundingClientRect().top,
+    language: document.querySelector('.phone-menu-button').getBoundingClientRect().top,
     tagline: getComputedStyle(document.querySelector('.top-bar-tagline')).display,
   }))
-  check('on a phone the back button is level with the other buttons', Math.abs(bar.back - bar.language) < 2, JSON.stringify(bar))
+  check('on a phone the back button is level with the menu button', Math.abs(bar.back - bar.language) < 2, JSON.stringify(bar))
   check('on a phone the tagline is hidden', bar.tagline === 'none', bar.tagline)
 
   // Then open the decorating panel.

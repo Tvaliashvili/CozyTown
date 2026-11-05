@@ -7,7 +7,9 @@ name: Nightly backup
 
 on:
   schedule:
-    - cron: '0 1 * * *' # 01:00 UTC = 05:00 in Tbilisi, when nobody is decorating
+    # 01:23 UTC = 05:23 in Tbilisi, when nobody is decorating. Not on the hour: that's GitHub's
+    # busiest moment, and the run set for 01:00 on 2026-11-04 only started at 07:04.
+    - cron: '23 1 * * *'
   workflow_dispatch:
 
 permissions:

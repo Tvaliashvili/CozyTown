@@ -6,6 +6,8 @@ export default function LanguageToggle({ className = 'pill-button' }) {
 
   return (
     <button type="button" className={className} onClick={() => setLang(lang === 'ka' ? 'en' : 'ka')}>
+      {/* Shows only inside the phone menu, where a bare "EN" on a long row would look lost. */}
+      <span className="menu-label">{t('menu.language')}</span>
       {t('switchLanguage')}
     </button>
   )

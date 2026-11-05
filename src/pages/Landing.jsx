@@ -1,6 +1,7 @@
 import { Link } from '../router.jsx'
 import { useI18n } from '../i18n/i18n.jsx'
 import LanguageToggle from '../ui/LanguageToggle.jsx'
+import PhoneMenu from '../ui/PhoneMenu.jsx'
 import { ChatIcon, DownloadIcon, GiftIcon, HouseIcon, KeyIcon, LockIcon, Logo, PICTURES } from '../ui/icons.jsx'
 import './pages.css'
 
@@ -50,12 +51,14 @@ export default function Landing() {
             <Logo />
             <span>{t('appName')}</span>
           </a>
-          <div className="hero-nav-links">
+          <PhoneMenu itemsClassName="hero-nav-links">
             <a href="#how">{t('nav.how')}</a>
             <a href="#prices">{t('nav.prices')}</a>
             <LanguageToggle className="pill-button outline" />
-            <Link to="/signin" className="pill-button">{t('signIn')}</Link>
-          </div>
+            {/* ?login: someone tapping "Sign in" already has an account. The gift buttons below
+                go to plain /signin, which starts on creating one. */}
+            <Link to="/signin?login" className="pill-button">{t('signIn')}</Link>
+          </PhoneMenu>
         </nav>
 
         <div id="top" className="hero-text">

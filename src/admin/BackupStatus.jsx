@@ -3,7 +3,8 @@ import { loadLastBackup } from '../data/admin.js'
 
 const ACTIONS_PAGE = 'https://github.com/Tvaliashvili/CozyTown/actions/workflows/nightly-backup.yml'
 
-// A backup runs every night at 05:00 Tbilisi time. Older than this means at least one was missed.
+// A backup runs every night around 05:23 Tbilisi time, sometimes hours late (GitHub's queue).
+// Older than this means at least one was missed.
 const LATE_AFTER_HOURS = 30
 
 // One line at the top of /admin: when the last nightly backup finished, or a red warning

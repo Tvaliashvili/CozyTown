@@ -56,7 +56,7 @@ export default function CardPage({ code }) {
       <div className="card-message">
         <h2>{t('card.notAllowed.title')}</h2>
         <p>{t('card.notAllowed.text')}</p>
-        <Link to="/signin" className="big-button accent">
+        <Link to="/signin?login" className="big-button accent">
           {t('signin.logIn')}
         </Link>
       </div>

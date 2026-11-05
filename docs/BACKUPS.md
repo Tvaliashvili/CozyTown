@@ -4,8 +4,9 @@ Supabase's free plan keeps no backups, so we make our own, every night.
 
 ## What happens each night
 
-At **05:00 Tbilisi time** GitHub runs `scripts/backup/backup.js` (set up in
-`.github/workflows/nightly-backup.yml`). It:
+At **about 05:23 Tbilisi time** GitHub runs `scripts/backup/backup.js` (set up in
+`.github/workflows/nightly-backup.yml`). GitHub starts scheduled jobs late when it's busy, sometimes by
+hours, and a run can even be skipped now and then. It:
 
 1. copies **every table** in the database, including the login accounts (so keepers' passwords still work
    after a restore),
@@ -85,6 +86,22 @@ This downloads the newest backup and all its photo copies, opens them with the p
 every file against the fingerprint taken when it was made. It prints how many rows and photos are inside. If it says
 "All … files are complete and undamaged", all is well.
 
+## Every few months, and after big database changes: rehearse a restore
+
+```
+npm install --no-save embedded-postgres@17.11.0-beta.19
+npm run test:restore
+```
+
+This rebuilds the whole database from the migrations on a throwaway Postgres on this computer, compares the
+result with the live database, restores the newest backup into it, and checks every row came back and that the
+house still behaves. Nothing on the site changes, and the local copy is deleted at the end. A "differs" line means
+the migrations no longer match what is live: fix that first, because a real restore depends on them.
+
+It can't check what only Supabase's real services do: signing in with a restored password, and uploading the photos
+back. Those need a real empty project, which the free plan's limit of 2 active projects makes awkward (last run and
+results: `docs/QA.md`).
+
 ## If the worst happens
 
 **Someone needs one of their own photos or letters back** (or asks for "everything we have about me"):
@@ -92,7 +109,8 @@ every file against the fingerprint taken when it was made. It prints how many ro
 npm run backup:extract -- newest backup-folder
 ```
 Photos are in `backup-folder/files/`, letters in `backup-folder/database/public.letters.json`.
-It's private: delete the folder when done.
+It's private: delete the folder when done. (Git ignores it, whatever you name it: the repo is public, so the
+unpacked folder gets its own `.gitignore`.)
 
 An older backup: download it from R2 in the Cloudflare dashboard, then
 `npm run backup:extract -- path/to/2026-11-05.zip.age backup-folder`.
@@ -106,6 +124,8 @@ An older backup: download it from R2 in the Cloudflare dashboard, then
    `VITE_SUPABASE_URL` and `VITE_SUPABASE_KEY` to the new project's values.
 5. `npm run backup:restore -- newest`. It refuses a project that already has houses, so it can't overwrite
    live data. Everything goes into the database in one go: if anything fails, nothing is half-done.
+   The photos upload after that, one by one. If that stops halfway (a network blip), finish with
+   `npm run backup:restore -- newest --photos-only`, which leaves the database alone.
 6. Update the two `VITE_SUPABASE_*` build variables in Cloudflare and the secrets in GitHub, then redeploy.
 
 Printed QR codes keep working: they point at `cozytown.ge/h/<code>`, and the house codes come back with

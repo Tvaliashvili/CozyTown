@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { loadCapsule, openCapsule, sealCapsule } from '../data/capsule.js'
+import { deleteOpenedCapsule, loadCapsule, openCapsule, sealCapsule } from '../data/capsule.js'
 import { useI18n } from '../i18n/i18n.jsx'
 import { formatDate, formatDay } from '../lib/formatDate.js'
 import { shrinkPhoto } from '../lib/shrinkPhoto.js'
@@ -16,10 +16,11 @@ const MAX_PHOTOS = 10
 //   Not sealed yet → the keeper writes a letter, adds photos, picks the day, and locks it, all at once.
 //                    A last step warns that this can't be undone. Helpers just see "not made yet".
 //   Locked         → shows the day it opens. Nothing more can go in, and the day can't change.
-//   Open           → read everything inside.
+//   Open           → read everything inside. The keeper can delete it, after a warning, and make a new one.
 export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) {
   const { t, lang } = useI18n()
-  // 'main' | 'confirm' (the "are you sure?" step). The phone's Back button goes back to the form.
+  // 'main' | 'confirm' (the "are you sure?" step) | 'delete' (the warning before deleting).
+  // The phone's Back button goes back to 'main'.
   const [view, setView] = useBackState('main')
   const [sealed, setSealed] = useState(false) // just locked it
   // A screen reader starts reading from the title when the page opens or changes view.
@@ -32,8 +33,19 @@ export default function Capsule({ code, capsule, isKeeper, onChange, onClose }) 
   }
 
   let content
-  if (capsule?.isOpen) {
-    content = <OpenedCapsule code={code} capsule={capsule} />
+  if (capsule?.isOpen && view === 'delete') {
+    content = (
+      <DeleteCapsule
+        code={code}
+        onCancel={() => setView('main')}
+        onDeleted={() => {
+          onChange(null)
+          setView('main')
+        }}
+      />
+    )
+  } else if (capsule?.isOpen) {
+    content = <OpenedCapsule code={code} capsule={capsule} onDelete={isKeeper ? () => setView('delete') : null} />
   } else if (capsule) {
     content = (
       <>
@@ -302,7 +314,47 @@ function FillCapsule({ code, confirming, onConfirm, onEdit, onSealed, onAlreadyS
   )
 }
 
-function OpenedCapsule({ code, capsule }) {
+// The last step before deleting an opened capsule. It can't be undone, so it says what goes,
+// and how to keep a copy first.
+function DeleteCapsule({ code, onCancel, onDeleted }) {
+  const { t } = useI18n()
+  const [busy, setBusy] = useState(false)
+  const [failed, setFailed] = useState(false)
+
+  async function remove() {
+    setBusy(true)
+    setFailed(false)
+    try {
+      await deleteOpenedCapsule(code)
+      onDeleted()
+    } catch {
+      setBusy(false)
+      setFailed(true)
+    }
+  }
+
+  return (
+    <div className="letter-form">
+      <div className="capsule-warning">
+        <p>
+          <strong>{t('capsule.deleteTitle')}</strong>
+        </p>
+        <p>{t('capsule.deleteText')}</p>
+        <p>{t('capsule.deleteKeepCopy').replace('{button}', t('export.button'))}</p>
+      </div>
+      {failed && <p className="error" role="alert">{t('capsule.deleteFailed')}</p>}
+      <button type="button" className="big-button accent" onClick={remove} disabled={busy}>
+        {busy ? t('capsule.deleting') : t('capsule.deleteYes')}
+      </button>
+      <button type="button" className="big-button soft" onClick={onCancel} disabled={busy}>
+        {t('capsule.deleteNo')}
+      </button>
+    </div>
+  )
+}
+
+// onDelete: the button to delete it and make a new one. Null for helpers, who can only read.
+function OpenedCapsule({ code, capsule, onDelete }) {
   const { t, lang } = useI18n()
   const [items, setItems] = useState(null)
   const [failed, setFailed] = useState(false)
@@ -350,6 +402,11 @@ function OpenedCapsule({ code, capsule }) {
           {item.from_name && <p className="letter-sign">{item.from_name}</p>}
         </article>
       ))}
+      {onDelete && (
+        <button type="button" className="big-button soft capsule-start-over" onClick={onDelete}>
+          {t('capsule.startOver')}
+        </button>
+      )}
     </>
   )
 }

@@ -77,7 +77,9 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   // ---------- From a house to the map and back ----------
   await page.goto(`${base}/h/${house.code}`)
   await page.waitForSelector('canvas', { timeout: 60000 })
-  await page.waitForSelector('.top-bar-buttons a[href="/map"]')
+  await page.waitForSelector('.phone-menu-button')
+  await page.click('.phone-menu-button')
+  await page.waitForSelector('.top-bar-buttons a[href="/map"]', { visible: true })
   check("a house's street has a button to the map", true)
   await page.click('.top-bar-buttons a[href="/map"]')
   await page.waitForSelector('.map-place')

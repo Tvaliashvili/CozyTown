@@ -5,6 +5,9 @@ export default {
   appName: 'მყუდრო ქალაქი',
   tagline: 'პატარა სახლი მათთვის, ვინც გიყვართ',
   switchLanguage: 'EN',
+  'menu.open': 'მენიუს გახსნა',
+  'menu.close': 'მენიუს დახურვა',
+  'menu.language': 'ენა',
 
   // ---------- Landing page ----------
   'nav.how': 'როგორ მუშაობს',

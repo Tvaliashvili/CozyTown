@@ -287,6 +287,14 @@ export default {
   'capsule.openedOn': 'გაიხსნა {date}. აი, ყველაფერი, რაც შემოგინახათ.',
   'capsule.openedEmpty': 'კაფსულა ცარიელი იყო.',
   'capsule.sealedOn': 'დალუქულია {date}',
+  'capsule.startOver': 'წაშლა და ახლის შექმნა',
+  'capsule.deleteTitle': 'წავშალოთ ეს დროის კაფსულა?',
+  'capsule.deleteText': 'შიგნით არსებული წერილი და ფოტოები სამუდამოდ წაიშლება. ამის შემდეგ შეძლებთ ახალი დროის კაფსულის შექმნას.',
+  'capsule.deleteKeepCopy': 'გსურთ მათი შენახვა? დაბრუნდით და ჯერ დააჭირეთ „{button}“ ოთახის ბოლოში.',
+  'capsule.deleteYes': 'დიახ, წაშალეთ',
+  'capsule.deleteNo': 'არა, დავტოვოთ',
+  'capsule.deleting': 'იშლება…',
+  'capsule.deleteFailed': 'ვერ მოხერხდა. შეამოწმეთ ინტერნეტი და სცადეთ თავიდან.',
 
   // ---------- ოჯახის დამხმარეები - DRAFT, founder to review ----------
   'helpers.title': 'ოჯახის დამხმარეები',

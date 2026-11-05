@@ -164,15 +164,28 @@
   margin-top: -40px;
 }
 
-/* Phones: the menu keeps only the language and sign-in buttons (the page scrolls to the rest),
-   and the street is shown bigger, cropped to the middle houses, so it isn't a thin strip. */
+/* Phones: the links and buttons go into the sandwich menu (src/ui/PhoneMenu.jsx), beside a smaller
+   name. The street is shown bigger, cropped to the middle houses, so it isn't a thin strip. */
 @media (max-width: 640px) {
   .hero {
     overflow: hidden;
   }
 
+  .hero-nav {
+    flex-wrap: nowrap;
+  }
+
+  .brand {
+    font-size: 20px;
+    min-width: 0;
+  }
+
   .hero-nav-links > a:not(.pill-button) {
-    display: none;
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 0 14px;
+    color: var(--ink);
   }
 
   .hero-street {

@@ -1,4 +1,4 @@
-// The nightly backup. GitHub runs it at 05:00 Tbilisi time (.github/workflows/nightly-backup.yml).
+// The nightly backup. GitHub runs it around 05:23 Tbilisi time (.github/workflows/nightly-backup.yml).
 // You can also run it yourself: `npm run backup`, or `npm run backup -- --to-folder backups`
 // to keep everything on this computer instead of sending it to R2.
 //

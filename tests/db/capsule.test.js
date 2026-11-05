@@ -1,5 +1,7 @@
 // Database tests for the time capsule: filled and sealed once by the keeper, then locked until
 // its day. Run with: npm run test:db
+import { LEFTOVER_FILES_SQL } from '../../scripts/backup/shared.js'
+
 const KEEPER = '11111111-1111-1111-1111-111111111111'
 const STRANGER = '22222222-2222-2222-2222-222222222222'
 const ADMIN = '33333333-3333-3333-3333-333333333333'
@@ -127,6 +129,58 @@ export default async function run(db, { as, attempt, check }) {
   check('keeper sees capsule files once open', r.result?.rows.length === 1, r.error)
   r = await seal(await inDays(50), null, 'late')
   check('re-sealing an open capsule is refused', r.error?.includes('already sealed'), r.error)
+
+  // Deleting an opened capsule, to start a new one
+  const remove = () => attempt('select public.delete_opened_capsule($1)', [code])
+  const itemsLeft = async () => {
+    await as(null)
+    return (await db.query('select count(*)::int n from public.capsule_items where house_id = $1', [houseId])).rows[0].n
+  }
+  await as('anon')
+  r = await remove()
+  check('visitor cannot delete an opened capsule', Boolean(r.error), r.error)
+  await as(STRANGER)
+  r = await remove()
+  check('stranger cannot delete an opened capsule', Boolean(r.error), r.error)
+  await as(ADMIN)
+  r = await remove()
+  check('admin cannot delete an opened capsule', Boolean(r.error), r.error)
+  await as(null)
+  await db.query('insert into public.house_helpers (house_id, user_id) values ($1, $2)', [houseId, STRANGER])
+  await as(STRANGER)
+  r = await remove()
+  check('helper cannot delete an opened capsule', r.error?.includes('Only the keeper'), r.error)
+  check('none of them removed anything', (await itemsLeft()) === 3)
+
+  await as(KEEPER)
+  r = await remove()
+  check('keeper deletes the opened capsule', !r.error, r.error)
+  check('everything inside went with it', (await itemsLeft()) === 0)
+  await as(KEEPER)
+  r = await attempt('select * from public.get_capsule($1)', [code])
+  check('the house has no capsule now', r.result?.rows.length === 0, r.error)
+  r = await remove()
+  check('deleting twice (double tap) is harmless', !r.error, r.error)
+  r = await attempt('select * from public.get_house($1)', [code])
+  check('no capsule news after deleting', r.result?.rows[0]?.capsule_news === false, r.error)
+  r = await attempt(`select name from storage.objects where bucket_id = 'capsule'`)
+  check('old capsule files can no longer be read', r.result?.rows.length === 0, r.error)
+
+  await as(null)
+  await db.query(`update storage.objects set created_at = now() - interval '8 days' where bucket_id = 'capsule' and name = $1`, [`${houseId}/a.webp`])
+  const leftover = (await db.query(LEFTOVER_FILES_SQL)).rows.map((file) => file.name)
+  check('the nightly tidy-up will remove the old photo files', leftover.includes(`${houseId}/a.webp`))
+
+  // And a new one, which is as locked as the first
+  await as(KEEPER)
+  r = await attempt(`insert into storage.objects (bucket_id, name, owner) values ('capsule', $1, $2)`, [`${houseId}/new.webp`, KEEPER])
+  check('keeper can upload photos for a new capsule', !r.error, r.error)
+  r = await seal(await inDays(40), 'Mum', 'A new one', [photo('new')])
+  check('keeper seals a new capsule', !r.error, r.error)
+  r = await remove()
+  check('a capsule that is still locked cannot be deleted', r.error?.includes('still locked'), r.error)
+  r = await attempt('select * from public.open_capsule($1)', [code])
+  check('the new capsule is locked too', r.error?.includes('still locked'), r.error)
 
   await as(null)
 }

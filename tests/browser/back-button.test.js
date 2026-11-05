@@ -82,9 +82,20 @@ export default async function run({ check, newUser, newHouse, openPage, clickTex
   await back()
   await isAt('Back from the room goes to the street', { path: street, room: false })
 
-  await page.click('.top-bar-buttons button')
+  // Opened from the phone menu: the menu's own history step stays behind the sheet, so one Back
+  // press must still close the sheet and skip that step too.
+  const openShareSheet = async () => {
+    await page.click('.phone-menu-button')
+    await page.click('.top-bar-buttons button[aria-label="Share your house"]')
+    await wait(500)
+  }
+  await openShareSheet()
+  await isAt('the share sheet opens from the menu, and the menu closes', { sheet: true })
+  check('the menu closed when the sheet opened', !(await page.$('.phone-menu.open')))
+  await back()
   await wait(500)
-  await isAt('the share sheet opens', { sheet: true, depth: 1 })
+  await isAt('one Back press closes the share sheet, with nothing left over', { path: street, sheet: false, depth: 0 })
+  await openShareSheet()
   await clickText(page, 'a', 'Print a card')
   await wait(1500)
   await isAt('the card page opens', { path: `${street}/card` })

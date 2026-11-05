@@ -9,7 +9,7 @@ export default async function run({ db, check, newUser, newHouse, openPage, clic
   const visitor = await openPage(null)
   await visitor.goto(`${base}/h/${house.code}`)
   await visitor.waitForSelector('.street-actions .gold', { timeout: 60000 })
-  check('a visitor gets no account button', !(await visitor.$('.top-bar-buttons a[href="/signin"]')))
+  check('a visitor gets no account button', !(await visitor.$('.top-bar-buttons a[href^="/signin"]')))
   await visitor.click('.street-actions .gold')
   await visitor.waitForSelector('#lantern-name')
   await visitor.type('#lantern-name', 'Test visitor')

@@ -37,6 +37,7 @@ function en(c) {
         heading: 'The time capsule',
         paragraphs: [
           'The keeper fills the time capsule and locks it once, choosing the day it opens. After it is locked nothing can be added or changed, and the day cannot be moved. Before that day nobody can open it, not the keeper and not us, even if you ask.',
+          'Once it has opened, the keeper can delete it and make a new one. Deleting it removes the letter and photos inside for good, so download them first if you want to keep them.',
         ],
       },
       {
@@ -113,6 +114,7 @@ function ka(c) {
         heading: 'დროის კაფსულა',
         paragraphs: [
           'მეპატრონე დროის კაფსულას ერთხელ ავსებს და კეტავს, და ირჩევს დღეს, როცა გაიხსნება. ჩაკეტვის შემდეგ მასში ვეღარაფერი დაემატება და ვეღარაფერი შეიცვლება, და დღის გადაწევაც აღარ შეიძლება. ამ დღემდე მას ვერავინ გახსნის, ვერც მეპატრონე და ვერც ჩვენ, თუნდაც გვთხოვოთ.',
+          'გახსნის შემდეგ მეპატრონეს შეუძლია წაშალოს ის და შექმნას ახალი. წაშლისას შიგნით არსებული წერილი და ფოტოები სამუდამოდ იშლება, ამიტომ თუ მათი შენახვა გსურთ, ჯერ ჩამოტვირთეთ.',
         ],
       },
       {

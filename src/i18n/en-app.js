@@ -284,6 +284,14 @@ export default {
   'capsule.openedOn': 'Opened on {date}. Here is everything it kept for you.',
   'capsule.openedEmpty': 'The time capsule was empty.',
   'capsule.sealedOn': 'Sealed on {date}',
+  'capsule.startOver': 'Delete it and make a new one',
+  'capsule.deleteTitle': 'Delete this time capsule?',
+  'capsule.deleteText': 'The letter and photos inside will be gone for good. Then you can make a new time capsule.',
+  'capsule.deleteKeepCopy': 'Want to keep them? Go back and tap "{button}" at the bottom of the room first.',
+  'capsule.deleteYes': 'Yes, delete it',
+  'capsule.deleteNo': 'No, keep it',
+  'capsule.deleting': 'Deleting…',
+  'capsule.deleteFailed': "It didn't work. Check your internet and try again.",
 
   // ---------- Family helpers (co-decorators) ----------
   'helpers.title': 'Family helpers',

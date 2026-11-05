@@ -89,13 +89,14 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   `VITE_SUPABASE_*` values as build variables. Manual deploy: `npm run build` then `npx wrangler deploy`
   with `CLOUDFLARE_API_TOKEN` from `.env.local`.
 - Admin: after the founder first signs up, add their user id to `public.admins` in the SQL editor.
-- **Backups**: a nightly GitHub Action (`.github/workflows/nightly-backup.yml`, 05:00 Tbilisi) runs
+- **Backups**: a nightly GitHub Action (`.github/workflows/nightly-backup.yml`, ~05:23 Tbilisi, GitHub may start it hours late) runs
   `scripts/backup/backup.js`: all tables (incl. `auth.users`) as JSON + migrations, zipped, plus each photo
   copied once (`photos/` in R2, kept while any backup lists it), all encrypted with `age` (public key in `scripts/backup/public-key.txt`, private key `BACKUP_PRIVATE_KEY` only in
   `.env.local` and the founder's safe copies), sent to the private R2 bucket `cozytown-backups`. `/admin`
   shows the last one from `public.backup_runs`. Check: `npm run backup:check`. Restore: `docs/BACKUPS.md`.
   New tables in `public` are included automatically. The repo is public: backup logs must never print names or words.
   The same run deletes photo files on the site that no `photos` / `capsule_items` row points to (after 7 days, Q7).
+  `npm run test:restore` rehearses a full restore on a throwaway local Postgres and compares the migrations with live.
 
 ## How the site is organised
 - Pages: `/` landing (`src/pages/Landing.jsx`), `/signin` (email + password sign-in + gift-code claim),
@@ -120,11 +121,15 @@ nightly backup (database + storage) from the start. Move to Supabase Pro once pa
   = capsule day has come and the keeper hasn't looked inside (both from `get_house`, so only with that house's link).
   The flag goes down through `mark_letters_seen()` when the keeper opens the letters. `houses.quiet` marks a memorial
   house (admin page: order form or house list): no bow, no gift box. The database never tells visitors a house is quiet.
-- The **time capsule** (`src/inside/Capsule.jsx`, `src/data/capsule.js`) is one chest per house with one
+- **Phone menu** (`src/ui/PhoneMenu.jsx`): up to 640 px wide, the top-bar buttons of the landing page and the street tuck
+  behind a sandwich button, as big rows with words. One set of buttons: CSS alone decides row or menu.
+- **Sign-in links**: plain `/signin` starts on "create account" (gift recipients); `/signin?login` starts on the sign-in form.
+- The **time capsule** (`src/inside/Capsule.jsx`, `src/data/capsule.js`) is one chest per house at a time, with one
   opening day (Tbilisi time). **Filled and locked once** (founder, Nov 2026): on one page the keeper writes a
   letter, adds up to 10 photos and picks the day, then a warning step, then `seal_capsule()` saves it all at
-  once. After that nothing can be added and the day can't move. Helpers can't make or fill it. Nobody reads
-  the tables directly; `get_capsule`, `seal_capsule` and `open_capsule` check the rules. Capsule photos sit
+  once. After that nothing can be added and the day can't move. Helpers can't make or fill it. **Once it has opened**
+  the keeper can delete it, after a warning, and make a new one (`delete_opened_capsule()`; refused while locked). Nobody
+  reads the tables directly; `get_capsule`, `seal_capsule` and `open_capsule` check the rules. Capsule photos sit
   in the private `capsule` bucket (upload: keeper, before sealing), downloadable only once open.
   `get_house().capsule_news` tells the keeper on the street when it has opened.
 - **Helpers** (co-decorators, `src/inside/Helpers.jsx`, `src/data/helpers.js`): the keeper makes a one-time

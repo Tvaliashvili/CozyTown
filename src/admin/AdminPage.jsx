@@ -59,7 +59,7 @@ export default function AdminPage() {
     content = (
       <div className="admin-box">
         <p>This page is for Cozy Town admins. Sign in with an admin account first.</p>
-        <Link to="/signin" className="big-button accent">Sign in</Link>
+        <Link to="/signin?login" className="big-button accent">Sign in</Link>
       </div>
     )
   } else if (status === 'failed') {

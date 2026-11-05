@@ -48,6 +48,13 @@ export async function sealCapsule(code, { date, fromName, body, photos }, onProg
   }
 }
 
+// Deletes a capsule that has opened, with everything inside, so the keeper can make a new one.
+// The database refuses this while it's still locked. The photo files are removed by the nightly run (Q7).
+export async function deleteOpenedCapsule(code) {
+  const { error } = await supabase.rpc('delete_opened_capsule', { house_code: code })
+  if (error) throw error
+}
+
 // Everything inside, oldest first, once the day has come. Photos get a link that works for a day.
 // markSeen: false for "Download everything", so the zip doesn't count as the keeper looking inside
 // and the "it has opened!" notice stays until they really do.

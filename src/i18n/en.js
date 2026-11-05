@@ -5,6 +5,9 @@ export default {
   appName: 'Cozy Town',
   tagline: 'A little house for the ones you love',
   switchLanguage: 'ქართ',
+  'menu.open': 'Open the menu',
+  'menu.close': 'Close the menu',
+  'menu.language': 'Language',
 
   // ---------- Landing page ----------
   'nav.how': 'How it works',

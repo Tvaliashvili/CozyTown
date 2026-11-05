@@ -4,6 +4,7 @@
 //   npm run backup:check -- backups/cozytown-2026-11-05.zip.age      the same, for a file on this computer
 //   npm run backup:extract -- newest my-folder        unpack it into a folder (photos, letters as JSON)
 //   npm run backup:restore -- newest                  put everything into an EMPTY Supabase project
+//   npm run backup:restore -- newest --photos-only    finish a restore that stopped while uploading photos
 //
 // For a restore, first point .env.local at the new project (ref, database password, secret key)
 // and run every file in supabase/migrations on it. The restore refuses a project that already has houses,
@@ -96,6 +97,8 @@ if (mode === 'extract') {
     fs.mkdirSync(path.dirname(target), { recursive: true })
     fs.writeFileSync(target, bytes)
   }
+  // This holds private letters and the repo is public, so git must never pick it up, whatever the folder is called.
+  save('.gitignore', '*\n')
   for (const [name, bytes] of Object.entries(entries)) {
     if (!name.startsWith('files/')) save(name, bytes)
   }
@@ -105,25 +108,30 @@ if (mode === 'extract') {
 
 // ---------- Put it back ----------
 if (mode === 'restore') {
-  const db = await connectToDatabase(settings)
-  const { rows } = await db.query('select count(*)::int as count from public.houses')
-  if (rows[0].count > 0) {
-    throw new Error(`Project ${settings.SUPABASE_PROJECT_REF} already has houses. A restore only goes into an empty project.`)
-  }
+  // The database part can only run once, because afterwards the project has houses. If the upload
+  // below stops halfway (a network blip), --photos-only finishes the job without touching the database.
+  if (!process.argv.includes('--photos-only')) {
+    const db = await connectToDatabase(settings)
+    const { rows } = await db.query('select count(*)::int as count from public.houses')
+    if (rows[0].count > 0) {
+      throw new Error(`Project ${settings.SUPABASE_PROJECT_REF} already has houses. A restore only goes into an empty project.`)
+    }
 
-  // All tables in one go: if anything fails, nothing is half-restored.
-  await db.query('begin')
-  await db.query('set local session_replication_role = replica')
-  await emptyPublicTables(db, Object.keys(manifest.tables))
-  for (const table of Object.keys(manifest.tables)) {
-    if (table === 'storage.objects') continue // these come back with the uploads below
-    const count = await loadTable(db, table, strFromU8(entries[`database/${table}.json`]))
-    console.log(`  ${table.padEnd(26)} ${count} rows back`)
+    // All tables in one go: if anything fails, nothing is half-restored.
+    await db.query('begin')
+    await db.query('set local session_replication_role = replica')
+    await emptyPublicTables(db, Object.keys(manifest.tables))
+    for (const table of Object.keys(manifest.tables)) {
+      if (table === 'storage.objects') continue // these come back with the uploads below
+      const count = await loadTable(db, table, strFromU8(entries[`database/${table}.json`]))
+      console.log(`  ${table.padEnd(26)} ${count} rows back`)
+    }
+    await db.query('commit')
+    await db.end()
   }
-  await db.query('commit')
-  await db.end()
 
   // Photos go back under the same names, so the restored rows still point at them.
+  // upsert: a photo already uploaded by a run that stopped halfway is simply written again.
   const storage = connectToStorage(settings)
   const types = Object.fromEntries(
     JSON.parse(strFromU8(entries['database/storage.objects.json']))
@@ -131,8 +139,10 @@ if (mode === 'restore') {
   )
   let uploaded = 0
   for await (const [bucket, name, bytes] of photos()) {
-    const { error } = await storage.from(bucket).upload(name, bytes, { contentType: types[`${bucket}/${name}`] })
-    if (error) throw new Error(`Couldn't upload a photo to ${bucket}: ${error.message}`)
+    const { error } = await storage.from(bucket).upload(name, bytes, { contentType: types[`${bucket}/${name}`], upsert: true })
+    if (error) {
+      throw new Error(`Couldn't upload a photo to ${bucket}: ${error.message}. The database is back. To finish, run: npm run backup:restore -- ${source} --photos-only`)
+    }
     uploaded += 1
   }
   console.log(`Restored. ${uploaded} photos uploaded.`)

@@ -535,6 +535,13 @@
   font-size: 1.3rem;
 }
 
+/* Below everything inside, set apart, so nobody taps it while reading. */
+.capsule-start-over {
+  display: flex;
+  width: 100%;
+  margin-top: 32px;
+}
+
 /* "Photos (up to 10)" is a heading over the photo grid, not a label for one box */
 p.field-label {
   margin: 0;

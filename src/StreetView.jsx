@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Town from './scene/Town.jsx'
 import LanguageToggle from './ui/LanguageToggle.jsx'
+import PhoneMenu from './ui/PhoneMenu.jsx'
 import Customizer from './ui/Customizer.jsx'
 import { hideLoadingScreen } from './ui/loadingScreen.js'
 import { useI18n } from './i18n/i18n.jsx'
@@ -112,28 +113,31 @@ export default function StreetView({
             {subtitle ? <p>{subtitle}</p> : <p className="top-bar-tagline">{t('tagline')}</p>}
           </div>
         </div>
-        <div className="top-bar-buttons">
+        <PhoneMenu itemsClassName="top-bar-buttons">
           {/* state: so the map's back arrow can step back to this house instead of going to the home page. */}
           {showMap && (
             <Link to="/map" state={{ fromHouse: true }} className="pill-button" aria-label={t('street.map')}>
               <MapIcon />
+              <span className="menu-label">{t('street.map')}</span>
             </Link>
           )}
           {onShare && (
             <button type="button" className="pill-button" onClick={onShare} aria-label={t('share.button')}>
               <ShareIcon />
+              <span className="menu-label">{t('share.button')}</span>
             </button>
           )}
           {/* Opens the sign-in page, which shows who's signed in and has "Sign out".
               Not a sign-out button right here: one accidental tap would lock a grandparent out,
               and there's no password-reset email yet. */}
           {showAccount && (
-            <Link to="/signin" className="pill-button" aria-label={t('street.account')}>
+            <Link to="/signin?login" className="pill-button" aria-label={t('street.account')}>
               <PersonIcon />
+              <span className="menu-label">{t('street.account')}</span>
             </Link>
           )}
           <LanguageToggle />
-        </div>
+        </PhoneMenu>
       </header>
 
       {showPanel ? (

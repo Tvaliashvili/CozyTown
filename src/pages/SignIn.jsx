@@ -33,7 +33,8 @@ export default function SignIn() {
   const { t } = useI18n()
   const session = useSession()
   // Most people arriving here are opening a gift for the first time, so start on "create account".
-  const [mode, setMode] = useState('signUp')
+  // Links meant for people who already have an account ("Sign in") go to /signin?login.
+  const [mode, setMode] = useState(() => (new URLSearchParams(window.location.search).has('login') ? 'signIn' : 'signUp'))
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)

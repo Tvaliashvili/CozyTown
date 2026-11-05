@@ -249,11 +249,109 @@ textarea.text-field {
   text-decoration: none;
 }
 
-/* Phones: with the map button there's less room, so the title wraps. Keep the back button level
-   with the other buttons, and drop the tagline, which would otherwise run down onto the hills. */
-@media (max-width: 480px) {
+/* The sandwich menu (src/ui/PhoneMenu.jsx). On wide screens only the row of buttons inside it shows.
+   z-index: the open menu sits above the house's label, below the sheets that cover the whole screen. */
+.phone-menu {
+  position: relative;
+  z-index: 25;
+  flex: none;
+}
+
+.phone-menu-button,
+.phone-menu-backdrop,
+.menu-label {
+  display: none;
+}
+
+/* Phones: the buttons go into the menu. The title gets smaller and stays on one line beside it,
+   and the tagline goes, because it would run down onto the hills. */
+@media (max-width: 640px) {
+  .phone-menu-button {
+    display: inline-flex;
+    min-width: 48px;
+    padding: 0;
+  }
+
+  .phone-menu.open .phone-menu-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .phone-menu:not(.open) .phone-menu-items {
+    display: none;
+  }
+
+  .phone-menu.open .phone-menu-items {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    gap: 4px;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: min(280px, calc(100vw - 32px));
+    padding: 8px;
+    border-radius: 20px;
+    background: var(--cream);
+    box-shadow: var(--shadow);
+  }
+
+  /* Each button becomes a full-width row with big, plain words, easy for grandparents to tap. */
+  .phone-menu-items .pill-button,
+  .phone-menu-items .pill-button.outline {
+    justify-content: flex-start;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--ink);
+    box-shadow: none;
+    text-align: left;
+  }
+
+  .phone-menu-items .menu-label {
+    display: inline;
+  }
+
+  .top-bar {
+    align-items: center;
+  }
+
   .top-bar-title {
-    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .top-bar-title > div {
+    min-width: 0;
+  }
+
+  .top-bar-title .pill-button {
+    min-width: 48px;
+    padding: 0;
+  }
+
+  /* Scales down a little on the narrowest phones, so the whole Georgian name still fits. */
+  .top-bar h1 {
+    font-size: clamp(1rem, 5.2vw, 1.25rem);
+    white-space: nowrap;
+  }
+
+  /* A long street name is cut with "..." rather than pushing the menu off the screen. */
+  .top-bar h1,
+  .top-bar p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .top-bar p {
+    white-space: nowrap;
   }
 
   .top-bar-tagline {

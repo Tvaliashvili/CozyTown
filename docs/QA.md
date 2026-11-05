@@ -18,6 +18,13 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
+| Q18 | 🟠 | Phones | Decorating panel: on 320-390 px phones the header, tall tabs and "Make it final" leave only a 40-70 px strip for the choices. | Slimmer tabs and header, "Make it final" as a slim link, or a taller panel on short screens. `.customizer`, `.tab`, `.finish-button`. |
+| Q19 | 🟢 | Phones | Sign-in: on 360x640 the first box is near the bottom of the screen, under the sky picture. | Smaller `.signin-sky` on short screens. |
+| Q20 | 🟢 | Phones | Room sheet: the Share pill sits beside the house name, so a normal Georgian name wraps to 2-3 lines and pushes "Add a photo" down. | Move Share to `.room-top`, or make it a link under the counts. |
+| Q21 | 🟢 | Speed | Photos from before small copies load in full in the frames: a visit to the test house costs 286 KB of photos, ~75 KB if all had copies. | One-off script making small copies for rows with empty `small_path`. |
+| Q22 | 🟢 | Phones | Landing is 8,600 px tall at 360 px in Georgian (13.5 screens). | Step pictures beside the text, 2 occasions per row, frames 2x2, less section padding: saves ~2,000 px. Founder's CSS, so only if wanted. |
+| Q23 | 🟢 | Phones | Helpers and capsule pages open with 6-7 lines before the main button. Keeper's lantern rows are ~130 px each. Empty frames are 35-48 px tap targets at 320-360 px. | Shorter intros, one-line lantern rows, a bigger invisible tap area on `.frame.empty`. |
+| Q24 | 🟢 | Tablets | Street on portrait tablets: the house is ~40% of the width, with ~370 px of empty road below it. | Bring the camera closer on tall screens (`CameraRig.jsx`). |
 
 ### Questions for the founder (product choices made without asking)
 None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
@@ -294,4 +301,40 @@ The founder asked for my opinion on the four choices above and to apply it. Deci
   earlier the same day; no database change since.
 - **Growing the map (founder: "like a GTA map", meaning seen from the top with territories lighting up on hover, not zooming):**
   the drawing is extended by hand as neighbourhoods open, with streets drawn in place once there are more than a few. Recorded in CLAUDE.md.
+
+### 2026-11-05 · Backup check and restore rehearsal
+- **Healthy:** all 3 backups in R2 (2 nightly, 1 monthly) open with no damage; every photo copy a backup names is there and none is
+  unaccounted for; no row points at a missing photo file. Nothing private was ever committed to the repo, and no key is in it.
+- **First full restore rehearsal (`npm run test:restore`, new):** on a local Postgres 17.11, all 15 migrations (with the capsule one below)
+  ran from zero and matched live with 0 differences across columns, constraints, indexes, rules, functions, triggers, permissions and
+  buckets. The real newest backup then restored with every row identical, including login accounts, all links between tables whole, a
+  visitor and the keeper getting the right things. **Rehearsed with Supabase's own tables copied, not a real project:** signing in with a
+  restored password and uploading photos back are still unproven.
+- **Fixed (🟠) unpacked backups could reach the public repo:** `backup:extract` and the docs' example folder weren't ignored by git, so
+  one `git add .` would have published letters and photos. Now the folder gets its own `.gitignore`, whatever it's called, and
+  `/backups/` and `/backup-folder/` are ignored too. Checked with a real extract.
+- **Fixed (🟠) a restore that stopped while uploading photos couldn't finish:** the database part refuses a project with houses, and the
+  database was already back. New `--photos-only`. **Not run against real storage**, only reviewed: the live project isn't a safe place to try it.
+- **Changed: the schedule moved from 05:00 to 05:23 Tbilisi.** The run for 2026-11-04 started 6 hours late (07:04 UTC); on the hour is
+  GitHub's busiest time. Only one scheduled run so far, so this is GitHub's own advice, not a measured cure. Docs no longer promise an exact time.
+- **Watch:** the 2026-11-05 scheduled run had not started by 05:40 UTC (4h40 after its slot, while yesterday's took 6h). If `/admin` turns red, runs
+  are being skipped, and the nightly needs a sturdier trigger. Founder's 2 offline copies of the private key: still unconfirmed.
+
+### 2026-11-05 · Phone menu, sign-in link, delete an opened capsule
+- **Phone menu (founder):** up to 640 px the top-bar buttons of the street and landing page go behind a sandwich button, as rows with words, beside
+  a smaller one-line title. Back, a tap outside, and Escape close it. Tablets keep the row. The landing page gained no download of other pages.
+- **Sign-in (founder):** "Sign in" links open the sign-in form (`/signin?login`): landing, street account, card and admin. The gift buttons and
+  invite links still start on "create account", because those people are new.
+- **Capsule (founder: an opened capsule was a dead end):** below an opened capsule the keeper gets "Delete it and make a new one", then a warning
+  that says how to keep a copy first. Migration `20261110000000_delete_opened_capsule.sql`, tested rolled back, then applied. Photo files go in the nightly
+  tidy-up. **Choice made without asking:** a capsule that's still locked can't be deleted, by anyone, because "nobody can touch it before that day" is the
+  product's promise. Terms updated (EN + KA draft). "Deleted for good" means from the house: copies leave the backups within a year, as `/privacy` says.
+- **Layout review, phone and tablet (Fable agent, live site, 6 sizes, both languages, visitor and keeper screens):** Q18-Q24 above. No sideways scroll anywhere, no page errors.
+  Not covered: real devices, on-screen keyboards, phones held sideways, the lantern form, the photo viewer. Ran before the phone menu went live.
+- **Found by the tests:** the Georgian title was clipped on a 320 px phone (fixed: it scales with the screen). Opening the share sheet from the menu
+  leaves a history step behind it; one Back press still closes it and skips the step, now tested.
+- **Tests:** `npm run test:db` 284 passed. `npm run test:browser` 211 passed, 1 failed: `signs-and-small-photos` timed out waiting for the photo viewer's
+  take-down button, in code not touched here. That file then passed 3 of 3 alone, so load is the likely cause, not proven (like the timeouts noted on 2026-11-04).
+  If it fails on an idle computer, treat it as a real bug. Landing page: ~80 KB gzip (79 before), and its test still passes.
+- **Founder:** new Georgian DRAFT texts: `menu.*` in `ka.js`, `capsule.startOver`, `capsule.delete*`, `capsule.deleting` in `ka-app.js`, one Terms paragraph.
 
