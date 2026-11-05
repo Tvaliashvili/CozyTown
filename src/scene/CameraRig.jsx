@@ -7,10 +7,13 @@ import { PLOT_XS, PLOT_Z, STREET_START, STREET_END } from './layout.js'
 // No free spinning: it should be impossible to get "lost".
 const STREET_LOOK_HEIGHT = 1.2
 
-// Must match the side-panel rule in styles.css (min-width: 900px, landscape)
-// and the panel's width plus its gap from the screen edge.
-const SIDE_PANEL_MIN_SCREEN = 900
+// The panel's width plus its gap from the screen edge. Must match the side-panel rule in styles.css.
 const SIDE_PANEL_SPACE = 432
+
+// Must also match that rule: big landscape screens, and phones held sideways.
+function usesSidePanel({ width, height }) {
+  return width > height && (width >= 900 || (width >= 641 && height <= 500))
+}
 
 // Swiping: the street moves a bit further than the finger, so a long street needs fewer swipes.
 const DRAG_SPEED = 1.5
@@ -101,7 +104,7 @@ export default function CameraRig({ startX = PLOT_XS[3], focusX = null, tallPane
       // Portrait phones are narrow, so step back further to fit a whole house on screen.
       distance = portrait ? 22 : 15
       lookHeight = STREET_LOOK_HEIGHT
-    } else if (!portrait && size.width >= SIDE_PANEL_MIN_SCREEN) {
+    } else if (usesSidePanel(size)) {
       // Panel on the right: come close and slide the view so the house sits in the free space on the left.
       distance = 10
       lookHeight = 1.8

@@ -627,15 +627,76 @@ textarea.text-field {
   transform: scale(0.95);
 }
 
+/* Phones, upright or sideways: everything around the choices gets slimmer, so more colors and styles fit
+   without scrolling. Every button stays at least 44 px tall, big enough for a thumb.
+   (.finish-button: see below its own rule.) */
+@media (max-width: 640px), (max-height: 500px) {
+  .customizer {
+    padding: 8px 16px max(10px, env(safe-area-inset-bottom));
+  }
+
+  .sheet-handle {
+    margin-bottom: 4px;
+  }
+
+  .customizer-header h2 {
+    font-size: 1.15rem;
+  }
+
+  .customizer .pill-button {
+    min-height: 44px;
+  }
+
+  .tabs {
+    gap: 6px;
+    padding: 8px 0 4px;
+  }
+
+  /* The icon sits beside the word instead of above it, which saves 20 px of height. */
+  .tab {
+    flex-direction: row;
+    gap: 6px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 14px;
+  }
+
+  .tab svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .control h3 {
+    margin: 8px 0 6px;
+  }
+
+  .options {
+    gap: 10px;
+  }
+
+  .swatch {
+    width: 48px;
+    height: 48px;
+  }
+
+  .choice {
+    min-width: 76px;
+    min-height: 48px;
+    padding: 0 14px;
+    border-radius: 14px;
+  }
+}
+
 /* While decorating, hide the title so the house has room */
 .app.editing .top-bar h1,
 .app.editing .top-bar p {
   visibility: hidden;
 }
 
-/* Wide screens in landscape: the panel sits on the right, the house on the left.
-   If you change these numbers, change SIDE_PANEL_* in src/scene/CameraRig.jsx too. */
-@media (min-width: 900px) and (orientation: landscape) {
+/* Wide screens in landscape, and phones held sideways: the panel sits on the right, the house on the left.
+   If you change these numbers, change usesSidePanel() and SIDE_PANEL_SPACE in src/scene/CameraRig.jsx too. */
+@media (min-width: 900px) and (orientation: landscape), (min-width: 641px) and (max-height: 500px) and (orientation: landscape) {
   .customizer {
     top: 88px;
     right: 16px;
@@ -654,6 +715,13 @@ textarea.text-field {
 
   .tabs {
     flex-wrap: wrap;
+  }
+}
+
+/* A phone held sideways is short: the tabs stay on one row and slide, or they'd take all the room. */
+@media (min-width: 641px) and (max-height: 500px) and (orientation: landscape) {
+  .tabs {
+    flex-wrap: nowrap;
   }
 }
 
@@ -692,6 +760,20 @@ textarea.text-field {
 
 .finish-button:active {
   transform: scale(0.97);
+}
+
+@media (max-width: 640px), (max-height: 500px) {
+  .finish-button {
+    min-height: 44px;
+    margin-top: 6px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+  }
+
+  .finish-button svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .save-warning {

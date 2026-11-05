@@ -18,7 +18,6 @@ Every few features, do a wider review (security, phones, Georgian, speed) and ad
 | ID | Sev | Area | What's wrong | Suggested fix |
 |---|---|---|---|---|
 | Q5 | 🟠 | Phones | **Never tested on a real budget Android** (open since Phase 1). All testing so far is a desktop browser pretending to be a phone. | Founder: run the phone checklist below on a cheap Android and an iPhone. |
-| Q18 | 🟠 | Phones | Decorating panel: on 320-390 px phones the header, tall tabs and "Make it final" leave only a 40-70 px strip for the choices. | Slimmer tabs and header, "Make it final" as a slim link, or a taller panel on short screens. `.customizer`, `.tab`, `.finish-button`. |
 | Q19 | 🟢 | Phones | Sign-in: on 360x640 the first box is near the bottom of the screen, under the sky picture. | Smaller `.signin-sky` on short screens. |
 | Q20 | 🟢 | Phones | Room sheet: the Share pill sits beside the house name, so a normal Georgian name wraps to 2-3 lines and pushes "Add a photo" down. | Move Share to `.room-top`, or make it a link under the counts. |
 | Q21 | 🟢 | Speed | Photos from before small copies load in full in the frames: a visit to the test house costs 286 KB of photos, ~75 KB if all had copies. | One-off script making small copies for rows with empty `small_path`. |
@@ -52,6 +51,7 @@ None open. Q11-Q14 confirmed by the founder on 2026-11-04 (see below).
 
 | ID | Date | What | Commit |
 |---|---|---|---|
+| Q18 | 2026-11-05 | 🟠 Decorating panel left only a 40-70 px strip for the choices on small phones. Up to 640 px wide (and on short screens) tabs are one line with the icon beside the word, swatches 48 px, "Make it final" 44 px: all 9 wall colours now fit on 360x640 without scrolling, buttons stay at least 44 px. Phones held sideways had no room at all: they now get the side panel, like big screens. `tests/browser/decorating-panel.test.js`. | decorating panel commit |
 | Q6 | 2026-11-04 | 🟢 The landing page downloaded every text for every page. Now `en.js`/`ka.js` hold only the landing page's 63 texts; the other 291 are in `en-app.js`/`ka-app.js` and download with the first other page (`lazyPage` in `App.jsx`). Landing page: **89.2 → 79.0 KB** gzip. | *(this commit)* |
 | Q16 | 2026-11-03 | 🟢 Every backup was a full copy of all photos (42 kept), so R2's free 10 GB would have filled at ~1,000 photos. Now each photo is copied to R2 **once**, encrypted on its own, and the nightly zip holds only the database (25 KB instead of 277 KB today). A copy is deleted once no kept backup lists it. Room now for ~40,000 photos. `/admin` shows how much of the 10 GB is used. | 7e8678b |
 | Q7 | 2026-11-03 | 🟢 Photo files with nothing pointing to them (deleted house, failed capsule upload) were left behind for ever. The nightly backup now deletes them from Supabase, if they are over a week old and already copied into the backups. If more than half of all files look left over, it deletes nothing and fails. | 7e8678b |
